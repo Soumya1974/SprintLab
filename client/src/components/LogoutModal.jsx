@@ -1,0 +1,97 @@
+import { LogOut, X } from "lucide-react";
+import api from "../api/axios";
+import useAuthStore from "../store/authStore";
+import { useNavigate } from "react-router-dom";
+import toast, { Toaster } from 'react-hot-toast';
+
+
+export default function LogoutModal({ onCancelClick }) {
+
+    const navigate = useNavigate();
+
+    const accessToken = useAuthStore((state) =>
+        state.accessToken
+    )
+    const clearAccessToken = useAuthStore((state) =>
+        state.clearAccessToken
+    )
+
+    const handleLogoutClick = async () => {
+        try {
+            const response = await api.post('/api/logout', {}, {
+                withCredentials: true
+            });
+
+            clearAccessToken();
+            toast.success(response.data.message);
+
+            setTimeout(() => {
+                navigate('/');
+            }, 1000);
+        }
+        catch (err) {
+            console.error(err);
+            toast.error(err.response?.data.message);
+        }
+    }
+
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+            {/* backdrop */}
+            <div
+                className="absolute inset-0 bg-slate-900/40 animate-fade-in"
+            />
+
+            {/* modal */}
+            <div className="relative bg-white rounded-2xl border border-slate-200 shadow-xl w-full max-w-sm p-6 animate-scale-in">
+                <button
+                    aria-label="Close"
+                    className="absolute top-4 right-4 h-7 w-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors duration-150"
+                >
+                    <X className="h-4 w-4" onClick={onCancelClick} />
+                </button>
+
+                <div className="h-11 w-11 rounded-full bg-red-50 flex items-center justify-center mb-4">
+                    <LogOut className="h-5 w-5 text-red-500" />
+                </div>
+
+                <h2 className="text-base font-semibold text-slate-800 mb-1.5">
+                    Log out of SprintLab?
+                </h2>
+                <p className="text-sm text-slate-500 leading-relaxed mb-6">
+                    You&apos;ll need to sign in again to access your workspaces and
+                    tasks.
+                </p>
+
+                <div className="flex items-center gap-2.5">
+                    <button
+                        className="flex-1 text-sm font-medium text-slate-600 hover:bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-lg transition-colors duration-150"
+                        onClick={onCancelClick}
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        className="flex-1 text-sm font-medium text-white bg-red-500 hover:bg-red-600 active:scale-[0.98] px-4 py-2.5 rounded-lg transition-all duration-150"
+                        onClick={handleLogoutClick}
+                    >
+                        Log out
+                    </button>
+                </div>
+            </div>
+
+            <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes scaleIn {
+          from { opacity: 0; transform: scale(0.96) translateY(4px); }
+          to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .animate-fade-in { animation: fadeIn 0.2s ease-out both; }
+        .animate-scale-in { animation: scaleIn 0.2s ease-out both; }
+      `}</style>
+        </div>
+    );
+}

@@ -10,10 +10,6 @@ import {
   X,
   Wrench,
 } from "lucide-react";
-import api from "../api/axios";
-import useAuthStore from "../store/authStore";
-import { useNavigate } from "react-router-dom";
-import toast, { Toaster } from 'react-hot-toast';
 
 
 const NAV_ITEMS = [
@@ -32,38 +28,8 @@ export default function Sidebar({
   setMobileOpen,
   active,
   setActive,
+  onLogoutClick
 }) {
-
-
-  const navigate = useNavigate();
-
-  const accessToken = useAuthStore((state) =>
-    state.accessToken
-  )
-
-  const clearAccessToken = useAuthStore((state) =>
-    state.clearAccessToken
-  )
-
-  const handleLogoutClick = async () => {
-    try {
-      const response = await api.post('/api/logout', {}, {
-        withCredentials: true
-      });
-
-      clearAccessToken();
-      toast.success(response.data.message);
-
-      setTimeout(() => {
-        navigate('/');
-      }, 1000);
-    }
-    catch (err) {
-      console.error(err);
-      toast.error(err.response?.data.message);
-    }
-  }
-
 
   return (
     <>
@@ -157,13 +123,13 @@ export default function Sidebar({
         </nav>
 
         <div className="px-3 py-4 border-t border-slate-100 shrink-0">
-          <button className="group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-500 hover:bg-rose-50 hover:text-rose-600 transition-colors duration-150 w-full">
-            <LogOut className="h-4.5 w-4.5 shrink-0" onClick={handleLogoutClick} />
+          <button className="group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-500 hover:bg-rose-50 hover:text-rose-600 transition-colors duration-150 w-full"
+            onClick={onLogoutClick}
+          >
+            <LogOut className="h-4.5 w-4.5 shrink-0"/>
             <span
               className={`whitespace-nowrap transition-all duration-200 ${collapsed ? "lg:opacity-0 lg:w-0 lg:hidden" : "opacity-100"
                 }`}
-
-                onClick={handleLogoutClick}
             >
               Logout
             </span>
