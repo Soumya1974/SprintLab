@@ -1,6 +1,7 @@
 import { useState } from "react";
 import AuthLayout from "../components/AuthLayout";
 import FormField from "../components/FormField";
+import toast, { Toaster } from 'react-hot-toast';
 import {
   validateName,
   validateEmail,
@@ -10,10 +11,15 @@ import {
 } from "../utils/validators";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import useAuthStore from "../store/authStore";
 
 export default function Signup() {
 
   const navigate = useNavigate();
+
+  const setAccessToken = useAuthStore(
+    (state) => state.setAccessToken
+  );
 
   const [form, setForm] = useState({
     name: "",
@@ -65,20 +71,48 @@ export default function Signup() {
     const { name, email, password, confirmPassword } = form;
 
     if (!name || !email || !password || !confirmPassword) {
+      toast.error("All fields are required");
       return;
     }
 
     try {
       const response = await axios.post('/api/signup', {
-        form
+        name,
+        email,
+        password
       },
         {
           withCredentials: true
         }
       )
+
+      setAccessToken(response.data.accessToken);
+
+      if (response.status === 201) {
+        toast.success(response.data.message);
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 500);
+      }
     }
     catch (err) {
+      switch (err.response.status) {
 
+        case 400:
+          toast.error(err.response.data.message);
+          break;
+
+        case 406:
+          toast.error(err.response.data.errors[0].message);
+          break;
+
+        case 500:
+          toast.error("Internal Server Error");
+          break;
+
+        default:
+          toast.error("Something went wrong");
+      }
     }
 
   }
@@ -100,6 +134,17 @@ export default function Signup() {
         </p>
       }
     >
+
+      <Toaster
+        position='top-right'
+        toastOptions={{
+          style: {
+            background: "#1f2937",
+            color: "#fff",
+          },
+        }}
+      />
+
       <form onSubmit={handleSubmit} noValidate>
         {submitError && (
           <div className="mb-4 rounded-lg bg-rose-50 border border-rose-100 px-3.5 py-2.5 text-sm text-rose-600 animate-fade-in-down">
