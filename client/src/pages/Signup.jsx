@@ -92,7 +92,7 @@ export default function Signup() {
         toast.success(response.data.message);
         setTimeout(() => {
           navigate('/dashboard');
-        }, 500);
+        }, 1000);
       }
     }
     catch (err) {
@@ -114,6 +114,9 @@ export default function Signup() {
           toast.error("Something went wrong");
       }
     }
+    finally{
+      setSubmitting(false);
+    }
 
   }
 
@@ -134,16 +137,6 @@ export default function Signup() {
         </p>
       }
     >
-
-      <Toaster
-        position='top-right'
-        toastOptions={{
-          style: {
-            background: "#1f2937",
-            color: "#fff",
-          },
-        }}
-      />
 
       <form onSubmit={handleSubmit} noValidate>
         {submitError && (
