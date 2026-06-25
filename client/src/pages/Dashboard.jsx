@@ -8,17 +8,18 @@ export default function Dashboard() {
   const [mobileOpen, setMobileOpen] = useState(false); //f or mobile view
   const [active, setActive] = useState("dashboard");
   const [isOpen, setIsOpen] = useState(false);
+// console.log(collapsed)
 
   return (
     <div className="h-screen w-full flex bg-gray-50 overflow-hidden font-sans">
       {
         isOpen && <LogoutModal 
-          onCancelClick={() => setIsOpen(false)}
+          onCancelClick={() => {setIsOpen(false); setCollapsed(false)}}
         />
       }
       <Sidebar
         collapsed={collapsed}
-        onLogoutClick={() => setIsOpen(true)}
+        onLogoutClick={() => {setIsOpen(true); setCollapsed(true)}}
         setCollapsed={setCollapsed}
         mobileOpen={mobileOpen}
         setMobileOpen={setMobileOpen}
