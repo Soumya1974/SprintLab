@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Wrench, Menu, X } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const LINKS = [
     { label: "Features", href: "#features" },
@@ -61,22 +62,31 @@ export default function Navbar() {
                 {/* desktop actions */}
                 <div className="hidden md:flex items-center gap-2">
                     <button
-                        
                         className="text-sm font-medium text-slate-600 hover:text-slate-900 px-3.5 py-2 rounded-lg transition-colors duration-150"
                     >
-                        Log in
+                        <Link
+                            to="/login"
+                        >
+                            Log in
+                        </Link>
                     </button>
                     <button
-                        onClick={() => onNavigate?.("signup")}
                         className="text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 px-3.5 py-2 rounded-lg border border-slate-200 transition-colors duration-150"
                     >
-                        Sign up
+                        <Link
+                            to="/signup"
+                        >
+                            Sign up
+                        </Link>
                     </button>
                     <button
-                        onClick={() => onNavigate?.("signup")}
                         className="text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.97] px-4 py-2 rounded-lg transition-all duration-150 shadow-sm"
                     >
-                        Get started
+                        <Link
+                            to="/signup"
+                        >
+                            Get started  
+                        </Link>
                     </button>
                 </div>
 
@@ -140,29 +150,38 @@ export default function Navbar() {
                     <button
                         onClick={() => {
                             setMobileOpen(false);
-                            onNavigate?.("login");
                         }}
                         className="w-full bg-gray-300 text-sm font-medium text-slate-600 hover:bg-slate-50 px-3.5 py-2.5 rounded-lg border border-slate-200 transition-colors duration-150"
                     >
-                        Log in
+                        <Link
+                            to="/login"
+                        >
+                            Log in
+                        </Link>
                     </button>
                     <button
                         onClick={() => {
                             setMobileOpen(false);
-                            onNavigate?.("signup");
                         }}
                         className="w-full text-sm bg-gray-300 font-medium text-slate-600 hover:bg-slate-50 px-3.5 py-2.5 rounded-lg border border-slate-200 transition-colors duration-150"
                     >
-                        Sign up
+                        <Link
+                            to="/signup"
+                        >
+                            Sign up
+                        </Link>
                     </button>
                     <button
                         onClick={() => {
                             setMobileOpen(false);
-                            onNavigate?.("signup");
                         }}
                         className="w-full text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] px-3.5 py-2.5 rounded-lg transition-all duration-150 shadow-sm"
                     >
-                        Get started
+                        <Link
+                            to="/signup"
+                        >
+                            Get Started
+                        </Link>
                     </button>
                 </div>
             </div>
