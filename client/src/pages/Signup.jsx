@@ -8,8 +8,13 @@ import {
   validateConfirmPassword,
   getPasswordStrength,
 } from "../utils/validators";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-export default function Signup({ onNavigate }) {
+export default function Signup() {
+
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -31,6 +36,8 @@ export default function Signup({ onNavigate }) {
       form.confirmPassword
     ),
   };
+
+  // console.log(form);
 
   const isValid = !Object.values(errors).some(Boolean) && agreed;
   const strength = getPasswordStrength(form.password);
@@ -55,12 +62,25 @@ export default function Signup({ onNavigate }) {
     setSubmitting(true);
     setSubmitError("");
 
-    // Simulated request — replace with real API call
-    await new Promise((resolve) => setTimeout(resolve, 900));
-    setSubmitting(false);
+    const { name, email, password, confirmPassword } = form;
 
-    // Example failure path:
-    // setSubmitError("An account with this email already exists");
+    if (!name || !email || !password || !confirmPassword) {
+      return;
+    }
+
+    try {
+      const response = await axios.post('/api/signup', {
+        form
+      },
+        {
+          withCredentials: true
+        }
+      )
+    }
+    catch (err) {
+
+    }
+
   }
 
   return (
@@ -184,9 +204,8 @@ export default function Signup({ onNavigate }) {
         <button
           type="submit"
           disabled={submitting}
-          className={`w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed active:scale-[0.98] text-white text-sm font-medium py-2.5 rounded-lg transition-all duration-150 ${
-            agreedTouched && !agreed ? "mt-0" : "mt-5"
-          }`}
+          className={`w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed active:scale-[0.98] text-white text-sm font-medium py-2.5 rounded-lg transition-all duration-150 ${agreedTouched && !agreed ? "mt-0" : "mt-5"
+            }`}
         >
           {submitting ? (
             <>
