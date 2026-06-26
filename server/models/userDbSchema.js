@@ -21,7 +21,17 @@ const userSchema = new mongoose.Schema({
     refreshToken: {
         type: String,
         default: null
-    }
+    },
+    otp: {
+        type: String
+    },
+    otpExpiry: {
+        type: Date
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
 }, { timestamps: true });
 
 export const User = mongoose.model("userData", userSchema);

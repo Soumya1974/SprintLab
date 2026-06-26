@@ -117,7 +117,9 @@ export default function Signup() {
       }
     }
     finally {
-      setSubmitting(false);
+      setTimeout(() => {
+        setSubmitting(false);
+      }, 500);
     }
 
   }
@@ -133,11 +135,11 @@ export default function Signup() {
             type="button"
             className="font-medium text-blue-600 hover:text-blue-700 hover:cursor-pointer transition-colors duration-150"
           >
-           <Link
-            to="/login"
-           >
-             Log in
-           </Link>
+            <Link
+              to="/login"
+            >
+              Log in
+            </Link>
           </button>
         </p>
       }

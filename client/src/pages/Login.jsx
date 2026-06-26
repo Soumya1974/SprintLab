@@ -98,7 +98,9 @@ export default function Login({ onNavigate }) {
             }
         }
         finally {
-            setSubmitting(false);
+            setTimeout(()  => {
+                setSubmitting(false);
+            },500);
         }
     }
 

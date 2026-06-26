@@ -1,23 +1,54 @@
 import { User } from "../models/userDbSchema.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import nodemailer from "nodemailer";
+import crypto from "crypto";
+
+
+//Nodemailer setup
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: "soumya1874@gmail.com",
+        pass: "asdhsjadhj",
+    }
+});
+
+//Generate 6 digit otp
+const generateOtp = () => crypto.randomInt(100000, 999999).toString();
 
 export const handleUserSignup = async (req, res) => {
     try {
+
         const { name, email, password } = req.body;
 
         const userExists = await User.findOne({ email });
+
         if (userExists) return res.status(400).json({
             message: "Email already exists"
         })
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        const otp = generateOtp();
+        const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 Minutes
+
+        const hashedOtp = await bcrypt.hash(otp, 10);
+
         const saveUser = await User.create({
             name,
             email,
             password: hashedPassword,
+            otp: hashedOtp,
+            otpExpiry
         });
+
+        await transporter.sendMail({
+            from: 'nalinisahoo781@gmail.com',
+            to: email,
+            subject: "Otp verification",
+            text: `Your Otp is ${otp}`
+        })
 
         const accessToken = jwt.sign({
             id: saveUser._id

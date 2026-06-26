@@ -33,7 +33,9 @@ export default function LogoutModal({ onCancelClick }) {
             toast.error(err.response?.data.message);
         }
         finally {
-            setSubmitting(false);
+            setTimeout(() => {
+                setSubmitting(false);
+            }, 500);
         }
     }
 
