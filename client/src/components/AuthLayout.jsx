@@ -29,7 +29,7 @@ export default function AuthLayout({ title, subtitle, children, footer }) {
 
       {/* Right form panel */}
       <div className="flex-1 flex items-center justify-center px-5 sm:px-8 py-10">
-        <div className="w-full max-w-[400px] animate-fade-in-up">
+        <div className="w-full max-w-100 animate-fade-in-up">
           {/* mobile logo */}
           <div className="lg:hidden flex items-center gap-2 justify-center mb-8">
             <Wrench className="h-5 w-5 text-blue-600" />

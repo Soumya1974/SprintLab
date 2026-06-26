@@ -9,5 +9,5 @@ export default function ProtectedRoute() {
 
   // console.log("Auth:", accessToken);
 
-  return accessToken ? <Outlet /> : <Navigate to="/login" replace />;
+  return accessToken ? <Outlet /> : <Navigate to="/" replace />;
 }

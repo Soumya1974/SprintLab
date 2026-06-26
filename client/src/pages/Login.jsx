@@ -2,6 +2,10 @@ import { useState } from "react";
 import AuthLayout from "../components/AuthLayout";
 import FormField from "../components/FormField";
 import { validateEmail, validateLoginPassword } from "../utils/validators";
+import useAuthStore from "../store/authStore";
+import toast from "react-hot-toast";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 export default function Login({ onNavigate }) {
     const [form, setForm] = useState({ email: "", password: "" });
@@ -9,6 +13,10 @@ export default function Login({ onNavigate }) {
     const [remember, setRemember] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState("");
+
+    const setAccessToken = useAuthStore((state) =>
+        state.setAccessToken
+    )
 
     const errors = {
         email: validateEmail(form.email),
@@ -36,12 +44,62 @@ export default function Login({ onNavigate }) {
         setSubmitting(true);
         setSubmitError("");
 
-        // Simulated request — replace with real API call
-        await new Promise((resolve) => setTimeout(resolve, 900));
-        setSubmitting(false);
+        const { email, password } = form;
 
-        // Example failure path:
-        // setSubmitError("Invalid email or password");
+        if (!email || !password) {
+            return;
+        }
+
+        try {
+            const response = await axios.post('/api/login', {
+                email,
+                password
+            },
+                {
+                    withCredentials: true
+                }
+            );
+
+
+            if (response.status === 200) {
+
+                setTimeout(() => {
+                    toast.success(response.data.message);
+                }, 500);
+
+                setTimeout(() => {
+                    setAccessToken(response.data.accessToken);
+                }, 1000);
+            }
+        }
+        catch (err) {
+
+            if (!err.response) {
+                toast.error("Network error");
+                return;
+            }
+
+            switch (err.response.status) {
+                case 400:
+                case 401:
+                    toast.error(err.response.data.message);
+                    break;
+
+                case 406:
+                    toast.error(err.response.data.errors[0].message);
+                    break;
+
+                case 500:
+                    toast.error("Internal Server Error");
+                    break;
+
+                default:
+                    toast.error("Something went wrong");
+            }
+        }
+        finally {
+            setSubmitting(false);
+        }
     }
 
     return (
@@ -53,10 +111,13 @@ export default function Login({ onNavigate }) {
                     Don&apos;t have an account?{" "}
                     <button
                         type="button"
-                        onClick={() => onNavigate?.("signup")}
-                        className="font-medium text-blue-600 hover:text-blue-700 transition-colors duration-150"
+                        className="font-medium text-blue-600 hover:text-blue-700 transition-colors hover:cursor-pointer duration-150"
                     >
-                        Sign up
+                        <Link
+                            to="/signup"
+                        >
+                            Sign up
+                        </Link>
                     </button>
                 </p>
             }
@@ -93,8 +154,8 @@ export default function Login({ onNavigate }) {
                     rightSlot={
                         <button
                             type="button"
-                            onClick={() => onNavigate?.("forgot")}
-                            className="text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors duration-150"
+
+                            className="text-xs font-medium hover:cursor-pointer text-blue-600 hover:text-blue-700 transition-colors duration-150"
                         >
                             Forgot password?
                         </button>
@@ -114,7 +175,7 @@ export default function Login({ onNavigate }) {
                 <button
                     type="submit"
                     disabled={submitting}
-                    className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed active:scale-[0.98] text-white text-sm font-medium py-2.5 rounded-lg transition-all duration-150"
+                    className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed hover:cursor-pointer active:scale-[0.98] text-white text-sm font-medium py-2.5 rounded-lg transition-all duration-150"
                 >
                     {submitting ? (
                         <>

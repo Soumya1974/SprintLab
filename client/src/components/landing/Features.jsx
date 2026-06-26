@@ -5,7 +5,7 @@ const FEATURES = [
     icon: LayoutGrid,
     title: "Boards that stay in sync",
     description:
-      "Drag a task across To Do, In Progress, and Done — everyone watching the board sees it move instantly, no refresh needed.",
+      "Drag a task across To Do, In Progress, and Done everyone watching the board sees it move instantly, no refresh needed.",
     accent: "bg-blue-50 text-blue-600",
   },
   {
@@ -19,7 +19,7 @@ const FEATURES = [
     icon: Bell,
     title: "Updates without the noise",
     description:
-      "Get notified when a task you own changes status or gets a comment — nothing else. No digest emails, no alert fatigue.",
+      "Get notified when a task you own changes status or gets a comment nothing else. No digest emails, no alert fatigue.",
     accent: "bg-emerald-50 text-emerald-600",
   },
 ];
@@ -34,7 +34,7 @@ export default function Features() {
           </h2>
           <p className="text-base text-slate-500 leading-relaxed">
             SprintLab is built around the three things that actually slow
-            teams down — unclear task state, scattered ownership, and noisy
+            teams down unclear task state, scattered ownership, and noisy
             updates.
           </p>
         </div>

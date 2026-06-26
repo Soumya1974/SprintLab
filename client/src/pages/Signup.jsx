@@ -10,12 +10,10 @@ import {
   getPasswordStrength,
 } from "../utils/validators";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import useAuthStore from "../store/authStore";
+import { Link } from "react-router-dom";
 
 export default function Signup() {
-
-  const navigate = useNavigate();
 
   const setAccessToken = useAuthStore(
     (state) => state.setAccessToken
@@ -86,13 +84,17 @@ export default function Signup() {
         }
       )
 
-      setAccessToken(response.data.accessToken);
 
       if (response.status === 201) {
-        toast.success(response.data.message);
+
         setTimeout(() => {
-          navigate('/dashboard');
+          toast.success(response.data.message);
+        }, 500);
+
+        setTimeout(() => {
+          setAccessToken(response.data.accessToken);
         }, 1000);
+
       }
     }
     catch (err) {
@@ -114,7 +116,7 @@ export default function Signup() {
           toast.error("Something went wrong");
       }
     }
-    finally{
+    finally {
       setSubmitting(false);
     }
 
@@ -129,10 +131,13 @@ export default function Signup() {
           Already have an account?{" "}
           <button
             type="button"
-            onClick={() => onNavigate?.("login")}
-            className="font-medium text-blue-600 hover:text-blue-700 transition-colors duration-150"
+            className="font-medium text-blue-600 hover:text-blue-700 hover:cursor-pointer transition-colors duration-150"
           >
-            Log in
+           <Link
+            to="/login"
+           >
+             Log in
+           </Link>
           </button>
         </p>
       }
@@ -242,7 +247,7 @@ export default function Signup() {
         <button
           type="submit"
           disabled={submitting}
-          className={`w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed active:scale-[0.98] text-white text-sm font-medium py-2.5 rounded-lg transition-all duration-150 ${agreedTouched && !agreed ? "mt-0" : "mt-5"
+          className={`w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed active:scale-[0.98] text-white text-sm font-medium hover:cursor-pointer py-2.5 rounded-lg transition-all duration-150 ${agreedTouched && !agreed ? "mt-0" : "mt-5"
             }`}
         >
           {submitting ? (

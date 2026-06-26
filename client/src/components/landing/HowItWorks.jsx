@@ -9,7 +9,7 @@ const STEPS = [
     number: "02",
     title: "Lay out your sprint",
     description:
-      "Add tasks to the board, assign owners, and set due dates — the board becomes your single source of truth.",
+      "Add tasks to the board, assign owners, and set due dates the board becomes your single source of truth.",
   },
   {
     number: "03",

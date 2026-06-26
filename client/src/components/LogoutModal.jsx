@@ -1,37 +1,39 @@
 import { LogOut, X } from "lucide-react";
 import api from "../api/axios";
 import useAuthStore from "../store/authStore";
-import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from 'react-hot-toast';
+import { useState } from "react";
 
 
 export default function LogoutModal({ onCancelClick }) {
 
-    const navigate = useNavigate();
+    const [submitting, setSubmitting] = useState(false);
 
-    const accessToken = useAuthStore((state) =>
-        state.accessToken
-    )
     const clearAccessToken = useAuthStore((state) =>
         state.clearAccessToken
     )
 
     const handleLogoutClick = async () => {
+        setSubmitting(true);
         try {
             const response = await api.post('/api/logout', {}, {
                 withCredentials: true
             });
 
-            clearAccessToken();
-            toast.success(response.data.message);
+            setTimeout(() => {
+                toast.success(response.data.message);
+            }, 500);
 
             setTimeout(() => {
-                navigate('/');
+                clearAccessToken();
             }, 1000);
         }
         catch (err) {
             console.error(err);
             toast.error(err.response?.data.message);
+        }
+        finally {
+            setSubmitting(false);
         }
     }
 
@@ -66,16 +68,23 @@ export default function LogoutModal({ onCancelClick }) {
 
                 <div className="flex items-center gap-2.5">
                     <button
-                        className="flex-1 text-sm font-medium text-slate-600 hover:bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-lg transition-colors duration-150"
+                        className="flex-1 text-sm font-medium hover:cursor-pointer text-slate-600 hover:bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-lg transition-colors duration-150"
                         onClick={onCancelClick}
                     >
                         Cancel
                     </button>
                     <button
-                        className="flex-1 text-sm font-medium text-white bg-red-500 hover:bg-red-600 active:scale-[0.98] px-4 py-2.5 rounded-lg transition-all duration-150"
+                        className="flex flex-1 items-center justify-center gap-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 active:scale-[0.98] hover:cursor-pointer px-4 py-2.5 rounded-lg transition-all duration-150"
                         onClick={handleLogoutClick}
                     >
-                        Log out
+                        {submitting ? (
+                            <>
+                                <span className="h-4 w-4 rounded-full border-2 border-white/40 border-t-white animate-spin" />
+                                Logging out...
+                            </>
+                        ) : (
+                            "Log out"
+                        )}
                     </button>
                 </div>
             </div>
