@@ -9,8 +9,8 @@ import crypto from "crypto";
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-        user: "soumya1874@gmail.com",
-        pass: "asdhsjadhj",
+        user: "sprintlab.support@gmail.com",
+        pass: `${process.env.PASS}`,
     }
 });
 
@@ -44,8 +44,8 @@ export const handleUserSignup = async (req, res) => {
         });
 
         await transporter.sendMail({
-            from: 'nalinisahoo781@gmail.com',
-            to: email,
+            from: 'sprintlab.support@gmail.com',
+            to: 'soumya1874@gmail.com',
             subject: "Otp verification",
             text: `Your Otp is ${otp}`
         })
