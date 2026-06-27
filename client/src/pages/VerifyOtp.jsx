@@ -4,6 +4,7 @@ import AuthLayout from "../components/AuthLayout";
 import useAuthStore from "../store/authStore";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 const OTP_LENGTH = 6;
 
@@ -14,6 +15,7 @@ export default function VerifyOtp() {
     const inputRefs = useRef([]);
 
     const email = useAuthStore((state) => state.email);
+    const clearEmail = useAuthStore((state) => state.clearEmail);
     const setAccessToken = useAuthStore((state) => state.setAccessToken);
 
     useEffect(() => {
@@ -75,6 +77,7 @@ export default function VerifyOtp() {
 
             setTimeout(() => {
                 setAccessToken(response.data.accessToken);
+                clearEmail();
             }, 1000);
         }
         catch (err) {
@@ -97,7 +100,7 @@ export default function VerifyOtp() {
                     toast.error("Something went wrong");
             }
         }
-        finally{
+        finally {
             setTimeout(() => {
                 setSubmitting(false);
             }, 500);
@@ -129,14 +132,18 @@ export default function VerifyOtp() {
             title="Verify your email"
             subtitle={`Enter the 6-digit code we sent to ${email}`}
             footer={
-                <button
-                    type="button"
-
-                    className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors duration-150"
+                <Link
+                    to="/signup"
                 >
-                    <ArrowLeft className="h-4 w-4" />
-                    Back to sign up
-                </button>
+                    <button
+                        type="button"
+
+                        className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors duration-150 hover:cursor-pointer"
+                    >
+                        <ArrowLeft className="h-4 w-4" />
+                        Back to sign up
+                    </button>
+                </Link>
             }
         >
             <div className="flex justify-center mb-2 animate-fade-in-up">

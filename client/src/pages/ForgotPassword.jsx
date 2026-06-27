@@ -1,16 +1,30 @@
-import { useState } from "react";
-import { ArrowLeft, MailCheck } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { ArrowLeft, ShieldCheck } from "lucide-react";
 import AuthLayout from "../components/AuthLayout";
 import FormField from "../components/FormField";
 import { validateEmail } from "../utils/validators";
+import { Link } from "react-router-dom";
+import axios from "axios";
 
-export default function ForgotPassword({ onNavigate }) {
+const OTP_LENGTH = 6;
+
+export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [touched, setTouched] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
 
+  const [otp, setOtp] = useState(Array(OTP_LENGTH).fill(""));
+  const [resendIn, setResendIn] = useState(30);
+  const inputRefs = useRef([]);
+
   const error = validateEmail(email);
+
+  useEffect(() => {
+    if (!sent || resendIn === 0) return;
+    const timer = setInterval(() => setResendIn((s) => s - 1), 1000);
+    return () => clearInterval(timer);
+  }, [sent, resendIn]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -22,43 +36,156 @@ export default function ForgotPassword({ onNavigate }) {
     await new Promise((resolve) => setTimeout(resolve, 900));
     setSubmitting(false);
     setSent(true);
+    setResendIn(30);
+  }
+
+  function handleOtpChange(index, value) {
+    if (!/^[0-9]?$/.test(value)) return;
+
+    const next = [...otp];
+    next[index] = value;
+    setOtp(next);
+
+    if (value && index < OTP_LENGTH - 1) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  }
+
+  function handleOtpKeyDown(index, e) {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+
+    if (e.key === "Enter") {
+      handleVerifySubmit(e);
+    }
+  }
+
+  function handleOtpPaste(e) {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData("text").trim().slice(0, OTP_LENGTH);
+    if (!/^[0-9]+$/.test(pasted)) return;
+
+    const next = pasted.split("");
+    while (next.length < OTP_LENGTH) next.push("");
+    setOtp(next);
+    inputRefs.current[Math.min(pasted.length, OTP_LENGTH - 1)]?.focus();
+  }
+
+  const code = otp.join("");
+  const isOtpComplete = code.length === OTP_LENGTH;
+
+  function handleVerifySubmit(e) {
+    e.preventDefault();
+    if (!isOtpComplete) return;
+
+    // `code` is the entered OTP as a single string, e.g. "482913"
+    // verify it against your backend here, e.g.:
+    // await api.post("/auth/verify-reset-otp", { email, otp: code });
+    console.log("Verifying OTP:", code);
+  }
+
+  async function handleResend() {
+    if (resendIn > 0) return;
+    setOtp(Array(OTP_LENGTH).fill(""));
+    setResendIn(30);
+    inputRefs.current[0]?.focus();
+
+    // resend request here, e.g.:
+    // await api.post("/auth/resend-reset-otp", { email });
+  }
+
+  const handleGetOtp = async (e) => {
+    e.preventDefault();
+
+    try{
+      const response = axios.post("/api/find-account")
+    }
+    catch(err) {
+
+    }
   }
 
   return (
     <AuthLayout
-      title={sent ? "Check your email" : "Forgot password?"}
+      title={sent ? "Enter verification code" : "Forgot password?"}
       subtitle={
         sent
-          ? `We've sent a reset link to ${email}`
-          : "Enter your email and we'll send you a reset link"
+          ? `Enter the 6-digit code we sent to ${email}`
+          : "Enter your email and we'll send you a reset code"
       }
       footer={
-        <button
-          type="button"
-          onClick={() => onNavigate?.("login")}
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors duration-150"
+        <Link
+          to="/login"
         >
-          <ArrowLeft className="h-4 w-4" />
-          Back to log in
-        </button>
+          <button
+            type="button"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors duration-150 hover:cursor-pointer"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to log in
+          </button>
+        </Link>
       }
     >
       {sent ? (
-        <div className="flex flex-col items-center text-center py-4 animate-fade-in-up">
-          <div className="h-14 w-14 rounded-full bg-emerald-50 flex items-center justify-center mb-4">
-            <MailCheck className="h-7 w-7 text-emerald-500" />
+        <div className="animate-fade-in-up">
+          <div className="flex justify-center mb-2">
+            <div className="h-14 w-14 rounded-full bg-blue-50 flex items-center justify-center">
+              <ShieldCheck className="h-7 w-7 text-blue-600" />
+            </div>
           </div>
-          <p className="text-sm text-slate-500 leading-relaxed">
-            Didn&apos;t get the email? Check your spam folder, or{" "}
-            <button
-              type="button"
-              onClick={() => setSent(false)}
-              className="font-medium text-blue-600 hover:text-blue-700 transition-colors duration-150"
+
+          <form onSubmit={handleVerifySubmit} className="mt-5">
+            <div
+              className="flex justify-between gap-2 sm:gap-3 mb-6"
+              onPaste={handleOtpPaste}
             >
-              try another address
+              {otp.map((digit, i) => (
+                <input
+                  key={i}
+                  ref={(el) => (inputRefs.current[i] = el)}
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={1}
+                  value={digit}
+                  onChange={(e) => handleOtpChange(i, e.target.value)}
+                  onKeyDown={(e) => handleOtpKeyDown(i, e)}
+                  className={`
+                    w-full aspect-square max-w-13 text-center text-lg font-semibold
+                    rounded-lg border text-slate-800
+                    focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400
+                    transition-all duration-150
+                    ${digit ? "border-blue-300 bg-blue-50/40" : "border-slate-200"}
+                  `}
+                />
+              ))}
+            </div>
+
+            <button
+              type="submit"
+              disabled={!isOtpComplete}
+              onClick={handleVerifySubmit}
+              className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed active:scale-[0.98] text-white text-sm font-medium py-2.5 rounded-lg transition-all duration-150"
+            >
+              Verify code
             </button>
-            .
-          </p>
+
+            <p className="text-center text-sm text-slate-500 mt-5">
+              Didn&apos;t get the code?{" "}
+              {resendIn > 0 ? (
+                <span className="text-slate-400">Resend in {resendIn}s</span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleResend}
+                  className="font-medium text-blue-600 hover:text-blue-700 transition-colors duration-150 hover:cursor-pointer"
+                >
+                  Resend OTP
+                </button>
+              )}
+            </p>
+          </form>
         </div>
       ) : (
         <form onSubmit={handleSubmit} noValidate>
@@ -77,15 +204,16 @@ export default function ForgotPassword({ onNavigate }) {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed active:scale-[0.98] text-white text-sm font-medium py-2.5 rounded-lg transition-all duration-150 mt-2"
+            onClick={handleGetOtp}
+            className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed active:scale-[0.98] text-white text-sm font-medium py-2.5 rounded-lg transition-all duration-150 mt-2 hover:cursor-pointer"
           >
             {submitting ? (
               <>
                 <span className="h-4 w-4 rounded-full border-2 border-white/40 border-t-white animate-spin" />
-                Sending link...
+                Just a sec...
               </>
             ) : (
-              "Send reset link"
+              "Send reset code"
             )}
           </button>
         </form>

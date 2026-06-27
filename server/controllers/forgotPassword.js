@@ -1,0 +1,63 @@
+import { User } from "../models/userDbSchema";
+import bcrypt from "bcrypt";
+import nodemailer from "nodemailer";
+import crypto from "crypto";
+
+// Nodemailer setup
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: process.env.EMAIL_ID,
+        pass: process.env.PASS_CODE,
+    }
+});
+
+// Generate 6 digit otp
+const generateOtp = () => crypto.randomInt(100000, 999999).toString();
+
+export const handleUserData = async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        const userData = await User.findOne({ email });
+
+        if (!userData) {
+            return res.status(400).json({
+                message: "User not found"
+            })
+        }
+
+        const id = userData._id;
+        const otp = generateOtp();
+        const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 Minutes
+
+        const hashedOtp = await bcrypt.hash(otp, 10);
+
+        await User.findByIdAndUpdate(
+            id,
+            {
+                resetPasswordOtp = hashedOtp,
+                resetPasswordOtpExpiry = otpExpiry
+            }
+        )
+
+        await transporter.sendMail({
+            from: `"SprintLab" <${process.env.EMAIL_ID}>`,
+            to: email,
+            subject: "SprintLab verification code",
+            text: `Your OTP is ${otp}`,
+            html: otpEmailTemplate(otp, { expiresInMinutes: 10 }),
+        });
+
+        return res.status(200).json({
+            message: "Verify otp to continue",
+            email: userData.email
+        })
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({
+            message: err.message
+        })
+    }
+}

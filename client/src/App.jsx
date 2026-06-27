@@ -10,6 +10,7 @@ import ProtectedRoute from './routes/ProtectedRoutes'
 import useAuthStore from './store/authStore'
 import PublicRoute from './routes/PublicRoute'
 import VerifyOtp from './pages/VerifyOtp'
+import SetNewPassword from './pages/SetNewPassword'
 
 function App() {
 
@@ -36,6 +37,7 @@ function App() {
           <Route path='/signup' element={<Signup />} />
           <Route path='/login' element={<Login />} />
           <Route path='/forgotpassword' element={<ForgotPassword />} />
+          <Route path='/resetpassword' element={<SetNewPassword />} />
           <Route path='/verifyotp' element={<VerifyOtp />} />
         </Route>
 
