@@ -11,10 +11,12 @@ import {
 } from "../utils/validators";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import useAuthStore from "../store/authStore";
 
 export default function Signup() {
 
   const navigate = useNavigate();
+  const setEmail = useAuthStore((state) => state.setEmail);
 
   const [form, setForm] = useState({
     name: "",
@@ -81,8 +83,9 @@ export default function Signup() {
         }
       )
 
+      setEmail(email);
 
-      if (response.status === 201) {
+      if (response.status === 200) {
 
         setTimeout(() => {
           toast.success(response.data.message);

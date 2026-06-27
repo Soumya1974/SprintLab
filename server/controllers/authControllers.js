@@ -52,44 +52,9 @@ export const handleUserSignup = async (req, res) => {
             html: otpEmailTemplate(otp, { expiresInMinutes: 10 }),
         });
 
-        const accessToken = jwt.sign({
-            id: saveUser._id
-        }, process.env.JWT_SECRET, {
-            expiresIn: "15m"
+        res.status(200).json({
+            message: "Verify the email to continue"
         })
-
-        const refreshToken = jwt.sign({
-            id: saveUser._id
-        }, process.env.JWT_SECRET, {
-            expiresIn: "7d"
-        })
-
-        const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
-
-        await User.findByIdAndUpdate(
-            saveUser._id,
-            {
-                refreshToken: hashedRefreshToken
-            }
-        )
-
-        res.cookie("refreshToken", refreshToken,
-            {
-                httpOnly: true,
-                secure: true,
-                sameSite: "strict",
-                maxAge: 7 * 24 * 60 * 60 * 1000 //7days
-
-            })
-
-        res.status(201).json({
-            message: "User created successfully",
-            user: {
-                name: saveUser.name,
-                email: saveUser.email
-            },
-            accessToken
-        });
     }
     catch (err) {
         console.error(err);

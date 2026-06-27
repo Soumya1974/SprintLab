@@ -1,13 +1,16 @@
 import { useState, useRef, useEffect } from "react";
 import { ShieldCheck, ArrowLeft } from "lucide-react";
 import AuthLayout from "../components/AuthLayout";
+import useAuthStore from "../store/authStore";
 
 const OTP_LENGTH = 6;
 
-export default function VerifyOtp({ email = "you@company.com", onNavigate }) {
+export default function VerifyOtp() {
   const [otp, setOtp] = useState(Array(OTP_LENGTH).fill(""));
   const [resendIn, setResendIn] = useState(60);
   const inputRefs = useRef([]);
+
+  const email = useAuthStore((state) => state.email);
 
   useEffect(() => {
     if (resendIn === 0) return;
@@ -46,6 +49,8 @@ export default function VerifyOtp({ email = "you@company.com", onNavigate }) {
 
   const code = otp.join("");
   const isComplete = code.length === OTP_LENGTH;
+
+  
 
   return (
     <AuthLayout
@@ -109,7 +114,7 @@ export default function VerifyOtp({ email = "you@company.com", onNavigate }) {
           ) : (
             <button
               type="button"
-              onClick={() => setResendIn(30)}
+              onClick={() => setResendIn(60)}
               className="font-medium text-blue-600 hover:text-blue-700 transition-colors duration-150"
             >
               Resend code
