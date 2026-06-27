@@ -1,4 +1,5 @@
-import { User } from "../models/userDbSchema";
+import { User } from "../models/userDbSchema.js";
+import { forgotPasswordEmailTemplate } from "../templates/forgotPasswordEmailTemplate.js"
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
@@ -33,21 +34,18 @@ export const handleUserData = async (req, res) => {
 
         const hashedOtp = await bcrypt.hash(otp, 10);
 
-        await User.findByIdAndUpdate(
-            id,
-            {
-                resetPasswordOtp = hashedOtp,
-                resetPasswordOtpExpiry = otpExpiry
-            }
-        )
+        userData.resetPasswordOtp = hashedOtp;
+        userData.resetPasswordOtpExpiry = otpExpiry;
 
         await transporter.sendMail({
             from: `"SprintLab" <${process.env.EMAIL_ID}>`,
             to: email,
             subject: "SprintLab verification code",
             text: `Your OTP is ${otp}`,
-            html: otpEmailTemplate(otp, { expiresInMinutes: 10 }),
+            html: forgotPasswordEmailTemplate(otp, { expiresInMinutes: 10 }),
         });
+
+        await userData.save();
 
         return res.status(200).json({
             message: "Verify otp to continue",

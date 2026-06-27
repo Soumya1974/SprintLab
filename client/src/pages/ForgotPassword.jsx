@@ -5,6 +5,7 @@ import FormField from "../components/FormField";
 import { validateEmail } from "../utils/validators";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const OTP_LENGTH = 6;
 
@@ -97,12 +98,46 @@ export default function ForgotPassword() {
 
   const handleGetOtp = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
 
-    try{
-      const response = axios.post("/api/find-account")
+    try {
+      const response = await axios.post("/api/find-account", {
+        email
+      }, {
+        withCredentials: true
+      });
+
+      if (response.status === 200) {
+        setTimeout(() => {
+          toast.success(response.data.message);
+        }, 500);
+      }
+
+      setSent(true);
     }
-    catch(err) {
+    catch (err) {
+      switch (err.response.status) {
 
+        case 400:
+          toast.error(err.response.data.message);
+          break;
+
+        case 406:
+          toast.error(err.response.data.errors[0].message);
+          break;
+
+        case 500:
+          toast.error("Internal Server Error");
+          break;
+
+        default:
+          toast.error("Something went wrong");
+      }
+    }
+    finally{
+      setTimeout(() => {
+        setSubmitting(false);
+      }, 500);
     }
   }
 
@@ -165,7 +200,6 @@ export default function ForgotPassword() {
             <button
               type="submit"
               disabled={!isOtpComplete}
-              onClick={handleVerifySubmit}
               className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed active:scale-[0.98] text-white text-sm font-medium py-2.5 rounded-lg transition-all duration-150"
             >
               Verify code

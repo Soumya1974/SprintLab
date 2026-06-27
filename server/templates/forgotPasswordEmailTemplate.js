@@ -1,4 +1,4 @@
-export function otpEmailTemplate(otp, { expiresInMinutes = 10 } = {}) {
+export function forgotPasswordEmailTemplate(otp, { expiresInMinutes = 10 } = {}) {
     const digits = String(otp).split("");
 
     const digitCells = digits
