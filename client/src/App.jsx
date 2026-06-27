@@ -9,6 +9,7 @@ import { Toaster } from 'react-hot-toast'
 import ProtectedRoute from './routes/ProtectedRoutes'
 import useAuthStore from './store/authStore'
 import PublicRoute from './routes/PublicRoute'
+import VerifyOtp from './pages/VerifyOtp'
 
 function App() {
 
@@ -35,6 +36,7 @@ function App() {
           <Route path='/signup' element={<Signup />} />
           <Route path='/login' element={<Login />} />
           <Route path='/forgotpassword' element={<ForgotPassword />} />
+          <Route path='/verifyotp' element={<VerifyOtp />} />
         </Route>
 
         {/* Protected Routes */}

@@ -3,14 +3,15 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
+import { otpEmailTemplate } from "../templates/otpEmailTemplate.js"
 
 
 //Nodemailer setup
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-        user: "sprintlab.support@gmail.com",
-        pass: `${process.env.PASS}`,
+        user: process.env.EMAIL_ID,
+        pass: process.env.PASS_CODE,
     }
 });
 
@@ -44,11 +45,12 @@ export const handleUserSignup = async (req, res) => {
         });
 
         await transporter.sendMail({
-            from: 'sprintlab.support@gmail.com',
-            to: 'soumya1874@gmail.com',
-            subject: "Otp verification",
-            text: `Your Otp is ${otp}`
-        })
+            from: `"SprintLab" <${process.env.EMAIL_ID}>`,
+            to: email,
+            subject: "SprintLab verification code",
+            text: `Your OTP is ${otp}`,
+            html: otpEmailTemplate(otp, { expiresInMinutes: 10 }),
+        });
 
         const accessToken = jwt.sign({
             id: saveUser._id
@@ -90,6 +92,7 @@ export const handleUserSignup = async (req, res) => {
         });
     }
     catch (err) {
+        console.error(err);
         res.status(500).json({
             message: err.message
         })
@@ -184,7 +187,7 @@ export const handleCreateNewAccessToken = async (req, res) => {
         })
 
         const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
-        
+
         await User.findByIdAndUpdate(
             getUserData._id,
             {
@@ -218,9 +221,9 @@ export const handleUserLogout = async (req, res) => {
 
     const getRefreshToken = req.cookies.refreshToken;
 
-    if(!getRefreshToken) return res.status(204);
+    if (!getRefreshToken) return res.status(204);
 
-    try{
+    try {
         const decoded = jwt.verify(
             getRefreshToken,
             process.env.JWT_SECRET
@@ -228,9 +231,9 @@ export const handleUserLogout = async (req, res) => {
 
         const getUserData = await User.findById(decoded.id);
 
-        if(getUserData){
+        if (getUserData) {
             getUserData.refreshToken = null,
-            await getUserData.save();
+                await getUserData.save();
         }
 
         res.clearCookie("refreshToken", {
@@ -243,7 +246,7 @@ export const handleUserLogout = async (req, res) => {
             message: "Logged out successfully"
         })
     }
-    catch(err) {
+    catch (err) {
 
         res.clearCookie("refreshToken", {
             httpOnly: true,

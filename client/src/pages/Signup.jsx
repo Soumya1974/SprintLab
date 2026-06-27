@@ -10,14 +10,11 @@ import {
   getPasswordStrength,
 } from "../utils/validators";
 import axios from "axios";
-import useAuthStore from "../store/authStore";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Signup() {
 
-  const setAccessToken = useAuthStore(
-    (state) => state.setAccessToken
-  );
+  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     name: "",
@@ -92,7 +89,7 @@ export default function Signup() {
         }, 500);
 
         setTimeout(() => {
-          setAccessToken(response.data.accessToken);
+          navigate('/verifyotp');
         }, 1000);
 
       }
