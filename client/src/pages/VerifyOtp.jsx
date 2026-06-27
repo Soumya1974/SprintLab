@@ -9,7 +9,8 @@ const OTP_LENGTH = 6;
 
 export default function VerifyOtp() {
     const [otp, setOtp] = useState(Array(OTP_LENGTH).fill(""));
-    const [resendIn, setResendIn] = useState(2);
+    const [resendIn, setResendIn] = useState(60);
+    const [submitting, setSubmitting] = useState(false);
     const inputRefs = useRef([]);
 
     const email = useAuthStore((state) => state.email);
@@ -55,9 +56,10 @@ export default function VerifyOtp() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setSubmitting(true);
 
         try {
-            const response = await axios.post('/api/verifyotp', {
+            const response = await axios.post('/api/verify-otp', {
                 email,
                 otp: code,
             }, {
@@ -95,7 +97,31 @@ export default function VerifyOtp() {
                     toast.error("Something went wrong");
             }
         }
+        finally{
+            setTimeout(() => {
+                setSubmitting(false);
+            }, 500);
+        }
     }
+
+    const handleResendOtp = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await axios.post(
+                "/api/resend-otp",
+                { email },
+                {
+                    withCredentials: true,
+                }
+            );
+
+            toast.success(response.data.message);
+            setResendIn(60);
+
+        } catch (err) {
+            toast.error(err.response.data.message);
+        }
+    };
 
 
     return (
@@ -150,7 +176,14 @@ export default function VerifyOtp() {
                     disabled={!isComplete}
                     className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed active:scale-[0.98] text-white text-sm font-medium py-2.5 rounded-lg transition-all duration-150"
                 >
-                    Verify and continue
+                    {submitting ? (
+                        <>
+                            <span className="h-4 w-4 rounded-full border-2 border-white/40 border-t-white animate-spin" />
+                            Just a sec...
+                        </>
+                    ) : (
+                        "Verify and continue"
+                    )}
                 </button>
 
                 <p className="text-center text-sm text-slate-500 mt-5">
@@ -160,7 +193,7 @@ export default function VerifyOtp() {
                     ) : (
                         <button
                             type="button"
-                            onClick={() => setResendIn(2)}
+                            onClick={handleResendOtp}
                             className="font-medium text-blue-600 hover:text-blue-700 transition-colors duration-150"
                         >
                             Resend code

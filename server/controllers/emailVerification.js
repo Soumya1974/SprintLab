@@ -109,17 +109,14 @@ export const handleResendOtp = async (req, res) => {
             });
         }
 
-        // Generate new OTP
         const otp = generateOtp();
         const hashedOtp = await bcrypt.hash(otp, 10);
 
-        // Set new expiry
         user.otp = hashedOtp;
         user.otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
 
         await user.save();
 
-        // Send email
         await transporter.sendMail({
             from: `"SprintLab" <${process.env.EMAIL_ID}>`,
             to: email,
