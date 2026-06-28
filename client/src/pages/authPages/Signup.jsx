@@ -1,6 +1,6 @@
 import { useState } from "react";
-import AuthLayout from "../components/AuthLayout";
-import FormField from "../components/FormField";
+import AuthLayout from "../../components/authComponents/AuthLayout";
+import FormField from "../../components/authComponents/FormField";
 import toast, { Toaster } from 'react-hot-toast';
 import {
   validateName,
@@ -8,10 +8,10 @@ import {
   validatePassword,
   validateConfirmPassword,
   getPasswordStrength,
-} from "../utils/validators";
+} from "../../utils/validators";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import useAuthStore from "../store/authStore";
+import useAuthStore from "../../store/authStore";
 
 export default function Signup() {
 

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import AuthLayout from "../components/AuthLayout";
-import FormField from "../components/FormField";
-import { validateEmail, validateLoginPassword } from "../utils/validators";
-import useAuthStore from "../store/authStore";
+import AuthLayout from "../../components/authComponents/AuthLayout";
+import FormField from "../../components/authComponents/FormField";
+import { validateEmail, validateLoginPassword } from "../../utils/validators";
+import useAuthStore from "../../store/authStore";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { Link } from "react-router-dom";

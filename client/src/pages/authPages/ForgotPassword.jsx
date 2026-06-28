@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
-import AuthLayout from "../components/AuthLayout";
-import FormField from "../components/FormField";
-import { validateEmail } from "../utils/validators";
+import AuthLayout from "../../components/authComponents/AuthLayout";
+import FormField from "../../components/authComponents/FormField";
+import { validateEmail } from "../../utils/validators";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
-import useAuthStore from "../store/authStore";
+import useAuthStore from "../../store/authStore";
 
 const OTP_LENGTH = 6;
 

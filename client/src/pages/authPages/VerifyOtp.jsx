@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { ShieldCheck, ArrowLeft } from "lucide-react";
-import AuthLayout from "../components/AuthLayout";
-import useAuthStore from "../store/authStore";
+import AuthLayout from "../../components/authComponents/AuthLayout";
+import useAuthStore from "../../store/authStore";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";

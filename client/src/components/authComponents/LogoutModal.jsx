@@ -1,6 +1,6 @@
 import { LogOut, X } from "lucide-react";
-import api from "../api/axios";
-import useAuthStore from "../store/authStore";
+import api from "../../api/axios";
+import useAuthStore from "../../store/authStore";
 import toast, { Toaster } from 'react-hot-toast';
 import { useState } from "react";
 

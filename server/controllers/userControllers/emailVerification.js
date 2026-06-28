@@ -1,9 +1,9 @@
-import { User } from "../models/userDbSchema.js";
+import { User } from "../../models/userDbSchema.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
-import { otpEmailTemplate } from "../templates/otpEmailTemplate.js"
+import { otpEmailTemplate } from "../../templates/otpEmailTemplate.js"
 
 // Nodemailer setup
 const transporter = nodemailer.createTransport({

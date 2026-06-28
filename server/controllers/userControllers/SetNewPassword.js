@@ -1,4 +1,4 @@
-import { User } from "../models/userDbSchema.js";
+import { User } from "../../models/userDbSchema.js";
 import bcrypt from "bcrypt";
 
 export const handleSetNewPassword = async (req, res) => {

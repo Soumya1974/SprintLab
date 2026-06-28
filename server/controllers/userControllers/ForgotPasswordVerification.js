@@ -1,5 +1,5 @@
-import { User } from "../models/userDbSchema.js";
-import { forgotPasswordEmailTemplate } from "../templates/forgotPasswordEmailTemplate.js"
+import { User } from "../../models/userDbSchema.js";
+import { forgotPasswordEmailTemplate } from "../../templates/forgotPasswordEmailTemplate.js"
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
 import crypto from "crypto";

@@ -1,10 +1,10 @@
-import Navbar from "../components/landing/Navbar";
-import Hero from "../components/landing/Hero";
-import TrustStrip from "../components/landing/TrustStrip";
-import Features from "../components/landing/Features";
-import HowItWorks from "../components/landing/HowItWorks";
-import CtaBanner from "../components/landing/CtaBanner";
-import Footer from "../components/landing/Footer";
+import Navbar from "../../components/landing/Navbar";
+import Hero from "../../components/landing/Hero";
+import TrustStrip from "../../components/landing/TrustStrip";
+import Features from "../../components/landing/Features";
+import HowItWorks from "../../components/landing/HowItWorks";
+import CtaBanner from "../../components/landing/CtaBanner";
+import Footer from "../../components/landing/Footer";
 
 export default function LandingPage() {
 

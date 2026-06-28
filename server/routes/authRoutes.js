@@ -1,10 +1,10 @@
 import express from "express";
-import { handleUserSignup, handleUserLogin, handleCreateNewAccessToken, handleUserLogout } from "../controllers/authControllers.js";
+import { handleUserSignup, handleUserLogin, handleCreateNewAccessToken, handleUserLogout } from "../controllers/userControllers/authControllers.js";
 import { handleValidSignUp, handleValidLogin } from "../middlewares/authMiddlewares.js";
-import { handleOtpVerification, handleResendOtp } from "../controllers/emailVerification.js";
-import { handleUserData } from "../controllers/forgotPassword.js";
-import { handlePasswordVerification, handleResendPasswordOtp } from "../controllers/ForgotPasswordVerification.js";
-import { handleSetNewPassword } from "../controllers/SetNewPassword.js";
+import { handleOtpVerification, handleResendOtp } from "../controllers/userControllers/emailVerification.js";
+import { handleUserData } from "../controllers/userControllers/forgotPassword.js";
+import { handlePasswordVerification, handleResendPasswordOtp } from "../controllers/userControllers/ForgotPasswordVerification.js";
+import { handleSetNewPassword } from "../controllers/userControllers/SetNewPassword.js";
 
 const authRouter = express.Router();
 

@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Eye, EyeOff, KeyRound, ArrowLeft, AlertCircle, CheckCircle2 } from "lucide-react";
-import AuthLayout from "../components/AuthLayout";
+import AuthLayout from "../../components/authComponents/AuthLayout";
 import { Link, useNavigate } from "react-router-dom";
-import { validatePassword, validateConfirmPassword, getPasswordStrength } from "../utils/validators";
+import { validatePassword, validateConfirmPassword, getPasswordStrength } from "../../utils/validators";
 import axios from "axios";
 import toast from "react-hot-toast";
-import useAuthStore from "../store/authStore";
+import useAuthStore from "../../store/authStore";
 
 export default function SetNewPassword() {
 
