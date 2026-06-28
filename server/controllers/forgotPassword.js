@@ -30,6 +30,13 @@ export const handleUserData = async (req, res) => {
             })
         }
 
+        if (!userData.isVerified) {
+            return res.status(400).json({
+                message: "User is not verified",
+            });
+        }
+
+
         const id = userData._id;
         const otp = generateOtp();
         const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 Minutes
@@ -55,6 +62,7 @@ export const handleUserData = async (req, res) => {
         })
     }
     catch (err) {
+        console.error(err);
         res.status(500).json({
             message: err.message
         })

@@ -25,9 +25,40 @@ export const handleUserSignup = async (req, res) => {
 
         const userExists = await User.findOne({ email });
 
-        if (userExists) return res.status(400).json({
+        if (userExists && userExists.isVerified) return res.status(400).json({
             message: "Email already exists"
         })
+
+        if (userExists && !userExists.isVerified) {
+
+            const existingUserHashedPassword = await bcrypt.hash(password, 10);
+
+            const existingUserVerificationOtp = generateOtp();
+            const existingUserVerificationOtpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 Minutes
+
+            const existingUserHashedOtp = await bcrypt.hash(existingUserVerificationOtp, 10);
+
+            await User.findByIdAndUpdate(
+                userExists._id,
+                {
+                    name,
+                    password: existingUserHashedPassword,
+                    otp: existingUserHashedOtp,
+                    otpExpiry: existingUserVerificationOtpExpiry
+                });
+
+            await transporter.sendMail({
+                from: `"SprintLab" <${process.env.EMAIL_ID}>`,
+                to: email,
+                subject: "SprintLab verification code",
+                text: `Your OTP is ${existingUserVerificationOtp}`,
+                html: otpEmailTemplate(existingUserVerificationOtp, { expiresInMinutes: 10 }),
+            });
+
+            return res.status(200).json({
+                message: "Verify email to continue"
+            })
+        }
 
         const hashedPassword = await bcrypt.hash(password, 10);
 

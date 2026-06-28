@@ -61,7 +61,7 @@ export default function VerifyOtp() {
         setSubmitting(true);
 
         try {
-            const response = await axios.post('/api/verify-otp', {
+            const response = await axios.post('/api/signup/verify-otp', {
                 email,
                 otp: code,
             }, {
@@ -109,9 +109,11 @@ export default function VerifyOtp() {
 
     const handleResendOtp = async (e) => {
         e.preventDefault();
+        setResendIn(60);
+
         try {
             const response = await axios.post(
-                "/api/resend-otp",
+                "/api/signup/resend-otp",
                 { email },
                 {
                     withCredentials: true,
@@ -119,7 +121,6 @@ export default function VerifyOtp() {
             );
 
             toast.success(response.data.message);
-            setResendIn(60);
 
         } catch (err) {
             toast.error(err.response.data.message);

@@ -1,5 +1,20 @@
 import { User } from "../models/userDbSchema.js";
+import { forgotPasswordEmailTemplate } from "../templates/forgotPasswordEmailTemplate.js"
 import bcrypt from "bcrypt";
+import nodemailer from "nodemailer";
+import crypto from "crypto";
+
+// Nodemailer setup
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: process.env.EMAIL_ID,
+        pass: process.env.PASS_CODE,
+    }
+});
+
+// Generate 6 digit otp
+const generateOtp = () => crypto.randomInt(100000, 999999).toString();
 
 export const handlePasswordVerification = async (req, res) => {
     try {
@@ -10,6 +25,12 @@ export const handlePasswordVerification = async (req, res) => {
         if (!userData) return res.status(400).json({
             message: "User not found"
         })
+
+        if (!userData.isVerified) {
+            return res.status(400).json({
+                message: "User is not verified",
+            });
+        }
 
         if (userData.resetPasswordOtpExpiry < new Date()) {
             return res.status(400).json({ message: "OTP expired" });
@@ -39,38 +60,39 @@ export const handlePasswordVerification = async (req, res) => {
     }
 }
 
-export const handleResendOtp = async (req, res) => {
+export const handleResendPasswordOtp = async (req, res) => {
     try {
         const { email } = req.body;
 
-        const user = await User.findOne({ email });
+        const userData = await User.findOne({ email });
 
-        if (!user) {
+        if (!userData) {
             return res.status(404).json({
                 message: "User not found",
             });
         }
 
-        if (user.isVerified) {
+        if (!userData.isVerified) {
             return res.status(400).json({
-                message: "User already verified",
+                message: "User is not verified",
             });
         }
 
         const otp = generateOtp();
+
         const hashedOtp = await bcrypt.hash(otp, 10);
 
-        user.otp = hashedOtp;
-        user.otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+        userData.resetPasswordOtp = hashedOtp;
+        userData.resetPasswordOtpExpiry = new Date(Date.now() + 10 * 60 * 1000);
 
-        await user.save();
+        await userData.save();
 
         await transporter.sendMail({
             from: `"SprintLab" <${process.env.EMAIL_ID}>`,
             to: email,
             subject: "SprintLab Verification Code",
             text: `Your OTP is ${otp}`,
-            html: otpEmailTemplate(otp, {
+            html: forgotPasswordEmailTemplate(otp, {
                 expiresInMinutes: 10,
             }),
         });

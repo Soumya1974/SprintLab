@@ -3,17 +3,21 @@ import { handleUserSignup, handleUserLogin, handleCreateNewAccessToken, handleUs
 import { handleValidSignUp, handleValidLogin } from "../middlewares/authMiddlewares.js";
 import { handleOtpVerification, handleResendOtp } from "../controllers/emailVerification.js";
 import { handleUserData } from "../controllers/forgotPassword.js";
-import { handlePasswordVerification } from "../controllers/passwordVerification.js";
+import { handlePasswordVerification, handleResendPasswordOtp } from "../controllers/passwordVerification.js";
 
 const authRouter = express.Router();
 
 authRouter.post('/signup', handleValidSignUp, handleUserSignup);
+authRouter.post('/signup/verify-otp', handleOtpVerification);
+authRouter.post('/signup/resend-otp', handleResendOtp);
+
+authRouter.post('/forgot-password', handleUserData);
+authRouter.post('/forgot-password/verify-otp', handlePasswordVerification);
+authRouter.post('/forgot-password/resend-otp', handleResendPasswordOtp);
+
+
 authRouter.post('/login', handleValidLogin, handleUserLogin);
 authRouter.post('/refresh', handleCreateNewAccessToken);
 authRouter.post('/logout', handleUserLogout);
-authRouter.post('/verify-otp', handleOtpVerification);
-authRouter.post('/resend-otp', handleResendOtp);
-authRouter.post('/find-account', handleUserData);
-authRouter.post('/find-account/verify-otp', handlePasswordVerification);
 
 export default authRouter;
