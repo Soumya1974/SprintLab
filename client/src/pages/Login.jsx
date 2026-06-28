@@ -17,6 +17,9 @@ export default function Login({ onNavigate }) {
     const setAccessToken = useAuthStore((state) =>
         state.setAccessToken
     )
+    const clearEmail = useAuthStore((state) =>
+        state.clearEmail
+    )
 
     const errors = {
         email: validateEmail(form.email),
@@ -69,6 +72,7 @@ export default function Login({ onNavigate }) {
 
                 setTimeout(() => {
                     setAccessToken(response.data.accessToken);
+                    clearEmail();
                 }, 1000);
             }
         }
