@@ -3,14 +3,15 @@ import { ArrowLeft, ShieldCheck } from "lucide-react";
 import AuthLayout from "../components/AuthLayout";
 import FormField from "../components/FormField";
 import { validateEmail } from "../utils/validators";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
+import useAuthStore from "../store/authStore";
 
 const OTP_LENGTH = 6;
 
 export default function ForgotPassword() {
-  const [email, setEmail] = useState("");
+  const [getEmail, setGetEmail] = useState("");
   const [touched, setTouched] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
@@ -19,7 +20,12 @@ export default function ForgotPassword() {
   const [resendIn, setResendIn] = useState(30);
   const inputRefs = useRef([]);
 
-  const error = validateEmail(email);
+  const error = validateEmail(getEmail);
+  const navigate = useNavigate();
+
+  const setEmail = useAuthStore((state) => state.setEmail);
+  const email = useAuthStore((state) => state.email);
+  const clearEmail = useAuthStore((state) => state.clearEmail);
 
   useEffect(() => {
     if (!sent || resendIn === 0) return;
@@ -80,40 +86,21 @@ export default function ForgotPassword() {
     e.preventDefault();
     if (!isOtpComplete) return;
 
-    // `code` is the entered OTP as a single string, e.g. "482913"
-    // verify it against your backend here, e.g.:
-    // await api.post("/auth/verify-reset-otp", { email, otp: code });
-    console.log("Verifying OTP:", code);
-  }
-
-  async function handleResend() {
-    if (resendIn > 0) return;
-    setOtp(Array(OTP_LENGTH).fill(""));
-    setResendIn(30);
-    inputRefs.current[0]?.focus();
-
-    // resend request here, e.g.:
-    // await api.post("/auth/resend-reset-otp", { email });
-  }
-
-  const handleGetOtp = async (e) => {
-    e.preventDefault();
-    setSubmitting(true);
-
     try {
-      const response = await axios.post("/api/find-account", {
-        email
+      const response = axios.post('/api/find-account/verify-otp', {
+        email,
+        otp: code
       }, {
         withCredentials: true
       });
 
       if (response.status === 200) {
-        setTimeout(() => {
-          toast.success(response.data.message);
-        }, 500);
-      }
+        toast.success(response.data.message);
 
-      setSent(true);
+        setTimeout(() => {
+          Navigate("/resetpassword");
+        }, 1000);
+      }
     }
     catch (err) {
       switch (err.response.status) {
@@ -134,7 +121,58 @@ export default function ForgotPassword() {
           toast.error("Something went wrong");
       }
     }
-    finally{
+  }
+
+  async function handleResend() {
+    if (resendIn > 0) return;
+    setOtp(Array(OTP_LENGTH).fill(""));
+    setResendIn(30);
+    inputRefs.current[0]?.focus();
+
+    // resend request here, e.g.:
+    // await api.post("/auth/resend-reset-otp", { email });
+  }
+
+  const handleGetOtp = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+
+    try {
+      const response = await axios.post("/api/find-account", {
+        getEmail
+      }, {
+        withCredentials: true
+      });
+
+      if (response.status === 200) {
+        setTimeout(() => {
+          toast.success(response.data.message);
+        }, 500);
+      }
+
+      setSent(true);
+      setEmail(email);
+    }
+    catch (err) {
+      switch (err.response.status) {
+
+        case 400:
+          toast.error(err.response.data.message);
+          break;
+
+        case 406:
+          toast.error(err.response.data.errors[0].message);
+          break;
+
+        case 500:
+          toast.error("Internal Server Error");
+          break;
+
+        default:
+          toast.error("Something went wrong");
+      }
+    }
+    finally {
       setTimeout(() => {
         setSubmitting(false);
       }, 500);
@@ -222,14 +260,14 @@ export default function ForgotPassword() {
           </form>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} noValidate>
+        <form onSubmit={handleGetOtp} noValidate>
           <FormField
             label="Email"
             type="email"
             name="email"
             placeholder="you@company.com"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => setGetEmail(e.target.value)}
             onBlur={() => setTouched(true)}
             error={error}
             touched={touched}
@@ -238,7 +276,6 @@ export default function ForgotPassword() {
           <button
             type="submit"
             disabled={submitting}
-            onClick={handleGetOtp}
             className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed active:scale-[0.98] text-white text-sm font-medium py-2.5 rounded-lg transition-all duration-150 mt-2 hover:cursor-pointer"
           >
             {submitting ? (
