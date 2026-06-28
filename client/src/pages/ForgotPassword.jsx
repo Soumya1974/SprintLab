@@ -87,7 +87,7 @@ export default function ForgotPassword() {
     if (!isOtpComplete) return;
 
     try {
-      const response = await axios.post('/api/login/find-account/verify-otp', {
+      const response = await axios.post('/api/forgot-password/verify-otp', {
         email,
         otp: code
       }, {
@@ -152,7 +152,7 @@ export default function ForgotPassword() {
     setSubmitting(true);
 
     try {
-      const response = await axios.post("/api/forgot-password/verify-otp", {
+      const response = await axios.post("/api/forgot-password", {
         email: getEmail
       }, {
         withCredentials: true

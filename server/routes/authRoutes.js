@@ -3,7 +3,8 @@ import { handleUserSignup, handleUserLogin, handleCreateNewAccessToken, handleUs
 import { handleValidSignUp, handleValidLogin } from "../middlewares/authMiddlewares.js";
 import { handleOtpVerification, handleResendOtp } from "../controllers/emailVerification.js";
 import { handleUserData } from "../controllers/forgotPassword.js";
-import { handlePasswordVerification, handleResendPasswordOtp } from "../controllers/passwordVerification.js";
+import { handlePasswordVerification, handleResendPasswordOtp } from "../controllers/ForgotPasswordVerification.js";
+import { handleSetNewPassword } from "../controllers/SetNewPassword.js";
 
 const authRouter = express.Router();
 
@@ -14,6 +15,7 @@ authRouter.post('/signup/resend-otp', handleResendOtp);
 authRouter.post('/forgot-password', handleUserData);
 authRouter.post('/forgot-password/verify-otp', handlePasswordVerification);
 authRouter.post('/forgot-password/resend-otp', handleResendPasswordOtp);
+authRouter.post('/forgot-password/set-password', handleSetNewPassword);
 
 
 authRouter.post('/login', handleValidLogin, handleUserLogin);

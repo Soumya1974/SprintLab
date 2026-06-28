@@ -101,10 +101,9 @@ export const handleResendPasswordOtp = async (req, res) => {
             message: "OTP sent successfully",
         });
     } catch (err) {
-        console.error(err);
-
         return res.status(500).json({
             message: "Internal Server Error",
         });
     }
 };
+

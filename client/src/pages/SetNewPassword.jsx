@@ -1,10 +1,17 @@
 import { useState } from "react";
 import { Eye, EyeOff, KeyRound, ArrowLeft, AlertCircle, CheckCircle2 } from "lucide-react";
 import AuthLayout from "../components/AuthLayout";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { validatePassword, validateConfirmPassword, getPasswordStrength } from "../utils/validators";
+import axios from "axios";
+import toast from "react-hot-toast";
+import useAuthStore from "../store/authStore";
 
 export default function SetNewPassword() {
+
+    const navigate = useNavigate();
+    const email = useAuthStore((state) => state.email);
+
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -20,12 +27,42 @@ export default function SetNewPassword() {
         setTouched((prev) => ({ ...prev, [field]: true }));
     }
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault();
         setTouched({ password: true, confirmPassword: true });
         if (!isValid) return;
 
-        console.log(password);
+        try{
+            const response = await axios.post("/api/forgot-password/set-password", {
+                email,
+                newPassword: password
+            }, {
+                withCredentials: true
+            })
+
+            if(response.status === 200){
+                toast.success(response.data.message);
+                setTimeout(() => {
+                    navigate("/login");
+                }, 1000);
+            }
+        }
+        catch(err) {
+            switch (err.response.status) {
+                case 400:
+                    toast.error(err.response.data.message);
+                    break;
+                case 404:
+                    toast.error(err.response.data.message);
+                    break;
+                case 500:
+                    toast.error("Internal Server Error");
+                    break;
+                default:
+                    toast.error("Something went wrong");
+            }
+        }
+       
     }
 
     return (
