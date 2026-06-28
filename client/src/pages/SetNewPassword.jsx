@@ -11,6 +11,9 @@ export default function SetNewPassword() {
 
     const navigate = useNavigate();
     const email = useAuthStore((state) => state.email);
+    const clearForgotPasswordProgress = useAuthStore((state) =>
+        state.clearForgotPasswordProgress
+    )
 
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -43,7 +46,7 @@ export default function SetNewPassword() {
             if(response.status === 200){
                 toast.success(response.data.message);
                 setTimeout(() => {
-                    navigate("/login");
+                    clearForgotPasswordProgress();
                 }, 1000);
             }
         }

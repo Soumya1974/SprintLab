@@ -16,6 +16,7 @@ export default function VerifyOtp() {
 
     const email = useAuthStore((state) => state.email);
     const clearEmail = useAuthStore((state) => state.clearEmail);
+    const clearSignupProgress = useAuthStore((state) => state.clearSignupProgress);
     const setAccessToken = useAuthStore((state) => state.setAccessToken);
 
     useEffect(() => {
@@ -78,6 +79,7 @@ export default function VerifyOtp() {
             setTimeout(() => {
                 setAccessToken(response.data.accessToken);
                 clearEmail();
+                clearSignupProgress();
             }, 1000);
         }
         catch (err) {

@@ -17,6 +17,7 @@ export default function Signup() {
 
   const navigate = useNavigate();
   const setEmail = useAuthStore((state) => state.setEmail);
+  const setSignupProgress = useAuthStore((state) => state.setSignupProgress);
 
   const [form, setForm] = useState({
     name: "",
@@ -84,6 +85,7 @@ export default function Signup() {
       )
 
       setEmail(email);
+      setSignupProgress(true);
 
       if (response.status === 200) {
 

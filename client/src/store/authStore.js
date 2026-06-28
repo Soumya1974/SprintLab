@@ -7,20 +7,30 @@ const useAuthStore = create(
       email: "",
       accessToken: null,
       signupProgress: false,
+      forgotPasswordProgress: false,
 
       setEmail: (email) => set({ email }),
+
       clearEmail: () => set({ email: "" }),
 
       setAccessToken: (token) =>
         set({ accessToken: token }),
+
       clearAccessToken: () =>
         set({ accessToken: null }),
 
-      setSignupInProgress: (value) =>
-        set({ signupInProgress: value }),
-      clearSignupProgress: (value) =>
-        set({ signupInProgress: false }),
+      setSignupProgress: (value) =>
+        set({ signupProgress: value }),
+
+      clearSignupProgress: () =>
+        set({ signupProgress: false }),
       
+      setForgotPasswordProgress: (value) =>
+        set({ forgotPasswordProgress: value }),
+
+      clearForgotPasswordProgress: () =>
+        set({ forgotPasswordProgress: false }),
+
     }),
     {
       name: "auth-storage",

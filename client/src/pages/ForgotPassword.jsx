@@ -24,6 +24,7 @@ export default function ForgotPassword() {
   const navigate = useNavigate();
 
   const setEmail = useAuthStore((state) => state.setEmail);
+  const setForgotPasswordProgress = useAuthStore((state) => state.setForgotPasswordProgress);
   const email = useAuthStore((state) => state.email);
   const clearEmail = useAuthStore((state) => state.clearEmail);
 
@@ -94,8 +95,6 @@ export default function ForgotPassword() {
         withCredentials: true
       });
 
-      console.log("email:" ,email);
-
       if (response.status === 200) {
         toast.success(response.data.message);
 
@@ -163,6 +162,7 @@ export default function ForgotPassword() {
       if (response.status === 200) {
         setTimeout(() => {
           toast.success(response.data.message);
+          setForgotPasswordProgress(true);
         }, 500);
       }
 
