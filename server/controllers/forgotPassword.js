@@ -20,6 +20,8 @@ export const handleUserData = async (req, res) => {
     try {
         const { email } = req.body;
 
+        // console.log(email);
+
         const userData = await User.findOne({ email });
 
         if (!userData) {

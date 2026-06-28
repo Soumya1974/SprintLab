@@ -17,7 +17,7 @@ export default function ForgotPassword() {
   const [sent, setSent] = useState(false);
 
   const [otp, setOtp] = useState(Array(OTP_LENGTH).fill(""));
-  const [resendIn, setResendIn] = useState(30);
+  const [resendIn, setResendIn] = useState(10);
   const inputRefs = useRef([]);
 
   const error = validateEmail(getEmail);
@@ -82,23 +82,25 @@ export default function ForgotPassword() {
   const code = otp.join("");
   const isOtpComplete = code.length === OTP_LENGTH;
 
-  function handleVerifySubmit(e) {
+  async function handleVerifySubmit(e) {
     e.preventDefault();
     if (!isOtpComplete) return;
 
     try {
-      const response = axios.post('/api/find-account/verify-otp', {
+      const response = await axios.post('/api/find-account/verify-otp', {
         email,
         otp: code
       }, {
         withCredentials: true
       });
 
+      console.log("email:" ,email);
+
       if (response.status === 200) {
         toast.success(response.data.message);
 
         setTimeout(() => {
-          Navigate("/resetpassword");
+          navigate("/resetpassword");
         }, 1000);
       }
     }
@@ -126,23 +128,24 @@ export default function ForgotPassword() {
   async function handleResend() {
     if (resendIn > 0) return;
     setOtp(Array(OTP_LENGTH).fill(""));
-    setResendIn(30);
+    setResendIn(10);
     inputRefs.current[0]?.focus();
 
-    // resend request here, e.g.:
-    // await api.post("/auth/resend-reset-otp", { email });
   }
 
   const handleGetOtp = async (e) => {
+
     e.preventDefault();
     setSubmitting(true);
 
     try {
       const response = await axios.post("/api/find-account", {
-        getEmail
+        email: getEmail
       }, {
         withCredentials: true
       });
+
+      setEmail(getEmail);
 
       if (response.status === 200) {
         setTimeout(() => {
@@ -151,7 +154,6 @@ export default function ForgotPassword() {
       }
 
       setSent(true);
-      setEmail(email);
     }
     catch (err) {
       switch (err.response.status) {
@@ -266,7 +268,7 @@ export default function ForgotPassword() {
             type="email"
             name="email"
             placeholder="you@company.com"
-            value={email}
+            value={getEmail}
             onChange={(e) => setGetEmail(e.target.value)}
             onBlur={() => setTouched(true)}
             error={error}

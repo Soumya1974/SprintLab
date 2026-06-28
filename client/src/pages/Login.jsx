@@ -154,13 +154,17 @@ export default function Login({ onNavigate }) {
                     error={errors.password}
                     touched={touched.password}
                     rightSlot={
-                        <button
+                        <Link
+                            to="/forgotpassword"
+                        >
+                            <button
                             type="button"
 
                             className="text-xs font-medium hover:cursor-pointer text-blue-600 hover:text-blue-700 transition-colors duration-150"
                         >
                             Forgot password?
                         </button>
+                        </Link>
                     }
                 />
 
