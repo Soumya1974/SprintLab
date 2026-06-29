@@ -22,7 +22,7 @@ const COLORS = [
     { name: "Slate", value: "#475569" },
 ];
 
-const MAX_WORDS = 70;
+const MAX_WORDS = 20;
 
 function countWords(text) {
     if (!text) return 0;

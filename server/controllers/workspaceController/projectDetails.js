@@ -23,10 +23,31 @@ export const handleProjectDetails = async (req, res) => {
 
         return res.status(201).json({
             message: "Workspace created successfully",
-            workspaceData
         });
     }
     catch (err) {
+        return res.status(500).json({
+            message: err.message
+        });
+    }
+}
+
+export const handleGetProjectData = async (req, res) => {
+    try{
+        const userProjects = await Workspace.find({
+            owner: req.user.id
+        });
+
+        if(!userProjects) return res.status(400).json({
+            message: "No workspaces found"
+        })
+
+        res.status(200).json({
+            userProjects
+        })
+
+    }
+    catch(err) {
         console.error(err);
         return res.status(500).json({
             message: err.message
