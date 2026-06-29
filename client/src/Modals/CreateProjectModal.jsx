@@ -22,7 +22,7 @@ const COLORS = [
     { name: "Slate", value: "#475569" },
 ];
 
-const MAX_WORDS = 20;
+const MAX_WORDS = 40;
 
 function countWords(text) {
     if (!text) return 0;
@@ -34,7 +34,6 @@ function validateEmail(value) {
     return emailRegex.test(value);
 }
 
-// Single object holding every field — mirrors what you'd POST to the backend.
 const INITIAL_FORM_DATA = {
     name: "",
     description: "",
@@ -48,7 +47,6 @@ export default function CreateProjectModal({ onClose }) {
 
     const [touched, setTouched] = useState({ name: false, description: false });
 
-    // collapsible sections — closed by default, open on tap
     const [showColor, setShowColor] = useState(false);
     const [showDueDate, setShowDueDate] = useState(false);
     const [showInvite, setShowInvite] = useState(false);
@@ -66,7 +64,6 @@ export default function CreateProjectModal({ onClose }) {
     const isValid = !nameError && !descriptionError;
 
 
-    // generic helper — updates one key inside the single formData object
     function updateField(key, value) {
         setFormData((prev) => ({ ...prev, [key]: value }));
     }

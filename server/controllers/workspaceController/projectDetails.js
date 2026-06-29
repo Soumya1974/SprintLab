@@ -36,7 +36,9 @@ export const handleGetProjectData = async (req, res) => {
     try{
         const userProjects = await Workspace.find({
             owner: req.user.id
-        });
+        })
+        .populate("owner", "name email avatar")
+        .populate("members", "name email avatar")
 
         if(!userProjects) return res.status(400).json({
             message: "No workspaces found"

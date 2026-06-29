@@ -3,15 +3,12 @@ import Sidebar from "../components/kanbanComponents/Sidebar";
 import Topbar from "../components/kanbanComponents/Topbar";
 import LogoutModal from "../components/authComponents/LogoutModal";
 import Workspaces from "../components/kanbanComponents/Workspaces";
-import CreateProjectModal from "../Modals/CreateProjectModal";
 
 export default function Dashboard() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [active, setActive] = useState("dashboard");
   const [isOpen, setIsOpen] = useState(false);
-
-  const [isProjectForm, setProjectForm] = useState(false);
 
   const components = {
     dashboard: <>hello</>,
@@ -48,9 +45,6 @@ export default function Dashboard() {
         <main className="flex-1 overflow-y-auto">
           {
             components[active]
-          }
-          {
-            isProjectForm && <CreateProjectModal onClose={() => setProjectForm(false)} />
           }
         </main>
       </div>
