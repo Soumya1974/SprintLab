@@ -42,7 +42,7 @@ const INITIAL_FORM_DATA = {
 };
 
 
-export default function CreateProjectModal({ onClose }) {
+export default function CreateProjectModal({ onClose, handleGetData }) {
     const [formData, setFormData] = useState(INITIAL_FORM_DATA);
 
     const [touched, setTouched] = useState({ name: false, description: false });
@@ -50,6 +50,7 @@ export default function CreateProjectModal({ onClose }) {
     const [showColor, setShowColor] = useState(false);
     const [showDueDate, setShowDueDate] = useState(false);
     const [showInvite, setShowInvite] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
 
     const wordCount = countWords(formData.description);
     const isOverLimit = wordCount > MAX_WORDS;
@@ -77,7 +78,11 @@ export default function CreateProjectModal({ onClose }) {
         setTouched({ name: true, description: true });
         if (!isValid) return;
 
+        setSubmitting(true);
+
         const { name, description, color, dueDate } = formData;
+
+        if( !name || !description ) return;
 
         try {
             const response = await api.post("/api/workspaces", {
@@ -91,9 +96,11 @@ export default function CreateProjectModal({ onClose }) {
 
             toast.success(response.data.message);
 
+
             setTimeout(() => {
                 onClose();
             }, 1000);
+            await handleGetData();
         }
         catch (err) {
             switch (err.response.status) {
@@ -109,6 +116,11 @@ export default function CreateProjectModal({ onClose }) {
                 default:
                     toast.error("Something went wrong");
             }
+        }
+        finally {
+            setTimeout(() => {
+                setSubmitting(false);
+            }, 500);
         }
     }
 
@@ -281,9 +293,20 @@ export default function CreateProjectModal({ onClose }) {
                         </button>
                         <button
                             type="submit"
-                            className="flex-1 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] px-4 py-2.5 rounded-lg transition-all duration-150 hover:cursor-pointer"
+                            disabled={submitting}
+                            className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
+                            ${submitting
+                                    ? "bg-blue-500 cursor-not-allowed opacity-80"
+                                    : "bg-blue-600 hover:bg-blue-700 active:scale-[0.98] cursor-pointer"
+                                } text-white`}
                         >
-                            Create project
+                            {submitting && (
+                                <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            )}
+
+                            <span>
+                                {submitting ? "Creating..." : "Create Project"}
+                            </span>
                         </button>
                     </div>
                 </form>
