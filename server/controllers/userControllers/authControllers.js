@@ -128,6 +128,12 @@ export const handleUserLogin = async (req, res) => {
             expiresIn: "7d"
         })
 
+        const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+
+        userExists.refreshToken = hashedRefreshToken;
+
+        await userExists.save();
+
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
             secure: true,

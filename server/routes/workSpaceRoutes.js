@@ -1,0 +1,9 @@
+import express from "express";
+import { handleAccessToken } from "../middlewares/accessTokenMiddleware.js";
+import { handleProjectDetails } from "../controllers/workspaceController/projectDetails.js";
+
+const workspaceRoute = express.Router();
+
+workspaceRoute.post('/workspaces', handleAccessToken, handleProjectDetails);
+
+export default workspaceRoute;

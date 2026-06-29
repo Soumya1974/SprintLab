@@ -10,6 +10,8 @@ import {
     Palette,
     Users,
 } from "lucide-react";
+import api from "../api/axios";
+import toast from "react-hot-toast";
 
 const COLORS = [
     { name: "Blue", value: "#2563eb" },
@@ -41,18 +43,16 @@ const INITIAL_FORM_DATA = {
 };
 
 
-export default function CreateProjectModal({ open, onClose, onCreate }) {
+export default function CreateProjectModal({ onClose }) {
     const [formData, setFormData] = useState(INITIAL_FORM_DATA);
-    
-    const [emailInput, setEmailInput] = useState("");
-    const [emailError, setEmailError] = useState("");
+
     const [touched, setTouched] = useState({ name: false, description: false });
-    
+
     // collapsible sections — closed by default, open on tap
     const [showColor, setShowColor] = useState(false);
     const [showDueDate, setShowDueDate] = useState(false);
     const [showInvite, setShowInvite] = useState(false);
-    
+
     const wordCount = countWords(formData.description);
     const isOverLimit = wordCount > MAX_WORDS;
 
@@ -75,46 +75,44 @@ export default function CreateProjectModal({ open, onClose, onCreate }) {
         setTouched((prev) => ({ ...prev, [field]: true }));
     }
 
-    function handleAddEmail() {
-        const value = emailInput.trim();
-        if (!value) return;
-
-        if (!validateEmail(value)) {
-            setEmailError("Enter a valid email address");
-            return;
-        }
-        if (formData.invitedEmails.includes(value)) {
-            setEmailError("This email is already added");
-            return;
-        }
-
-        updateField("invitedEmails", [...formData.invitedEmails, value]);
-        setEmailInput("");
-        setEmailError("");
-    }
-
-    function handleEmailKeyDown(e) {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            handleAddEmail();
-        }
-    }
-
-    function handleRemoveEmail(email) {
-        updateField(
-            "invitedEmails",
-            formData.invitedEmails.filter((e) => e !== email)
-        );
-    }
-
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault();
         setTouched({ name: true, description: true });
         if (!isValid) return;
 
-        // formData is already shaped exactly as you'd send it to the backend:
-        // { name, description, color, dueDate, invitedEmails }
-        onCreate?.(formData);
+        const { name, description, color, dueDate } = formData;
+
+        try {
+            const response = await api.post("/api/workspaces", {
+                title: name,
+                description,
+                color,
+                dueDate: dueDate || null
+            }, {
+                withCredentials: true
+            });
+
+            toast.success(response.data.message);
+
+            setTimeout(() => {
+                onClose();
+            }, 1000);
+        }
+        catch (err) {
+            switch (err.response.status) {
+                case 400:
+                    toast.error(err.response.data.message);
+                    break;
+                case 404:
+                    toast.error(err.response.data.message);
+                    break;
+                case 500:
+                    toast.error("Internal Server Error");
+                    break;
+                default:
+                    toast.error("Something went wrong");
+            }
+        }
     }
 
     return (
@@ -164,8 +162,8 @@ export default function CreateProjectModal({ open, onClose, onCreate }) {
                             onBlur={() => handleBlur("name")}
                             placeholder="e.g. Mobile App Redesign"
                             className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 transition-colors duration-150 ${touched.name && nameError
-                                    ? "border-rose-300 focus:border-rose-400 focus:ring-rose-100"
-                                    : "border-slate-200 focus:border-blue-400 focus:ring-blue-100"
+                                ? "border-rose-300 focus:border-rose-400 focus:ring-rose-100"
+                                : "border-slate-200 focus:border-blue-400 focus:ring-blue-100"
                                 }`}
                         />
                         {touched.name && nameError && (
@@ -200,8 +198,8 @@ export default function CreateProjectModal({ open, onClose, onCreate }) {
                             placeholder="What's this project about?"
                             rows={3}
                             className={`w-full h-15 rounded-lg border px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 transition-colors duration-150 resize-none ${(touched.description && descriptionError) || isOverLimit
-                                    ? "border-rose-300 focus:border-rose-400 focus:ring-rose-100"
-                                    : "border-slate-200 focus:border-blue-400 focus:ring-blue-100"
+                                ? "border-rose-300 focus:border-rose-400 focus:ring-rose-100"
+                                : "border-slate-200 focus:border-blue-400 focus:ring-blue-100"
                                 }`}
                         />
                         {touched.description && descriptionError && (
@@ -238,8 +236,8 @@ export default function CreateProjectModal({ open, onClose, onCreate }) {
                                     onClick={() => updateField("color", c.value)}
                                     aria-label={c.name}
                                     className={`h-6 w-6 rounded-full transition-transform duration-150 hover:cursor-pointer ${formData.color === c.value
-                                            ? "ring-2 ring-offset-1 ring-slate-400 scale-105"
-                                            : "hover:scale-105"
+                                        ? "ring-2 ring-offset-1 ring-slate-400 scale-105"
+                                        : "hover:scale-105"
                                         }`}
                                     style={{ backgroundColor: c.value }}
                                 />

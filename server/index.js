@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import { connectDb } from "./config/connectDb.js";
 import authRouter from "./routes/authRoutes.js";
+import workspaceRoute from "./routes/workSpaceRoutes.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
@@ -20,6 +21,7 @@ app.use(cookieParser());
 
 app.use(express.json());
 app.use('/api', authRouter);
+app.use('/api', workspaceRoute);
 
 connectDb();
 app.listen(port, () => {

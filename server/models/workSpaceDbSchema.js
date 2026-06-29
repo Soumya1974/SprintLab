@@ -11,21 +11,23 @@ const workspaceSchema = new mongoose.Schema({
     },
     color: {
         type: String,
-        default: null
     },
-    ownerId: {
-        type: String,
-        unique: true,
-        default: null
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "userData"
     },
     dueDate: {
         type: Date,
         default: null
     },
-     status: {
+    status: {
         type: String,
         default: "pending"
     },
+    members: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "userData",
+    }]
 }, { timestamps: true });
 
 export const Workspace = mongoose.model("workspaceData", workspaceSchema);
