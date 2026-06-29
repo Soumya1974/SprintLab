@@ -48,7 +48,7 @@ export default function LogoutModal({ onCancelClick }) {
             />
 
             {/* modal */}
-            <div className="relative bg-white rounded-2xl border border-slate-200 shadow-xl w-full max-w-sm p-6 animate-scale-in">
+            <div className="relative bg-white border border-slate-200 shadow-xl w-full max-w-sm p-6 animate-scale-in">
                 <button
                     aria-label="Close"
                     className="absolute top-4 right-4 h-7 w-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors duration-150"

@@ -31,9 +31,8 @@ export default function Topbar({ onMenuClick }) {
           >
             <span>Select Workspace</span>
             <ChevronDown
-              className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${
-                wsOpen ? "rotate-180" : ""
-              }`}
+              className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${wsOpen ? "rotate-180" : ""
+                }`}
             />
           </button>
         </div>
@@ -49,8 +48,12 @@ export default function Topbar({ onMenuClick }) {
 
         <button
           aria-label="Account"
-          className="h-9 w-9 rounded-full bg-blue-600 hover:bg-blue-700 active:scale-95 transition-all duration-150"
-        />
+          className="h-9 w-9 rounded-full active:scale-95 transition-all duration-150"
+        >
+          <img src="https://imgs.search.brave.com/gqMXrbzzUd8ga0aULDgdlPi6nb6-Cjp1N6wcHFE9Pmk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/dmVjdG9yc3RvY2su/Y29tL2kvNTAwcC81/Ni8xNC9kZWZhdWx0/LWF2YXRhci1tYW4t/dG8tc29jaWFsLXVz/ZXItdmVjdG9yLTE3/ODY1NjE0LmpwZw"
+            className="h-9 w-9 rounded-full active:scale-95 hover:scale-110 hover:cursor-pointer transition-all duration-150"
+          />
+        </button>
       </div>
     </header>
   );

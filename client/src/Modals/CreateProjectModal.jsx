@@ -20,12 +20,11 @@ const COLORS = [
     { name: "Slate", value: "#475569" },
 ];
 
-const MAX_WORDS = 50;
+const MAX_WORDS = 70;
 
 function countWords(text) {
-    const trimmed = text.trim();
-    if (!trimmed) return 0;
-    return trimmed.split(/\s+/).length;
+    if (!text) return 0;
+    return text.trim().length;
 }
 
 function validateEmail(value) {
@@ -39,21 +38,21 @@ const INITIAL_FORM_DATA = {
     description: "",
     color: COLORS[0].value,
     dueDate: "",
-    invitedEmails: [],
 };
+
 
 export default function CreateProjectModal({ open, onClose, onCreate }) {
     const [formData, setFormData] = useState(INITIAL_FORM_DATA);
-
+    
     const [emailInput, setEmailInput] = useState("");
     const [emailError, setEmailError] = useState("");
     const [touched, setTouched] = useState({ name: false, description: false });
-
+    
     // collapsible sections — closed by default, open on tap
     const [showColor, setShowColor] = useState(false);
     const [showDueDate, setShowDueDate] = useState(false);
     const [showInvite, setShowInvite] = useState(false);
-
+    
     const wordCount = countWords(formData.description);
     const isOverLimit = wordCount > MAX_WORDS;
 
@@ -61,7 +60,7 @@ export default function CreateProjectModal({ open, onClose, onCreate }) {
     const descriptionError = !formData.description.trim()
         ? "Description is required"
         : isOverLimit
-            ? `Description must be ${MAX_WORDS} words or fewer`
+            ? `Description must be ${MAX_WORDS} charecters or fewer`
             : "";
 
     const isValid = !nameError && !descriptionError;
@@ -121,11 +120,10 @@ export default function CreateProjectModal({ open, onClose, onCreate }) {
     return (
         <div className="fixed inset-0 z-100 flex items-center justify-center px-4">
             <div
-                onClick={onClose}
                 className="absolute inset-0 bg-slate-900/40 animate-fade-in"
             />
 
-            <div className="relative bg-white rounded-2xl border border-slate-200 shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-scale-in">
+            <div className="relative bg-white border border-slate-200 shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-scale-in">
                 {/* header */}
                 <div className="flex items-center justify-between px-6 pt-6 pb-4 sticky top-0 bg-white z-10">
                     <div className="hidden md:flex items-center gap-3">
@@ -201,7 +199,7 @@ export default function CreateProjectModal({ open, onClose, onCreate }) {
                             onBlur={() => handleBlur("description")}
                             placeholder="What's this project about?"
                             rows={3}
-                            className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 transition-colors duration-150 resize-none ${(touched.description && descriptionError) || isOverLimit
+                            className={`w-full h-15 rounded-lg border px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 transition-colors duration-150 resize-none ${(touched.description && descriptionError) || isOverLimit
                                     ? "border-rose-300 focus:border-rose-400 focus:ring-rose-100"
                                     : "border-slate-200 focus:border-blue-400 focus:ring-blue-100"
                                 }`}
@@ -274,80 +272,6 @@ export default function CreateProjectModal({ open, onClose, onCreate }) {
                                     className="w-full rounded-lg border border-slate-200 pl-10 pr-3.5 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors duration-150"
                                 />
                             </div>
-                        </div>
-                    </CollapsibleRow>
-
-                    {/* invite members - collapsible */}
-                    <CollapsibleRow
-                        icon={Users}
-                        label="Invite members"
-                        open={showInvite}
-                        onToggle={() => setShowInvite(!showInvite)}
-                        preview={
-                            !showInvite &&
-                            formData.invitedEmails.length > 0 && (
-                                <span className="text-xs text-slate-500">
-                                    {formData.invitedEmails.length} added
-                                </span>
-                            )
-                        }
-                    >
-                        <div className="pt-1 pb-3">
-                            <div className="relative flex gap-2">
-                                <div className="relative flex-1">
-                                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                                    <input
-                                        type="email"
-                                        value={emailInput}
-                                        onChange={(e) => {
-                                            setEmailInput(e.target.value);
-                                            if (emailError) setEmailError("");
-                                        }}
-                                        onKeyDown={handleEmailKeyDown}
-                                        placeholder="teammate@company.com"
-                                        className={`w-full rounded-lg border pl-10 pr-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 transition-colors duration-150 ${emailError
-                                                ? "border-rose-300 focus:border-rose-400 focus:ring-rose-100"
-                                                : "border-slate-200 focus:border-blue-400 focus:ring-blue-100"
-                                            }`}
-                                    />
-                                </div>
-                                <button
-                                    type="button"
-                                    onClick={handleAddEmail}
-                                    className="flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:bg-blue-50 border border-slate-200 hover:cursor-pointer px-3.5 py-2.5 rounded-lg transition-colors duration-150 shrink-0"
-                                >
-                                    <Plus className="h-4 w-4" />
-                                    Add
-                                </button>
-                            </div>
-
-                            {emailError && (
-                                <p className="mt-1.5 text-xs text-rose-500 flex items-center gap-1 animate-fade-in-down">
-                                    <AlertCircle className="h-3.5 w-3.5" />
-                                    {emailError}
-                                </p>
-                            )}
-
-                            {formData.invitedEmails.length > 0 && (
-                                <div className="flex flex-wrap gap-2 mt-3">
-                                    {formData.invitedEmails.map((email) => (
-                                        <span
-                                            key={email}
-                                            className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-600 text-xs font-medium pl-2.5 pr-1.5 py-1.5 rounded-full animate-fade-in-up"
-                                        >
-                                            {email}
-                                            <button
-                                                type="button"
-                                                onClick={() => handleRemoveEmail(email)}
-                                                aria-label={`Remove ${email}`}
-                                                className="h-4 w-4 flex items-center justify-center rounded-full hover:bg-blue-100 transition-colors duration-150"
-                                            >
-                                                <X className="h-3 w-3" />
-                                            </button>
-                                        </span>
-                                    ))}
-                                </div>
-                            )}
                         </div>
                     </CollapsibleRow>
 
