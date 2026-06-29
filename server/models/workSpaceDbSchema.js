@@ -15,8 +15,17 @@ const workspaceSchema = new mongoose.Schema({
     },
     ownerId: {
         type: String,
+        unique: true,
         default: null
-    }
+    },
+    dueDate: {
+        type: Date,
+        default: null
+    },
+     status: {
+        type: String,
+        default: "pending"
+    },
 }, { timestamps: true });
 
 export const Workspace = mongoose.model("workspaceData", workspaceSchema);

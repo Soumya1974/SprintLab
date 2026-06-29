@@ -1,12 +1,17 @@
 import { LayoutGrid, Plus } from "lucide-react";
+import { Children, useState } from "react";
 
-export default function Workspaces() {
+export default function Workspaces({ onOpenClick }) {
+
   return (
     <div className="px-4 sm:px-6 py-5 animate-fade-in-up">
+
       <div className="flex items-center justify-between mb-5">
         <h1 className="text-xl font-semibold text-slate-800">Workspaces</h1>
 
-        <button className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-sm font-medium px-3.5 py-2 rounded-lg transition-all duration-150">
+        <button className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-sm font-medium px-3.5 py-2 rounded-lg transition-all duration-150 hover:cursor-pointer"
+          onClick={onOpenClick}
+        >
           <Plus className="h-4 w-4" />
           New Workspace
         </button>
@@ -24,7 +29,9 @@ export default function Workspaces() {
           Create a new workspace to get started
         </p>
 
-        <button className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-all duration-150">
+        <button className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-all duration-150 hover:cursor-pointer"
+          onClick={onOpenClick}
+        >
           <Plus className="h-4 w-4" />
           Create Workspace
         </button>
@@ -37,6 +44,7 @@ export default function Workspaces() {
         }
         .animate-fade-in-up { animation: fadeInUp 0.4s ease-out both; }
       `}</style>
+
     </div>
   );
 }
