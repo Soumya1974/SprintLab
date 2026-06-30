@@ -94,8 +94,8 @@ export default function ProjectCard({ projectData }) {
     const safeColor = /^#[0-9A-Fa-f]{6}$/.test(color) ? color : "#64748b";
 
     return (
-        <div className="relative bg-white border border-slate-300 p-5 pl-6 w-full max-w-sm mt-5 md:mt-10 overflow-hidden hover:border-slate-300 hover:shadow-lg shadow-md hover:-translate-y-0.5 transition-all duration-200 ease-out">
-            {/* left accent bar */}
+        <div className="relative h-full bg-white border border-slate-200 p-5 overflow-hidden hover:border-slate-300 hover:shadow-lg shadow-sm hover:-translate-y-0.5 transition-all duration-200 ease-out">
+            
             <span
                 className="absolute left-0 top-0 h-full w-1 rounded-l-2xl"
                 style={{ backgroundColor: safeColor }}

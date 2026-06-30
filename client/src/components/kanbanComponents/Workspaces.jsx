@@ -40,7 +40,12 @@ export default function Workspaces() {
   }, []);
 
   return (
-    <div className="px-4 h-full sm:px-6 py-5 animate-fade-in-up">
+    <div className="px-4 h-full sm:px-6 py-5 animate-fade-in-up"
+      style={{
+        backgroundImage: `linear-gradient(to right, rgb(226 232 240 / 0.6) 1px, transparent 1px),linear-gradient(to bottom, rgb(226 232 240 / 0.6) 1px, transparent 1px)`,
+        backgroundSize: "24px 24px",
+        backgroundColor: "#ffffff",
+      }}>
 
       <div className="flex items-center justify-between mb-5">
         <h1 className="text-xl font-semibold text-slate-800">Workspaces</h1>
@@ -76,12 +81,9 @@ export default function Workspaces() {
           </div>
         ) : (
 
-          <div className="w-full grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {projectData.map(project => (
-              <ProjectCard
-                key={project._id}
-                projectData={project}
-              />
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {projectData.map((project) => (
+              <ProjectCard key={project._id} projectData={project} />
             ))}
           </div>
 
@@ -89,7 +91,7 @@ export default function Workspaces() {
       }
 
       {
-        isProjectForm && <CreateProjectModal onClose={() => setProjectForm(false)} handleGetData={ handleGetdata } />
+        isProjectForm && <CreateProjectModal onClose={() => setProjectForm(false)} handleGetData={handleGetdata} />
       }
 
 

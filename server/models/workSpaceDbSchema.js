@@ -4,7 +4,6 @@ const workspaceSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
-        unique: true
     },
     description: {
         type: String
@@ -29,5 +28,10 @@ const workspaceSchema = new mongoose.Schema({
         ref: "userData",
     }]
 }, { timestamps: true });
+
+workspaceSchema.index(
+    {owner: 1, title: 1}, 
+    {unique: true}
+);
 
 export const Workspace = mongoose.model("workspaceData", workspaceSchema);
