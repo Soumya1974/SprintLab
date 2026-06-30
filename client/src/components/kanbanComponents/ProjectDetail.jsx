@@ -14,7 +14,7 @@ export default function ProjectDetail() {
       }}
     >
 
-        <main className="px-6 pb-8">
+        <main className="px-5 pb-8">
           <ProjectHeader />
 
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
@@ -27,7 +27,7 @@ export default function ProjectDetail() {
                     <ActivityFeed />
                     <CommentsSection />
                 </div>
-          </div>
+            </div>
             <ProjectNotes />
         </main>
       </div>

@@ -27,7 +27,7 @@ const TOOLBAR_ICONS = [
 
 export default function ProjectNotes() {
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-5 w-full">
+    <div className="bg-white border border-slate-200 rounded-2xl p-5 w-full mt-5">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-base font-semibold text-slate-800">
           Project Notes

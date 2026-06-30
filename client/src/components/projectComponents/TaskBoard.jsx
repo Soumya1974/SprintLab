@@ -10,6 +10,7 @@ import {
   useDraggable,
   useDroppable,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   DragOverlay,
@@ -60,7 +61,9 @@ function TaskCard({ task, isOverlay = false }) {
       style={style}
       {...listeners}
       {...attributes}
-      className={`group bg-white border border-slate-200 rounded-xl p-3.5 hover:border-slate-300 hover:shadow-sm transition-all duration-150 cursor-grab active:cursor-grabbing ${
+      // touch-none is the key fix: without it, mobile browsers treat the
+      // gesture as a page-scroll and dnd-kit never sees it as a drag.
+      className={`group touch-none select-none bg-white border border-slate-200 p-3.5 hover:border-slate-300 hover:shadow-sm transition-all duration-150 cursor-grab active:cursor-grabbing ${
         isDragging && !isOverlay ? "opacity-30" : ""
       } ${isOverlay ? "shadow-lg rotate-2" : ""}`}
     >
@@ -140,6 +143,12 @@ export default function TaskBoard() {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 6 },
+    }),
+    // TouchSensor handles mobile/touch input explicitly — a short delay
+    // (instead of distance) is the standard pattern for touch so a normal
+    // tap or scroll-attempt doesn't accidentally start a drag.
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 150, tolerance: 8 },
     })
   );
 
@@ -163,8 +172,8 @@ export default function TaskBoard() {
   }
 
   return (
-    <div className="bg-gray-200 border border-slate-200 rounded-2xl p-5 mb-6 overflow-y-scroll h-175">
-      <div className="flex items-center justify-between flex-wrap gap-3 mb-5">
+    <div className="bg-gray-200 border border-slate-200 rounded-2xl p-4 overflow-y-scroll h-175 scrollbar-hide">
+      <div className="flex items-center justify-between flex-wrap gap-3 mb-5 sticky inset-0 bg-white py-4 px-4 shadow-md">
         <h2 className="text-base font-semibold text-slate-800">
           Tasks Overview
         </h2>
