@@ -1,4 +1,4 @@
-import { Layers, UserPlus, Share2, Settings, ChevronDown } from "lucide-react";
+import { Layers, UserPlus, Share2, Settings, ChevronDown, LogOutIcon } from "lucide-react";
 
 export default function ProjectHeader() {
   return (
@@ -16,19 +16,20 @@ export default function ProjectHeader() {
           </span>
         </div>
         <p className="text-sm text-slate-500 ml-12">
-          Redesign and improve the marketing website for better user
+          Redesign and improve better user
           experience.
         </p>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex gap-2">
+
         <button className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-lg transition-colors duration-150">
           <UserPlus className="h-4 w-4" />
           Invite
         </button>
         <button className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-lg transition-colors duration-150">
-          <Share2 className="h-4 w-4" />
-          Share
+          <LogOutIcon className="h-4 w-4" />
+          Back
         </button>
         <button className="inline-flex items-center gap-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 active:scale-95 px-3.5 py-2 rounded-lg transition-all duration-150">
           <Settings className="h-4 w-4" />

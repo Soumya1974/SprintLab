@@ -3,7 +3,7 @@ import Sidebar from "../components/kanbanComponents/Sidebar";
 import Topbar from "../components/kanbanComponents/Topbar";
 import LogoutModal from "../components/authComponents/LogoutModal";
 import Workspaces from "../components/kanbanComponents/Workspaces";
-import ProjectDetail from "../components/kanbanComponents/ProjectDetail";
+// import ProjectDetail from "../components/kanbanComponents/ProjectDetail";
 
 export default function Dashboard() {
   const [collapsed, setCollapsed] = useState(false);
@@ -12,7 +12,7 @@ export default function Dashboard() {
   const [isOpen, setIsOpen] = useState(false);
 
   const components = {
-    dashboard: <>hello</>,
+    dashboard: <>Dashboard</>,
     workspaces: <Workspaces onOpenClick={() => setProjectForm(true)}/>
   }
 
@@ -44,7 +44,9 @@ export default function Dashboard() {
       <div className="flex-1 flex flex-col min-w-0">
         <Topbar onMenuClick={() => setMobileOpen(true)} />
         <main className="flex-1 overflow-y-auto">
-         <ProjectDetail/>
+          {
+            components[active]
+          }
         </main>
       </div>
     </div>

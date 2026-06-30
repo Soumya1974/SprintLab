@@ -5,6 +5,9 @@ import {
   CheckCircle2,
   Circle,
 } from "lucide-react";
+
+import { restrictToWindowEdges, snapCenterToCursor } from "@dnd-kit/modifiers";
+
 import {
   DndContext,
   useDraggable,
@@ -34,13 +37,11 @@ const INITIAL_TASKS = [
   { id: 1, title: "Research & Analysis", date: "May 25", priority: "High", status: "tasks" },
   { id: 2, title: "Create Wireframes", date: "May 27", priority: "Medium", status: "tasks" },
   { id: 3, title: "Competitor Review", date: "May 30", priority: "Low", status: "tasks" },
-  { id: 4, title: "UI/UX Design", date: "May 24", priority: "High", status: "tasks" },
-  { id: 5, title: "Develop Homepage", date: "May 26", priority: "Medium", status: "tasks" },
-  { id: 6, title: "API Integration", date: "May 28", priority: "High", status: "tasks" },
-  { id: 7, title: "Design System", date: "May 23", priority: "Medium", status: "tasks" },
-  { id: 8, title: "About Us Page", date: "May 22", priority: "Low", status: "tasks" },
-  { id: 9, title: "Project Setup", date: "May 15", status: "done" },
-  { id: 10, title: "Requirements Gathering", date: "May 16", status: "done" },
+  { id: 4, title: "Competitor Review", date: "May 30", priority: "Low", status: "tasks" },
+  { id: 5, title: "UI/UX Design", date: "May 24", priority: "High", status: "done" },
+  { id: 6, title: "Develop Homepage", date: "May 26", priority: "Medium", status: "done" },
+  { id: 7, title: "API Integration", date: "May 28", priority: "High", status: "done" },
+  { id: 8, title: "API Integration", date: "May 28", priority: "High", status: "done" },
 ];
 
 function TaskCard({ task, isOverlay = false }) {
@@ -63,7 +64,7 @@ function TaskCard({ task, isOverlay = false }) {
       {...attributes}
       // touch-none is the key fix: without it, mobile browsers treat the
       // gesture as a page-scroll and dnd-kit never sees it as a drag.
-      className={`group touch-none select-none bg-white border border-slate-200 p-3.5 hover:border-slate-300 hover:shadow-sm transition-all duration-150 cursor-grab active:cursor-grabbing ${
+      className={`group touch-none select-none bg-white border border-slate-200 rounded-md p-3 shadow-sm hover:border-slate-300 hover:shadow-md transition-all duration-150 cursor-grab active:cursor-grabbing ${
         isDragging && !isOverlay ? "opacity-30" : ""
       } ${isOverlay ? "shadow-lg rotate-2" : ""}`}
     >
@@ -144,9 +145,6 @@ export default function TaskBoard() {
     useSensor(PointerSensor, {
       activationConstraint: { distance: 6 },
     }),
-    // TouchSensor handles mobile/touch input explicitly — a short delay
-    // (instead of distance) is the standard pattern for touch so a normal
-    // tap or scroll-attempt doesn't accidentally start a drag.
     useSensor(TouchSensor, {
       activationConstraint: { delay: 150, tolerance: 8 },
     })
@@ -172,8 +170,8 @@ export default function TaskBoard() {
   }
 
   return (
-    <div className="bg-gray-200 border border-slate-200 rounded-2xl p-4 overflow-y-scroll h-175 scrollbar-hide">
-      <div className="flex items-center justify-between flex-wrap gap-3 mb-5 sticky inset-0 bg-white py-4 px-4 shadow-md">
+    <div className="bg-gray-200 border border-slate-200 rounded-sm p-4 overflow-y-scroll h-120 md:h-175 scrollbar-hide">
+      <div className="flex items-center justify-between flex-wrap gap-3 mb-5 rounded-md">
         <h2 className="text-base font-semibold text-slate-800">
           Tasks Overview
         </h2>
@@ -183,16 +181,14 @@ export default function TaskBoard() {
             <Plus className="h-4 w-4" />
             Add Task
           </button>
-          <button
-            aria-label="More options"
-            className="h-9 w-9 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-50 hover:text-slate-600 transition-colors duration-150"
-          >
-            <MoreHorizontal className="h-4 w-4" />
-          </button>
         </div>
       </div>
 
       <DndContext
+        // snapCenterToCursor keeps the overlay centered exactly under the
+        // pointer/finger, regardless of where on the card you grabbed it —
+        // this is what fixes the "grabbed from a different position" jump.
+        modifiers={[restrictToWindowEdges, snapCenterToCursor]}
         sensors={sensors}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}

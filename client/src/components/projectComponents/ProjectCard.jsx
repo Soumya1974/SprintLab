@@ -80,7 +80,7 @@ function MemberAvatars({ members = [] }) {
     );
 }
 
-export default function ProjectCard({ projectData }) {
+export default function ProjectCard({ projectData, onOpenProjectClick }) {
 
     const {
         title,
@@ -123,6 +123,7 @@ export default function ProjectCard({ projectData }) {
 
             <button
                 className="group w-full mt-4 flex items-center justify-center gap-1.5 text-sm font-medium py-2 rounded-lg bg-blue-50 hover:bg-blue-100 transition-all duration-150"
+                onClick={onOpenProjectClick}
             >
                 Open
                 <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
