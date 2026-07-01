@@ -4,10 +4,14 @@ import { persist } from "zustand/middleware";
 const useWorkspaceStore = create(
     persist(
         (set) => ({
-            workspaceData = null,
+            workspaceData: null,
+            projectDetails: null,
 
-            setWorkspaceData: (id) => set({ projectData: id  }),
-            clearWorkspaceData: () => set({ projectData: null })
+            setWorkspaceData: (id) => set({ workspaceData: id  }),
+            clearWorkspaceData: () => set({ workspaceData: null }),
+
+            setProjectDetails: (data) => set({ projectDetails: data}),
+            clearProjectDetails: () => set({ projectDetails: null}),
         }),
         {
             name: "workspace-store"

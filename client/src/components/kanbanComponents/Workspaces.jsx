@@ -4,6 +4,7 @@ import api from "../../api/axios";
 import ProjectCard from "../projectComponents/ProjectCard";
 import CreateProjectModal from "../../Modals/CreateProjectModal";
 import ProjectDetail from "./ProjectDetail";
+import useWorkspaceStore from "../../store/workspaceStore";
 
 export default function Workspaces() {
 
@@ -11,6 +12,9 @@ export default function Workspaces() {
   const [projectData, setProjectData] = useState([]);
   const [isProjectForm, setProjectForm] = useState(false);
   const [openProject, setOpenProject] = useState(false);
+
+  const workspaceData = useWorkspaceStore((state) => state.workspaceData);
+  const selectedWorkspace = projectData.find((project) => project._id === workspaceData);
 
   const handleGetdata = async () => {
     try {
@@ -50,7 +54,12 @@ export default function Workspaces() {
       }}>
 
       {
-        !openProject ? (
+        selectedWorkspace ? (
+
+          <ProjectDetail />
+
+        ) : (
+
           <>
             <div className="flex items-center justify-between py-5 px-5">
               <h1 className="text-xl font-semibold text-slate-800">Workspaces</h1>
@@ -94,10 +103,7 @@ export default function Workspaces() {
 
             }
           </>
-        ) : (
-          
-          <ProjectDetail/>
-        
+
         )
       }
 
