@@ -1,4 +1,5 @@
 import { Calendar, ArrowUpRight } from "lucide-react";
+import useWorkspaceStore from "../../store/workspaceStore";
 
 const STATUS_STYLES = {
     pending: "bg-green-50 text-gray-600",
@@ -82,7 +83,10 @@ function MemberAvatars({ members = [] }) {
 
 export default function ProjectCard({ projectData, onOpenProjectClick }) {
 
+    const workspaceData = useWorkspaceStore((state) => state.workspaceData);
+    
     const {
+        _id,
         title,
         description,
         status,
@@ -90,7 +94,7 @@ export default function ProjectCard({ projectData, onOpenProjectClick }) {
         color,
         members = [],
     } = projectData;
-
+    
     const safeColor = /^#[0-9A-Fa-f]{6}$/.test(color) ? color : "#64748b";
 
     return (
