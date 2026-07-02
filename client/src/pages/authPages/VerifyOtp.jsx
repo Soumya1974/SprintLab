@@ -71,9 +71,8 @@ export default function VerifyOtp() {
             )
 
             if (response.status === 200) {
-                setTimeout(() => {
-                    toast.success(response.data.message);
-                }, 500);
+               
+                toast.success(response.data.message);
             }
 
             setTimeout(() => {
@@ -103,9 +102,8 @@ export default function VerifyOtp() {
             }
         }
         finally {
-            setTimeout(() => {
-                setSubmitting(false);
-            }, 500);
+            
+            setSubmitting(false);
         }
     }
 

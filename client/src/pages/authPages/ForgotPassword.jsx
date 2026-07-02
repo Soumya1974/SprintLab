@@ -34,18 +34,18 @@ export default function ForgotPassword() {
     return () => clearInterval(timer);
   }, [sent, resendIn]);
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setTouched(true);
-    if (error) return;
+  // async function handleSubmit(e) {
+  //   e.preventDefault();
+  //   setTouched(true);
+  //   if (error) return;
 
-    setSubmitting(true);
-    // Simulated request — replace with real API call
-    await new Promise((resolve) => setTimeout(resolve, 900));
-    setSubmitting(false);
-    setSent(true);
-    setResendIn(30);
-  }
+  //   setSubmitting(true);
+  //   // Simulated request — replace with real API call
+  //   await new Promise((resolve) => setTimeout(resolve, 900));
+  //   setSubmitting(false);
+  //   setSent(true);
+  //   setResendIn(30);
+  // }
 
   function handleOtpChange(index, value) {
     if (!/^[0-9]?$/.test(value)) return;
@@ -188,9 +188,7 @@ export default function ForgotPassword() {
       }
     }
     finally {
-      setTimeout(() => {
-        setSubmitting(false);
-      }, 500);
+      setSubmitting(false);
     }
   }
 

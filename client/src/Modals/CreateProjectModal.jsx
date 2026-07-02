@@ -118,9 +118,7 @@ export default function CreateProjectModal({ onClose, handleGetData }) {
             }
         }
         finally {
-            setTimeout(() => {
-                setSubmitting(false);
-            }, 500);
+            setSubmitting(false);
         }
     }
 

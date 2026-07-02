@@ -99,7 +99,7 @@ export default function ProjectCard({ projectData }) {
     const safeColor = /^#[0-9A-Fa-f]{6}$/.test(color) ? color : "#64748b";
 
     return (
-        <div className="relative animate-fade-in-right h-full bg-white border border-slate-200 p-5 overflow-hidden hover:border-slate-300 hover:shadow-lg shadow-sm hover:-translate-y-0.5 transition-all duration-200 ease-out">
+        <div className="relative animate-fade-in-up h-full bg-white border border-slate-200 p-5 overflow-hidden hover:border-slate-300 hover:shadow-lg shadow-sm hover:-translate-y-0.5 transition-all duration-200 ease-out">
 
             <span
                 className="absolute left-0 top-0 h-full w-1 rounded-l-2xl"
@@ -139,11 +139,11 @@ export default function ProjectCard({ projectData }) {
             </button>
 
             <style>{`
-                @keyframes fadeInRight {
-                from { opacity: 0; transform: translateX(-8px); }
-                to { opacity: 1; transform: translateX(0); }
+                @keyframes fadeInUp {
+                from { opacity: 0; transform: translateY(8px); }
+                to { opacity: 1; transform: translateY(0); }
                 }
-                .animate-fade-in-right { animation: fadeInRight 0.4s ease-out both; }
+                .animate-fade-in-up { animation: fadeInUp 0.4s ease-out both; }
         `}</style>
         
 

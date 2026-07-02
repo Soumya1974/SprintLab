@@ -89,9 +89,7 @@ export default function Signup() {
 
       if (response.status === 200) {
 
-        setTimeout(() => {
-          toast.success(response.data.message);
-        }, 500);
+        toast.success(response.data.message);
 
         setTimeout(() => {
           navigate('/verifyotp');
@@ -119,9 +117,7 @@ export default function Signup() {
       }
     }
     finally {
-      setTimeout(() => {
-        setSubmitting(false);
-      }, 500);
+      setSubmitting(false);
     }
 
   }

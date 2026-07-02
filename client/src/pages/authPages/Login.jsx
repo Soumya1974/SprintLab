@@ -66,9 +66,7 @@ export default function Login({ onNavigate }) {
 
             if (response.status === 200) {
 
-                setTimeout(() => {
-                    toast.success(response.data.message);
-                }, 500);
+                toast.success(response.data.message);
 
                 setTimeout(() => {
                     setAccessToken(response.data.accessToken);
@@ -102,9 +100,7 @@ export default function Login({ onNavigate }) {
             }
         }
         finally {
-            setTimeout(()  => {
-                setSubmitting(false);
-            },500);
+            setSubmitting(false);
         }
     }
 

@@ -20,9 +20,7 @@ export default function LogoutModal({ onCancelClick }) {
                 withCredentials: true
             });
 
-            setTimeout(() => {
-                toast.success(response.data.message);
-            }, 500);
+            toast.success(response.data.message);
 
             setTimeout(() => {
                 clearAccessToken();
@@ -33,21 +31,18 @@ export default function LogoutModal({ onCancelClick }) {
             toast.error(err.response?.data.message);
         }
         finally {
-            setTimeout(() => {
-                setSubmitting(false);
-            }, 500);
+            setSubmitting(false);
         }
     }
 
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-            {/* backdrop */}
+            
             <div
                 className="absolute inset-0 bg-slate-900/40 animate-fade-in"
             />
 
-            {/* modal */}
             <div className="relative bg-white border border-slate-200 shadow-xl w-full max-w-sm p-6 animate-scale-in">
                 <button
                     aria-label="Close"
