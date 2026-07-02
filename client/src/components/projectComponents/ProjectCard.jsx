@@ -141,6 +141,7 @@ export default function ProjectCard({ projectData }) {
                 }
                 .animate-fade-in-right { animation: fadeInRight 0.4s ease-out both; }
         `}</style>
+        
 
         </div>
     );

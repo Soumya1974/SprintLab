@@ -3,6 +3,8 @@ import Sidebar from "../components/kanbanComponents/Sidebar";
 import Topbar from "../components/kanbanComponents/Topbar";
 import LogoutModal from "../components/authComponents/LogoutModal";
 import Workspaces from "../components/kanbanComponents/Workspaces";
+import CreateTaskModal from "../Modals/CreateTaskModal";
+import useWorkspaceStore from "../store/workspaceStore";
 // import ProjectDetail from "../components/kanbanComponents/ProjectDetail";
 
 export default function Dashboard() {
@@ -10,6 +12,8 @@ export default function Dashboard() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [active, setActive] = useState("dashboard");
   const [isOpen, setIsOpen] = useState(false);
+  
+  const taskForm = useWorkspaceStore((state) => state.taskForm);
 
   const components = {
     dashboard: <>Dashboard</>,
@@ -47,6 +51,11 @@ export default function Dashboard() {
           {
             components[active]
           }
+
+          {
+            taskForm && <CreateTaskModal/>
+          }
+
         </main>
       </div>
     </div>

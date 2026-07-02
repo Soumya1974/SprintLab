@@ -18,6 +18,7 @@ import {
   useSensors,
   DragOverlay,
 } from "@dnd-kit/core";
+import useWorkspaceStore from "../../store/workspaceStore";
 
 const PRIORITY_STYLES = {
   High: "bg-rose-50 text-rose-600",
@@ -62,8 +63,10 @@ function TaskCard({ task, isOverlay = false }) {
       style={style}
       {...listeners}
       {...attributes}
+
       // touch-none is the key fix: without it, mobile browsers treat the
       // gesture as a page-scroll and dnd-kit never sees it as a drag.
+
       className={`group touch-none select-none bg-white border border-slate-200 rounded-md p-3 shadow-sm hover:border-slate-300 hover:shadow-md transition-all duration-150 cursor-grab active:cursor-grabbing ${isDragging && !isOverlay ? "opacity-30" : ""
         } ${isOverlay ? "shadow-lg rotate-2" : ""}`}
     >
@@ -138,6 +141,8 @@ export default function TaskBoard() {
   const [tasks, setTasks] = useState(INITIAL_TASKS);
   const [activeTask, setActiveTask] = useState(null);
 
+  const setTaskForm = useWorkspaceStore((state) => state.setTaskForm);
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 6 },
@@ -174,7 +179,9 @@ export default function TaskBoard() {
         </h2>
 
         <div className="flex items-center gap-2">
-          <button className="inline-flex items-center gap-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 active:scale-95 px-3.5 py-2 rounded-lg transition-all duration-150">
+          <button className="inline-flex items-center gap-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 active:scale-95 px-3.5 py-2 rounded-lg hover:cursor-pointer transition-all duration-150"
+            onClick={() => setTaskForm(true)}
+          >
             <Plus className="h-4 w-4" />
             Add Task
           </button>
@@ -198,7 +205,9 @@ export default function TaskBoard() {
             count={todoTasks.length}
             tasks={todoTasks}
           >
-            <button className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-slate-600 px-1 py-1.5 transition-colors duration-150">
+            <button className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:cursor-pointer hover:text-slate-600 px-1 py-1.5 transition-colors duration-150"
+              onClick={() => setTaskForm(true)}
+            >
               <Plus className="h-4 w-4" />
               Add Task
             </button>
