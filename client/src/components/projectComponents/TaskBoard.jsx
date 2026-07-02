@@ -50,8 +50,8 @@ function TaskCard({ task, isOverlay = false }) {
 
   const style = transform
     ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-      }
+      transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+    }
     : undefined;
 
   const done = task.status === "done";
@@ -64,9 +64,8 @@ function TaskCard({ task, isOverlay = false }) {
       {...attributes}
       // touch-none is the key fix: without it, mobile browsers treat the
       // gesture as a page-scroll and dnd-kit never sees it as a drag.
-      className={`group touch-none select-none bg-white border border-slate-200 rounded-md p-3 shadow-sm hover:border-slate-300 hover:shadow-md transition-all duration-150 cursor-grab active:cursor-grabbing ${
-        isDragging && !isOverlay ? "opacity-30" : ""
-      } ${isOverlay ? "shadow-lg rotate-2" : ""}`}
+      className={`group touch-none select-none bg-white border border-slate-200 rounded-md p-3 shadow-sm hover:border-slate-300 hover:shadow-md transition-all duration-150 cursor-grab active:cursor-grabbing ${isDragging && !isOverlay ? "opacity-30" : ""
+        } ${isOverlay ? "shadow-lg rotate-2" : ""}`}
     >
       <div className="flex items-center justify-between mb-3">
         <p className="text-sm font-medium text-slate-800 leading-snug pr-2">
@@ -85,9 +84,8 @@ function TaskCard({ task, isOverlay = false }) {
 
       <div className="flex items-center justify-between">
         <div
-          className={`h-6 w-6 rounded-full ${
-            AVATAR_COLORS[task.id % AVATAR_COLORS.length]
-          } shrink-0`}
+          className={`h-6 w-6 rounded-full ${AVATAR_COLORS[task.id % AVATAR_COLORS.length]
+            } shrink-0`}
         />
         {done ? (
           <CheckCircle2 className="h-4 w-4 text-emerald-500" />
@@ -124,9 +122,8 @@ function Column({ id, title, dot, icon: Icon, count, tasks, children }) {
 
       <div
         ref={setNodeRef}
-        className={`flex flex-col gap-2.5 min-h-30 rounded-xl p-2 -m-2 transition-colors duration-150 ${
-          isOver ? "bg-blue-50/60 ring-2 ring-blue-200 ring-inset" : ""
-        }`}
+        className={`flex flex-col gap-2.5 min-h-30 rounded-xl p-2 -m-2 transition-colors duration-150 ${isOver ? "bg-blue-50/60 ring-2 ring-blue-200 ring-inset" : ""
+          }`}
       >
         {tasks.map((task) => (
           <TaskCard key={task.id} task={task} />
@@ -170,7 +167,7 @@ export default function TaskBoard() {
   }
 
   return (
-    <div className="bg-gray-200 border border-slate-200 rounded-sm p-4 overflow-y-scroll h-120 md:h-175 scrollbar-hide">
+    <div className="bg-gray-200 animate-fade-in-up  border border-slate-200 rounded-sm p-4 overflow-y-scroll h-120 md:h-175 scrollbar-hide">
       <div className="flex items-center justify-between flex-wrap gap-3 mb-5 rounded-md">
         <h2 className="text-base font-semibold text-slate-800">
           Tasks Overview
@@ -220,6 +217,15 @@ export default function TaskBoard() {
           {activeTask ? <TaskCard task={activeTask} isOverlay /> : null}
         </DragOverlay>
       </DndContext>
+
+      <style>{`
+                @keyframes fadeInUp {
+                from { opacity: 0; transform: translateY(8px); }
+                to { opacity: 1; transform: translateY(0); }
+                }
+                .animate-fade-in-up { animation: fadeInUp 0.4s ease-out both; }
+        `}</style>
+
     </div>
   );
 }

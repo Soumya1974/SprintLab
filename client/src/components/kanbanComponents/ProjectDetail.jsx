@@ -9,14 +9,16 @@ export default function ProjectDetail() {
   return (
     <div className="w-full flex bg-slate-50 overflow-x-hidden font-sans pt-5"
       style={{
-        backgroundImage: `linear-gradient(to right, rgb(226 232 240 / 0.6) 1px, transparent 1px),linear-gradient(to bottom, rgb(226 232 240 / 0.6) 1px, transparent 1px)`,
-        backgroundSize: "24px 24px",
-        backgroundColor: "#ffffff",
+        backgroundImage: `
+          linear-gradient(to right, rgb(203 213 225 / 0.7) 1px, transparent 1px),
+          linear-gradient(to bottom, rgb(203 213 225 / 0.7) 1px, transparent 1px)`,
+          backgroundSize: "24px 24px",
+          backgroundColor: "#F1F5F9",
       }}
     >
       <div className="min-h-screen pb-5">
         <main className="mx-auto sm:px-6 pb-8">
-          <div className="px-5">
+          <div>
             <ProjectHeader />
           </div>
 

@@ -19,14 +19,14 @@ const AVATAR_FALLBACK_COLORS = [
 
 function formatDate(date) {
 
-    if(date === null){
+    if (date === null) {
         return "No data"
     }
-  return new Date(date).toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+    return new Date(date).toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+    });
 }
 
 
@@ -85,7 +85,7 @@ export default function ProjectCard({ projectData }) {
 
     const setWorkspaceData = useWorkspaceStore((state) => state.setWorkspaceData);
     const setProjectDetails = useWorkspaceStore((state) => state.setProjectDetails);
-    
+
     const {
         _id,
         title,
@@ -95,12 +95,12 @@ export default function ProjectCard({ projectData }) {
         color,
         members = [],
     } = projectData;
-    
+
     const safeColor = /^#[0-9A-Fa-f]{6}$/.test(color) ? color : "#64748b";
 
     return (
-        <div className="relative h-full bg-white border border-slate-200 p-5 overflow-hidden hover:border-slate-300 hover:shadow-lg shadow-sm hover:-translate-y-0.5 transition-all duration-200 ease-out">
-            
+        <div className="relative animate-fade-in-right h-full bg-white border border-slate-200 p-5 overflow-hidden hover:border-slate-300 hover:shadow-lg shadow-sm hover:-translate-y-0.5 transition-all duration-200 ease-out">
+
             <span
                 className="absolute left-0 top-0 h-full w-1 rounded-l-2xl"
                 style={{ backgroundColor: safeColor }}
@@ -128,11 +128,20 @@ export default function ProjectCard({ projectData }) {
 
             <button
                 className="group w-full mt-4 flex items-center justify-center gap-1.5 text-sm font-medium py-2 rounded-lg bg-blue-50 hover:bg-blue-100 transition-all duration-150"
-                onClick={() => {setWorkspaceData(_id); setProjectDetails(projectData); console.log("Clicked:", projectData);}}
+                onClick={() => { setWorkspaceData(_id); setProjectDetails(projectData); console.log("Clicked:", projectData); }}
             >
                 Open
                 <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </button>
+
+            <style>{`
+                @keyframes fadeInRight {
+                from { opacity: 0; transform: translateX(-8px); }
+                to { opacity: 1; transform: translateX(0); }
+                }
+                .animate-fade-in-right { animation: fadeInRight 0.4s ease-out both; }
+        `}</style>
+
         </div>
     );
 }

@@ -29,7 +29,7 @@ const COMMENTS = [
 
 export default function CommentsSection() {
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-5">
+    <div className="bg-white border border-slate-200 rounded-2xl p-5 animate-fade-in-up">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-base font-semibold text-slate-800">
           Recent Comments
@@ -73,6 +73,16 @@ export default function CommentsSection() {
           <Send className="h-4 w-4" />
         </button>
       </div>
+
+        <style>{`
+                @keyframes fadeInUp {
+                from { opacity: 0; transform: translateY(8px); }
+                to { opacity: 1; transform: translateY(0); }
+                }
+                .animate-fade-in-up { animation: fadeInUp 0.4s ease-out both; }
+        `}</style>
+
+
     </div>
   );
 }

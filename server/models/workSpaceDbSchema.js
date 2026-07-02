@@ -4,9 +4,11 @@ const workspaceSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
+        trim: true,
     },
     description: {
-        type: String
+        type: String,
+        trim: true,
     },
     color: {
         type: String,

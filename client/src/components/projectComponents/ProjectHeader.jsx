@@ -1,4 +1,4 @@
-import { Layers, UserPlus, Share2, Settings, ChevronDown, LogOutIcon } from "lucide-react";
+import { UserPlus, Share2, Settings, ChevronDown, LogOutIcon } from "lucide-react";
 import useWorkspaceStore from "../../store/workspaceStore";
 
 export default function ProjectHeader() {
@@ -7,7 +7,7 @@ export default function ProjectHeader() {
   const projectDetails = useWorkspaceStore((state) => state.projectDetails);
 
   return (
-    <div className="flex items-start justify-between gap-4 flex-wrap mb-6">
+    <div className="flex items-center justify-between gap-4 flex-wrap mb-6 bg-white px-5 py-2 h-full">
       <div>
         <div className="flex items-center gap-3 mb-1.5">
           <h1 className="text-2xl font-semibold text-slate-800">
@@ -24,15 +24,15 @@ export default function ProjectHeader() {
 
       <div className="flex gap-2">
 
-        <button className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:bg-slate-200 border border-slate-200 px-3.5 py-2 rounded-lg hover:cursor-pointer transition-colors duration-150">
-          <UserPlus className="h-4 w-4" />
-          Invite
-        </button>
         <button className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:bg-slate-200 border border-slate-200 px-3.5 py-2 rounded-lg hover:cursor-pointer transition-colors duration-150"
           onClick={clearWorkspaceData}
         >
           <LogOutIcon className="h-4 w-4" />
           Back
+        </button>
+        <button className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:bg-slate-200 border border-slate-200 px-3.5 py-2 rounded-lg hover:cursor-pointer transition-colors duration-150">
+          <UserPlus className="h-4 w-4" />
+          Invite
         </button>
         <button className="inline-flex items-center gap-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 active:scale-95 px-3.5 py-2 rounded-lg hover:cursor-pointer transition-all duration-150">
           <Settings className="h-4 w-4" />

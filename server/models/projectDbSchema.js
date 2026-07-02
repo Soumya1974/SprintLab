@@ -4,10 +4,12 @@ const projectSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
-        unique: true
+        trim: true
     },
     description: {
-        type: String
+        type: String,
+        default: "",
+        trim: true
     },
     color: {
         type: String,
@@ -15,16 +17,26 @@ const projectSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        default: "pending"
+        default: "Todo"
+    },
+    priority: {
+        type: String,
+        enum: ["Low", "Medium", "High"],
+        default: "Medium",
     },
     createdBy: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "userData",
         required: true,
-        default: null
     },
     dueDate: {
         type: Date,
         default: null
+    },
+    workflowId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "workspaceData",
+        required: true,
     }
 }, { timestamps: true });
 

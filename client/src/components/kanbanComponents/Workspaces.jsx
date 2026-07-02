@@ -46,11 +46,13 @@ export default function Workspaces() {
   }, []);
 
   return (
-    <div className="h-full animate-fade-in-up"
+    <div className="h-full"
       style={{
-        backgroundImage: `linear-gradient(to right, rgb(226 232 240 / 0.6) 1px, transparent 1px),linear-gradient(to bottom, rgb(226 232 240 / 0.6) 1px, transparent 1px)`,
-        backgroundSize: "24px 24px",
-        backgroundColor: "#ffffff",
+        backgroundImage: `
+          linear-gradient(to right, rgb(203 213 225 / 0.7) 1px, transparent 1px),
+          linear-gradient(to bottom, rgb(203 213 225 / 0.7) 1px, transparent 1px)`,
+          backgroundSize: "24px 24px",
+          backgroundColor: "#F1F5F9",
       }}>
 
       {
@@ -110,15 +112,6 @@ export default function Workspaces() {
       {
         isProjectForm && <CreateProjectModal onClose={() => setProjectForm(false)} handleGetData={handleGetdata} />
       }
-
-
-      <style>{`
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(8px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in-up { animation: fadeInUp 0.4s ease-out both; }
-      `}</style>
 
     </div>
   );
