@@ -51,14 +51,14 @@ function MemberAvatars({ members = [] }) {
         <div className="flex items-center -space-x-2">
             {visible.map((member, i) => (
                 <div
-                    key={member.id ?? member.name ?? i}
-                    title={member.name}
+                    key={member.user._id ?? member.user.name ?? i}
+                    title={member.user.name}
                     className="h-7 w-7 rounded-full ring-2 ring-white overflow-hidden shrink-0"
                 >
-                    {member.avatarUrl ? (
+                    {member.user.avatar ? (
                         <img
-                            src={member.avatar}
-                            alt={member.name}
+                            src={member.user.avatar}
+                            alt={member.user.name}
                             className="h-full w-full object-cover"
                         />
                     ) : (
@@ -66,7 +66,7 @@ function MemberAvatars({ members = [] }) {
                             className={`h-full w-full flex items-center justify-center text-[10px] font-medium text-white ${AVATAR_FALLBACK_COLORS[i % AVATAR_FALLBACK_COLORS.length]
                                 }`}
                         >
-                            {getInitials(member.name)}
+                            {getInitials(member.user.name)}
                         </div>
                     )}
                 </div>
@@ -93,7 +93,7 @@ export default function ProjectCard({ projectData }) {
         status,
         dueDate,
         color,
-        members = [],
+        members,
     } = projectData;
 
     const safeColor = /^#[0-9A-Fa-f]{6}$/.test(color) ? color : "#64748b";
@@ -119,7 +119,11 @@ export default function ProjectCard({ projectData }) {
             <p className="text-sm text-slate-400 mb-4">{description}</p>
 
             <div className="flex items-center justify-between pt-3 border-t border-slate-100">
-                <MemberAvatars members={members} />
+                {
+                    
+                    <MemberAvatars members={members} />
+
+                }
                 <div className="flex items-center gap-1.5 text-slate-400">
                     <Calendar className="h-3.5 w-3.5" />
                     <span className="text-xs">Due: {formatDate(dueDate)}</span>
@@ -128,7 +132,7 @@ export default function ProjectCard({ projectData }) {
 
             <button
                 className="group w-full mt-4 flex items-center justify-center gap-1.5 text-sm font-medium py-2 rounded-lg bg-blue-50 hover:bg-blue-100 transition-all duration-150"
-                onClick={() => { setWorkspaceData(_id); setProjectDetails(projectData); console.log("Clicked:", projectData); }}
+                onClick={() => { setWorkspaceData(_id); setProjectDetails(projectData);}}
             >
                 Open
                 <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

@@ -18,8 +18,12 @@ export const handleProjectDetails = async (req, res) => {
             color,
             dueDate,
             owner,
-            members: [owner]
+            members: [{
+                user: owner,
+                role: "team",
+            }]
         });
+
 
         return res.status(201).json({
             message: "Workspace created successfully",
@@ -39,7 +43,7 @@ export const handleGetProjectData = async (req, res) => {
             owner: req.user.id
         })
         .populate("owner", "name email avatar")
-        .populate("members", "name email avatar")
+        .populate("members.user", "name email avatar")
 
         if(!userProjects) return res.status(400).json({
             message: "No workspaces found"

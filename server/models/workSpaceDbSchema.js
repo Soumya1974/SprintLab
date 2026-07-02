@@ -26,8 +26,17 @@ const workspaceSchema = new mongoose.Schema({
         default: "pending"
     },
     members: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "userData",
+        _id: false,
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "userData",
+            required: true,
+        },
+        role: {
+            type: String,
+            enum: ["team", "viewer"],
+            default: "viewer",
+        }
     }]
 }, { timestamps: true });
 

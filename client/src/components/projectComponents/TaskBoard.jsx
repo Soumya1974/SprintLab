@@ -67,6 +67,8 @@ function TaskCard({ task, isOverlay = false }) {
       // touch-none is the key fix: without it, mobile browsers treat the
       // gesture as a page-scroll and dnd-kit never sees it as a drag.
 
+      // task card here
+
       className={`group touch-none select-none bg-white border border-slate-200 rounded-md p-3 shadow-sm hover:border-slate-300 hover:shadow-md transition-all duration-150 cursor-grab active:cursor-grabbing ${isDragging && !isOverlay ? "opacity-30" : ""
         } ${isOverlay ? "shadow-lg rotate-2" : ""}`}
     >
