@@ -1,10 +1,13 @@
 import express from "express";
 import { handleAccessToken } from "../middlewares/accessTokenMiddleware.js";
 import { handleGetProjectData, handleProjectDetails } from "../controllers/workspaceController/projectDetails.js";
+import { handleGetTaskData } from "../controllers/workspaceController/taskDetails.js";
 
-const workspaceRoute = express.Router();
+const workspaceRouter = express.Router();
 
-workspaceRoute.post('/workspaces', handleAccessToken, handleProjectDetails);
-workspaceRoute.get('/workspaces/get-projects', handleAccessToken, handleGetProjectData);
+workspaceRouter.post('/workspaces', handleAccessToken, handleProjectDetails);
+workspaceRouter.get('/workspaces/get-projects', handleAccessToken, handleGetProjectData);
 
-export default workspaceRoute;
+workspaceRouter.post('/workspaces/addtask/:id', handleGetTaskData);
+
+export default workspaceRouter;
