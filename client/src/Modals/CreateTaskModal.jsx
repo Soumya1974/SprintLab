@@ -9,6 +9,8 @@ import {
   Palette,
 } from "lucide-react";
 import useWorkspaceStore from "../store/workspaceStore";
+import api from "../api/axios";
+import toast from "react-hot-toast";
 
 const COLORS = [
   { name: "Blue",    value: "#2563eb" },
@@ -22,7 +24,7 @@ const COLORS = [
 const PRIORITIES = [
   { label: "Low",    dot: "bg-emerald-500", text: "text-emerald-600", bg: "bg-emerald-50 border-emerald-200" },
   { label: "Medium", dot: "bg-amber-500",   text: "text-amber-600",   bg: "bg-amber-50 border-amber-200"   },
-  { label: "High",   dot: "bg-rose-500",    text: "text-rose-600",    bg: "bg-rose-50 border-rose-200"     },
+  { label: "High",   dot: "bg-red-500",    text: "text-rose-600",    bg: "bg-red-50 border-red-200"     },
 ];
 
 const MAX_DESC_WORDS = 50;
@@ -45,8 +47,8 @@ const INITIAL_FORM = {
   color: COLORS[0].value,
 };
 
-// Reusable collapsible row — same pattern as CreateProjectModal
-function CollapsibleRow({ icon: Icon, label, open, onToggle, preview, children }) {
+function CollapsibleRow({ icon: Icon, label, open, onToggle, preview, children }){
+
   return (
     <div className="border-t border-slate-100">
       <button
@@ -91,8 +93,8 @@ export default function CreateTaskModal() {
   const isOverLimit = wordCount > MAX_DESC_WORDS;
 
   const clearTaskForm = useWorkspaceStore((state) => state.clearTaskForm);
+  const workspaceData = useWorkspaceStore((state) => state.workspaceData);
 
-  // --- validation ---
   const titleError = !formData.title.trim() ? "Title is required" : "";
   const descriptionError = !formData.description.trim()
     ? "Description is required"
@@ -110,14 +112,39 @@ export default function CreateTaskModal() {
     setTouched((prev) => ({ ...prev, [field]: true }));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     setTouched({ title: true, description: true });
     if (!isValid) return;
+    const { title, description, dueDate, priority, color } = formData;
 
-    // formData is ready to POST:
-    // { title, description, dueDate, priority, color }
-    onCreate?.(formData);
+    try{
+      const response = await api.post(`/api/workspaces/addtask/${workspaceData}`,{
+        title,
+        description,
+        dueDate: dueDate || null,
+        priority: priority,
+        color,
+      },{
+        withCredentials: true
+      });
+
+      if(response.status === 200){
+        toast.success(response.data.message);
+      }
+    }
+    catch(err) {
+      switch (err.response.status) {
+                case 400:
+                    toast.error(err.response.data.message);
+                    break;
+                case 500:
+                    toast.error("Internal Server Error");
+                    break;
+                default:
+                    toast.error("Something went wrong");
+      }
+    }
   }
 
   const safeColor = /^#[0-9A-Fa-f]{6}$/.test(formData.color)

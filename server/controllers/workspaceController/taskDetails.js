@@ -4,32 +4,47 @@ import { Project } from "../../models/projectDbSchema.js";
 
 export const handleGetTaskData = async (req, res) => {
     try {
+        const id = req.params.workspaceData;
+
         const { title, description, dueDate, priority, color } = req.body;
 
-        const workSpace = await Workspace.findById(req.params.id)
+        const workSpace = await Workspace.findById(id)
             .populate("dueDate")
             .populate("members.user", "name email avatar")
 
-        if(!workSpace) return res.status(400).json({
+        if (!workSpace) return res.status(400).json({
             message: "Workspace not found",
         })
 
         const members = workSpace.members.find(
-            member => member.user.toString() == req.user.id
+            member => member.user._id.toString() === req.user.id
         );
 
-        if(!members || members.role !== "team"){
+        if (!members || members.role === "viewer") {
             return res.status(400).json({
                 message: "Viewers are not allowed to update tasks"
             })
         }
 
+        const taskData = await Project.create({
+            title,
+            description,
+            dueDate,
+            priority,
+            color,
+            workflowId: id,
+            createdBy: req.user.id
+        })
 
+        res.status(200).json({
+            message: "Task created successfully"
+        })
     }
     catch (err) {
         console.error(err.message);
+
         res.status(500).json({
-            message: "Internal server error"
-        })
+            message: err.message
+        });
     }
 }

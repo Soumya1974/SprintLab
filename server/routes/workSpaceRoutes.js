@@ -8,6 +8,6 @@ const workspaceRouter = express.Router();
 workspaceRouter.post('/workspaces', handleAccessToken, handleProjectDetails);
 workspaceRouter.get('/workspaces/get-projects', handleAccessToken, handleGetProjectData);
 
-workspaceRouter.post('/workspaces/addtask/:id', handleGetTaskData);
+workspaceRouter.post('/workspaces/addtask/:workspaceData', handleAccessToken, handleGetTaskData);
 
 export default workspaceRouter;

@@ -22,7 +22,7 @@ const projectSchema = new mongoose.Schema({
     priority: {
         type: String,
         enum: ["Low", "Medium", "High"],
-        default: "Medium",
+        default: "Low",
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
@@ -37,7 +37,7 @@ const projectSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "workspaceData",
         required: true,
-    }
+    },
 }, { timestamps: true });
 
 export const Project = mongoose.model("projectData", projectSchema);
