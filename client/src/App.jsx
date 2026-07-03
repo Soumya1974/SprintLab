@@ -14,6 +14,7 @@ import VerifyOtp from './pages/authPages/VerifyOtp'
 import SetNewPassword from './pages/authPages/SetNewPassword'
 import ForgotPasswordRoute from './routes/authRoutes/ForgotPasswordRoute'
 import NotFound from './pages/landingPages/NotFound'
+import { SkeletonTheme } from 'react-loading-skeleton'
 
 function App() {
 
@@ -23,15 +24,16 @@ function App() {
 
   return (
     <div>
-      <Toaster
-        position='top-right'
-        toastOptions={{
-          style: {
-            background: "#1f2937",
-            color: "#fff",
-          },
-        }}
-      />
+      <SkeletonTheme baseColor='#BFC6C4' highlightColor='#AEB5B3'>
+        <Toaster
+          position='top-right'
+          toastOptions={{
+            style: {
+              background: "#1f2937",
+              color: "#fff",
+            },
+          }}
+        />
         <Routes>
 
           {/* Public Routes */}
@@ -57,9 +59,10 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
           </Route>
 
-          <Route path='*' element={<NotFound />}/>
+          <Route path='*' element={<NotFound />} />
 
         </Routes>
+      </SkeletonTheme>
     </div>
   )
 }
