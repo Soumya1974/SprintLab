@@ -35,14 +35,14 @@ const AVATAR_COLORS = [
 ];
 
 const INITIAL_TASKS = [
-  { id: 1, title: "Research & Analysis", date: "May 25", priority: "High", status: "tasks" },
-  { id: 2, title: "Create Wireframes", date: "May 27", priority: "Medium", status: "tasks" },
-  { id: 3, title: "Competitor Review", date: "May 30", priority: "Low", status: "tasks" },
-  { id: 4, title: "Competitor Review", date: "May 30", priority: "Low", status: "tasks" },
-  { id: 5, title: "UI/UX Design", date: "May 24", priority: "High", status: "done" },
-  { id: 6, title: "Develop Homepage", date: "May 26", priority: "Medium", status: "done" },
-  { id: 7, title: "API Integration", date: "May 28", priority: "High", status: "done" },
-  { id: 8, title: "API Integration", date: "May 28", priority: "High", status: "done" },
+  { id: 1, title: "Research & Analysis", description: "Research and analysis task", date: "May 25", priority: "High", status: "tasks" },
+  { id: 2, title: "Create Wireframes", description: "Research and analysis task", date: "May 27", priority: "Medium", status: "tasks" },
+  { id: 3, title: "Competitor Review", description: "Research and analysis task", date: "May 30", priority: "Low", status: "tasks" },
+  { id: 4, title: "Competitor Review", description: "Research and analysis task", date: "May 30", priority: "Low", status: "tasks" },
+  { id: 5, title: "UI/UX Design",  description: "Research and analysis task",date: "May 24", priority: "High", status: "done" },
+  { id: 6, title: "Develop Homepage", description: "Research and analysis task", date: "May 26", priority: "Medium", status: "done" },
+  { id: 7, title: "API Integration", description: "Research and analysis task", date: "May 28", priority: "High", status: "done" },
+  { id: 8, title: "API Integration",  description: "Research and analysis task",date: "May 28", priority: "High", status: "done" },
 ];
 
 function TaskCard({ task, isOverlay = false }) {
@@ -63,9 +63,6 @@ function TaskCard({ task, isOverlay = false }) {
       style={style}
       {...listeners}
       {...attributes}
-
-      // touch-none is the key fix: without it, mobile browsers treat the
-      // gesture as a page-scroll and dnd-kit never sees it as a drag.
 
       // task card here
 
@@ -89,9 +86,10 @@ function TaskCard({ task, isOverlay = false }) {
 
       <div className="flex items-center justify-between">
         <div
-          className={`h-6 w-6 rounded-full ${AVATAR_COLORS[task.id % AVATAR_COLORS.length]
-            } shrink-0`}
-        />
+          className="shrink-0 text-gray-400"
+        >
+          {task.description}
+        </div>
         {done ? (
           <CheckCircle2 className="h-4 w-4 text-emerald-500" />
         ) : (

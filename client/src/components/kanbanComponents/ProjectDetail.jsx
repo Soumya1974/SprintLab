@@ -16,8 +16,8 @@ export default function ProjectDetail() {
           backgroundColor: "#F1F5F9",
       }}
     >
-      <div className="min-h-screen pb-5">
-        <main className="mx-auto sm:px-6 pb-8">
+      <div className="w-full min-h-screen pb-5">
+        <main className="w-full mx-auto sm:px-6 pb-8">
           <div>
             <ProjectHeader />
           </div>

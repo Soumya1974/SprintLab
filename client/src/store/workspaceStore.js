@@ -7,6 +7,7 @@ const useWorkspaceStore = create(
             workspaceData: null,
             projectDetails: null,
             taskForm: false,
+            workspaceDueDate: "",
 
             setWorkspaceData: (id) => set({ workspaceData: id  }),
             clearWorkspaceData: () => set({ workspaceData: null }),
@@ -16,6 +17,9 @@ const useWorkspaceStore = create(
 
             setTaskForm: (value) => set({ taskForm: value}),
             clearTaskForm: () => set({ taskForm: false}),
+
+            setWorkspaceDueDate: (value) => set({ workspaceDueDate: value}),
+            clearWorkspaceDueDate: () => set({ workspaceDueDate: ""}),
         }),
         {
             name: "workspace-store"

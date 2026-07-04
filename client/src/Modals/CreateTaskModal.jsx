@@ -13,18 +13,18 @@ import api from "../api/axios";
 import toast from "react-hot-toast";
 
 const COLORS = [
-  { name: "Blue",    value: "#2563eb" },
-  { name: "Violet",  value: "#7c3aed" },
+  { name: "Blue", value: "#2563eb" },
+  { name: "Violet", value: "#7c3aed" },
   { name: "Emerald", value: "#10b981" },
-  { name: "Amber",   value: "#f59e0b" },
-  { name: "Rose",    value: "#f43f5e" },
-  { name: "Slate",   value: "#475569" },
+  { name: "Amber", value: "#f59e0b" },
+  { name: "Rose", value: "#f43f5e" },
+  { name: "Slate", value: "#475569" },
 ];
 
 const PRIORITIES = [
-  { label: "Low",    dot: "bg-emerald-500", text: "text-emerald-600", bg: "bg-emerald-50 border-emerald-200" },
-  { label: "Medium", dot: "bg-amber-500",   text: "text-amber-600",   bg: "bg-amber-50 border-amber-200"   },
-  { label: "High",   dot: "bg-red-500",    text: "text-rose-600",    bg: "bg-red-50 border-red-200"     },
+  { label: "Low", dot: "bg-emerald-500", text: "text-emerald-600", bg: "bg-emerald-50 border-emerald-200" },
+  { label: "Medium", dot: "bg-amber-500", text: "text-amber-600", bg: "bg-amber-50 border-amber-200" },
+  { label: "High", dot: "bg-red-500", text: "text-rose-600", bg: "bg-red-50 border-red-200" },
 ];
 
 const MAX_DESC_WORDS = 50;
@@ -43,11 +43,11 @@ const INITIAL_FORM = {
   title: "",
   description: "",
   dueDate: "",
-  priority: "",
+  priority: "Low",
   color: COLORS[0].value,
 };
 
-function CollapsibleRow({ icon: Icon, label, open, onToggle, preview, children }){
+function CollapsibleRow({ icon: Icon, label, open, onToggle, preview, children }) {
 
   return (
     <div className="border-t border-slate-100">
@@ -64,17 +64,15 @@ function CollapsibleRow({ icon: Icon, label, open, onToggle, preview, children }
         <span className="flex items-center gap-2">
           {preview}
           <ChevronDown
-            className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${
-              open ? "rotate-180" : ""
-            }`}
+            className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${open ? "rotate-180" : ""
+              }`}
           />
         </span>
       </button>
 
       <div
-        className={`overflow-hidden transition-all duration-300 ease-in-out ${
-          open ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-        }`}
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${open ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+          }`}
       >
         {children}
       </div>
@@ -88,19 +86,21 @@ export default function CreateTaskModal() {
   const [showDueDate, setShowDueDate] = useState(false);
   const [showPriority, setShowPriority] = useState(false);
   const [showColor, setShowColor] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const wordCount = countWords(formData.description);
   const isOverLimit = wordCount > MAX_DESC_WORDS;
 
   const clearTaskForm = useWorkspaceStore((state) => state.clearTaskForm);
   const workspaceData = useWorkspaceStore((state) => state.workspaceData);
+  const workspaceDueDate = useWorkspaceStore((state) => state.workspaceDueDate);
 
   const titleError = !formData.title.trim() ? "Title is required" : "";
   const descriptionError = !formData.description.trim()
     ? "Description is required"
     : isOverLimit
-    ? `Description must be ${MAX_DESC_WORDS} words or fewer`
-    : "";
+      ? `Description must be ${MAX_DESC_WORDS} words or fewer`
+      : "";
 
   const isValid = !titleError && !descriptionError;
 
@@ -117,33 +117,40 @@ export default function CreateTaskModal() {
     setTouched({ title: true, description: true });
     if (!isValid) return;
     const { title, description, dueDate, priority, color } = formData;
+    setSubmitting(true);
 
-    try{
-      const response = await api.post(`/api/workspaces/addtask/${workspaceData}`,{
+    try {
+      const response = await api.post(`/api/workspaces/addtask/${workspaceData}`, {
         title,
         description,
         dueDate: dueDate || null,
         priority: priority,
         color,
-      },{
+      }, {
         withCredentials: true
       });
 
-      if(response.status === 200){
+      if (response.status === 200) {
         toast.success(response.data.message);
       }
     }
-    catch(err) {
+    catch (err) {
       switch (err.response.status) {
-                case 400:
-                    toast.error(err.response.data.message);
-                    break;
-                case 500:
-                    toast.error("Internal Server Error");
-                    break;
-                default:
-                    toast.error("Something went wrong");
+        case 400:
+          toast.error(err.response.data.message);
+          break;
+        case 500:
+          toast.error("Internal Server Error");
+          break;
+        default:
+          toast.error("Something went wrong");
       }
+    }
+    finally {
+      setSubmitting(false);
+      setTimeout(() => {
+        clearTaskForm();
+      }, 1000);
     }
   }
 
@@ -202,11 +209,10 @@ export default function CreateTaskModal() {
               onChange={(e) => updateField("title", e.target.value)}
               onBlur={() => handleBlur("title")}
               placeholder="e.g. Design the login screen"
-              className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 transition-colors duration-150 ${
-                touched.title && titleError
-                  ? "border-rose-300 focus:border-rose-400 focus:ring-rose-100"
-                  : "border-slate-200 focus:border-blue-400 focus:ring-blue-100"
-              }`}
+              className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 transition-colors duration-150 ${touched.title && titleError
+                ? "border-rose-300 focus:border-rose-400 focus:ring-rose-100"
+                : "border-slate-200 focus:border-blue-400 focus:ring-blue-100"
+                }`}
             />
             {touched.title && titleError && (
               <p className="mt-1.5 text-xs text-rose-500 flex items-center gap-1 animate-fade-in-down">
@@ -226,9 +232,8 @@ export default function CreateTaskModal() {
                 Description <span className="text-rose-500">*</span>
               </label>
               <span
-                className={`text-xs font-medium transition-colors duration-150 ${
-                  isOverLimit ? "text-rose-500" : "text-slate-400"
-                }`}
+                className={`text-xs font-medium transition-colors duration-150 ${isOverLimit ? "text-rose-500" : "text-slate-400"
+                  }`}
               >
                 {wordCount}/{MAX_DESC_WORDS} words
               </span>
@@ -240,11 +245,10 @@ export default function CreateTaskModal() {
               onBlur={() => handleBlur("description")}
               placeholder="What does this task involve?"
               rows={3}
-              className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 transition-colors duration-150 resize-none ${
-                (touched.description && descriptionError) || isOverLimit
-                  ? "border-rose-300 focus:border-rose-400 focus:ring-rose-100"
-                  : "border-slate-200 focus:border-blue-400 focus:ring-blue-100"
-              }`}
+              className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 transition-colors duration-150 resize-none ${(touched.description && descriptionError) || isOverLimit
+                ? "border-rose-300 focus:border-rose-400 focus:ring-rose-100"
+                : "border-slate-200 focus:border-blue-400 focus:ring-blue-100"
+                }`}
             />
             {touched.description && descriptionError && (
               <p className="mt-1.5 text-xs text-rose-500 flex items-center gap-1 animate-fade-in-down">
@@ -274,6 +278,7 @@ export default function CreateTaskModal() {
                 <input
                   type="date"
                   value={formData.dueDate}
+                  max={workspaceDueDate ? workspaceDueDate.split("T")[0] : undefined}
                   onChange={(e) => updateField("dueDate", e.target.value)}
                   className="w-full rounded-lg border border-slate-200 pl-10 pr-3.5 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-colors duration-150"
                 />
@@ -302,17 +307,11 @@ export default function CreateTaskModal() {
                 <button
                   key={p.label}
                   type="button"
-                  onClick={() =>
-                    updateField(
-                      "priority",
-                      formData.priority === p.label ? "" : p.label
-                    )
-                  }
-                  className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border transition-all duration-150 ${
-                    formData.priority === p.label
-                      ? `${p.bg} ${p.text} border-current scale-105`
-                      : "border-slate-200 text-slate-500 hover:bg-slate-50"
-                  }`}
+                  onClick={() => updateField("priority", p.label)}
+                  className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border transition-all duration-150 ${formData.priority === p.label
+                    ? `${p.bg} ${p.text} border-current scale-105`
+                    : "border-slate-200 text-slate-500 hover:bg-slate-50"
+                    }`}
                 >
                   <span className={`h-2 w-2 rounded-full ${p.dot}`} />
                   {p.label}
@@ -343,11 +342,10 @@ export default function CreateTaskModal() {
                   type="button"
                   onClick={() => updateField("color", c.value)}
                   aria-label={c.name}
-                  className={`h-6 w-6 rounded-full transition-transform duration-150 hover:cursor-pointer ${
-                    formData.color === c.value
-                      ? "ring-2 ring-offset-1 ring-slate-400 scale-110"
-                      : "hover:scale-110"
-                  }`}
+                  className={`h-6 w-6 rounded-full transition-transform duration-150 hover:cursor-pointer ${formData.color === c.value
+                    ? "ring-2 ring-offset-1 ring-slate-400 scale-110"
+                    : "hover:scale-110"
+                    }`}
                   style={{ backgroundColor: c.value }}
                 />
               ))}
@@ -366,21 +364,16 @@ export default function CreateTaskModal() {
             <button
               type="submit"
               disabled={!isValid}
-              className={`flex-1 text-sm font-medium px-4 py-2.5 rounded-lg hover:cursor-pointer transition-all duration-150 ${
-                isValid
-                  ? "text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] cursor-pointer"
+              className={`flex flex-1 items-center justify-center gap-2 text-sm font-medium px-4 py-2.5 rounded-lg transition-all duration-150 ${isValid
+                  ? "text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98]"
                   : "text-white bg-blue-300 cursor-not-allowed"
-              }`}
-              style={
-                isValid
-                  ? {
-                      // subtle accent tint matching selected project color on hover
-                      // falls back to blue-600 if color isn't set
-                    }
-                  : undefined
-              }
+                }`}
             >
-              Create task
+              {submitting && (
+                <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              )}
+
+              <span>{submitting ? "Just a sec" : "Create Task"}</span>
             </button>
           </div>
         </form>

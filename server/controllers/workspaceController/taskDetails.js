@@ -2,7 +2,7 @@ import { User } from "../../models/userDbSchema.js";
 import { Workspace } from "../../models/workSpaceDbSchema.js";
 import { Project } from "../../models/projectDbSchema.js";
 
-export const handleGetTaskData = async (req, res) => {
+export const handlePostTask = async (req, res) => {
     try {
         const id = req.params.workspaceData;
 
@@ -42,6 +42,23 @@ export const handleGetTaskData = async (req, res) => {
     }
     catch (err) {
         console.error(err.message);
+
+        res.status(500).json({
+            message: err.message
+        });
+    }
+}
+
+export const handleGetTasks = async (req, res) => {
+    try{
+        const id = req.params.workspaceData;
+
+        const taskData = await Project.findById(id);
+
+        if()
+    }
+    catch(err) {
+         console.error(err.message);
 
         res.status(500).json({
             message: err.message

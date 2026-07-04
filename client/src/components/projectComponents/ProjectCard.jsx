@@ -85,6 +85,7 @@ export default function ProjectCard({ projectData }) {
 
     const setWorkspaceData = useWorkspaceStore((state) => state.setWorkspaceData);
     const setProjectDetails = useWorkspaceStore((state) => state.setProjectDetails);
+    const setWorkspaceDueDate = useWorkspaceStore((state) => state.setWorkspaceDueDate);
 
     const {
         _id,
@@ -132,7 +133,7 @@ export default function ProjectCard({ projectData }) {
 
             <button
                 className="group w-full mt-4 flex items-center justify-center gap-1.5 text-sm font-medium py-2 rounded-lg bg-blue-50 hover:bg-blue-100 transition-all duration-150"
-                onClick={() => { setWorkspaceData(_id); setProjectDetails(projectData);}}
+                onClick={() => { setWorkspaceData(_id); setProjectDetails(projectData); setWorkspaceDueDate(dueDate);}}
             >
                 Open
                 <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-150 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
