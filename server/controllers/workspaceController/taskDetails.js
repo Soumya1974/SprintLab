@@ -51,11 +51,17 @@ export const handlePostTask = async (req, res) => {
 
 export const handleGetTasks = async (req, res) => {
     try{
-        const id = req.params.workspaceData;
+        const workflowId = req.params.workspaceData;
 
-        const taskData = await Project.findById(id);
+        const projectData = await Project.find({ workflowId })
 
-        if()
+        if(!projectData) return res.status(400).json({
+            message: "Task details not found"
+        })
+
+        res.status(200).json({
+            projectData
+        })
     }
     catch(err) {
          console.error(err.message);

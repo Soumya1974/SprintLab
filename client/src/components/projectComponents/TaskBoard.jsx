@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   MoreHorizontal,
   Plus,
@@ -19,6 +19,8 @@ import {
   DragOverlay,
 } from "@dnd-kit/core";
 import useWorkspaceStore from "../../store/workspaceStore";
+import toast from "react-hot-toast";
+import api from "../../api/axios";
 
 const PRIORITY_STYLES = {
   High: "bg-rose-50 text-rose-600",
@@ -34,16 +36,6 @@ const AVATAR_COLORS = [
   "bg-rose-400",
 ];
 
-const INITIAL_TASKS = [
-  { id: 1, title: "Research & Analysis", description: "Research and analysis task", date: "May 25", priority: "High", status: "tasks" },
-  { id: 2, title: "Create Wireframes", description: "Research and analysis task", date: "May 27", priority: "Medium", status: "tasks" },
-  { id: 3, title: "Competitor Review", description: "Research and analysis task", date: "May 30", priority: "Low", status: "tasks" },
-  { id: 4, title: "Competitor Review", description: "Research and analysis task", date: "May 30", priority: "Low", status: "tasks" },
-  { id: 5, title: "UI/UX Design",  description: "Research and analysis task",date: "May 24", priority: "High", status: "done" },
-  { id: 6, title: "Develop Homepage", description: "Research and analysis task", date: "May 26", priority: "Medium", status: "done" },
-  { id: 7, title: "API Integration", description: "Research and analysis task", date: "May 28", priority: "High", status: "done" },
-  { id: 8, title: "API Integration",  description: "Research and analysis task",date: "May 28", priority: "High", status: "done" },
-];
 
 function TaskCard({ task, isOverlay = false }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
@@ -138,10 +130,11 @@ function Column({ id, title, dot, icon: Icon, count, tasks, children }) {
 }
 
 export default function TaskBoard() {
-  const [tasks, setTasks] = useState(INITIAL_TASKS);
+  const [tasks, setTasks] = useState([]);
   const [activeTask, setActiveTask] = useState(null);
 
   const setTaskForm = useWorkspaceStore((state) => state.setTaskForm);
+  const workspaceData = useWorkspaceStore((state) => state.workspaceData);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -170,6 +163,31 @@ export default function TaskBoard() {
       prev.map((t) => (t.id === active.id ? { ...t, status: newStatus } : t))
     );
   }
+
+  async function handleGetTaskCards() {
+    try {
+      const response = await api.get(`/api/workspaces/get-task/${workspaceData}`);
+      setTasks(response.data.projectData);
+    }
+    catch (err) {
+      switch (err.response.status) {
+        case 400:
+          toast.error(err.response.data.message);
+          break;
+
+        case 500:
+          toast.error("Internal Server Error");
+          break;
+
+        default:
+          toast.error("Something went wrong");
+      }
+    }
+  }
+
+  useEffect(() => {
+    handleGetTaskCards();
+  }, []);
 
   return (
     <div className="bg-gray-200 animate-fade-in-up  border border-slate-200 rounded-sm p-4 overflow-y-scroll h-120 md:h-175 scrollbar-hide">
