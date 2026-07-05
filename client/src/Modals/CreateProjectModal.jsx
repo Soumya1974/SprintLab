@@ -23,7 +23,7 @@ const COLORS = [
 ];
 
 const MAX_WORDS = 50;
-const MAX_TITLE_WORDS = 30;
+const MAX_NAME_WORDS = 30;
 
 function countWords(text) {
     if (!text) return 0;
@@ -54,9 +54,17 @@ export default function CreateProjectModal({ onClose, handleGetData }) {
     const [submitting, setSubmitting] = useState(false);
 
     const wordCount = countWords(formData.description);
-    const isOverLimit = wordCount > MAX_WORDS;
+    const nameWordCount = countWords(formData.name);
 
-    const nameError = !formData.name.trim() ? "Project name is required" : "";
+    const isOverLimit = wordCount > MAX_WORDS;
+    const isNameOverLimit = nameWordCount > MAX_NAME_WORDS;
+
+    const nameError = !formData.name.trim()
+        ? "Project name is required"
+        : isNameOverLimit
+            ? `Project name must be ${MAX_NAME_WORDS} charecters or fewer`
+            : "";
+
     const descriptionError = !formData.description.trim()
         ? "Description is required"
         : isOverLimit
@@ -83,7 +91,7 @@ export default function CreateProjectModal({ onClose, handleGetData }) {
 
         const { name, description, color, dueDate } = formData;
 
-        if( !name || !description ) return;
+        if (!name || !description) return;
 
         try {
             const response = await api.post("/api/workspaces", {
@@ -130,7 +138,7 @@ export default function CreateProjectModal({ onClose, handleGetData }) {
             />
 
             <div className="relative bg-white border border-slate-200 shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-scale-in">
-                {/* header */}
+
                 <div className="flex items-center justify-between px-6 pt-6 pb-4 sticky top-0 bg-white z-10">
                     <div className="hidden md:flex items-center gap-3">
                         <div className="h-10 w-10 rounded-xl bg-blue-50 flex items-center justify-center">
@@ -155,21 +163,29 @@ export default function CreateProjectModal({ onClose, handleGetData }) {
                 </div>
 
                 <form onSubmit={handleSubmit} noValidate className="px-6 pb-6">
-                    {/* project name */}
+
                     <div className="mb-4">
-                        <label
-                            htmlFor="projectName"
-                            className="text-sm font-medium text-slate-700 mb-1.5 block"
-                        >
-                            Project name <span className="text-rose-500">*</span>
-                        </label>
+                        <div className="flex items-center justify-between mb-1.5">
+                            <label
+                                htmlFor="projectName"
+                                className="text-sm font-medium text-slate-700 mb-1.5 block"
+                            >
+                                Project name <span className="text-rose-500">*</span>
+                            </label>
+                            <span
+                                className={`text-xs font-medium transition-colors duration-150 ${isNameOverLimit ? "text-rose-500" : "text-slate-400"
+                                    }`}
+                            >
+                                {nameWordCount}/{MAX_NAME_WORDS} words
+                            </span>
+                        </div>
                         <input
                             id="projectName"
                             value={formData.name}
                             onChange={(e) => updateField("name", e.target.value)}
                             onBlur={() => handleBlur("name")}
                             placeholder="e.g. Mobile App Redesign"
-                            className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 transition-colors duration-150 ${touched.name && nameError
+                            className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 transition-colors duration-150 ${touched.name && nameError || isNameOverLimit
                                 ? "border-rose-300 focus:border-rose-400 focus:ring-rose-100"
                                 : "border-slate-200 focus:border-blue-400 focus:ring-blue-100"
                                 }`}
@@ -182,7 +198,7 @@ export default function CreateProjectModal({ onClose, handleGetData }) {
                         )}
                     </div>
 
-                    {/* description */}
+
                     <div className="mb-4">
                         <div className="flex items-center justify-between mb-1.5">
                             <label

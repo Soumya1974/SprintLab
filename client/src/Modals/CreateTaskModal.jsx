@@ -224,7 +224,7 @@ export default function CreateTaskModal() {
               onChange={(e) => updateField("title", e.target.value)}
               onBlur={() => handleBlur("title")}
               placeholder="e.g. Design the login screen"
-              className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 transition-colors duration-150 ${touched.title && titleError
+              className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 transition-colors duration-150 ${touched.title && titleError || isTitleOverLimit
                 ? "border-rose-300 focus:border-rose-400 focus:ring-rose-100"
                 : "border-slate-200 focus:border-blue-400 focus:ring-blue-100"
                 }`}
