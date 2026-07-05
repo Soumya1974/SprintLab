@@ -39,7 +39,7 @@ const AVATAR_COLORS = [
 
 function TaskCard({ task, isOverlay = false }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
-    useDraggable({ id: task.id, data: task });
+    useDraggable({ id: task._id, data: task });
 
   const style = transform
     ? {
@@ -58,13 +58,14 @@ function TaskCard({ task, isOverlay = false }) {
 
       // task card here
 
-      className={`group touch-none select-none bg-white border border-slate-200 rounded-md p-3 shadow-sm hover:border-slate-300 hover:shadow-md transition-all duration-150 cursor-grab active:cursor-grabbing ${isDragging && !isOverlay ? "opacity-30" : ""
+      className={`group touch-none select-none w-full h-30 bg-white border border-slate-300 rounded-md p-3 shadow-sm hover:border-slate-300 hover:shadow-md transition-all duration-150 cursor-grab active:cursor-grabbing ${isDragging && !isOverlay ? "opacity-30" : ""
         } ${isOverlay ? "shadow-lg rotate-2" : ""}`}
     >
-      <div className="flex items-center justify-between mb-3">
-        <p className="text-sm font-medium text-slate-800 leading-snug pr-2">
+      <div className="flex items-center justify-between mb-2">
+        <p className="min-w-0 text-md font-semibold text-slate-800 leading-snug pr-2 wrap-break-word">
           {task.title}
         </p>
+
         {!done && (
           <button
             aria-label="Task options"
@@ -77,9 +78,7 @@ function TaskCard({ task, isOverlay = false }) {
       </div>
 
       <div className="flex items-center justify-between">
-        <div
-          className="shrink-0 text-gray-400"
-        >
+        <div className="min-w-0 text-gray-400 text-[14px] wrap-break-word">
           {task.description}
         </div>
         {done ? (
@@ -121,7 +120,7 @@ function Column({ id, title, dot, icon: Icon, count, tasks, children }) {
           }`}
       >
         {tasks.map((task) => (
-          <TaskCard key={task.id} task={task} />
+          <TaskCard key={task._id} task={task} />
         ))}
         {children}
       </div>
@@ -145,11 +144,11 @@ export default function TaskBoard() {
     })
   );
 
-  const todoTasks = tasks.filter((t) => t.status === "tasks");
-  const doneTasks = tasks.filter((t) => t.status === "done");
+  const todoTasks = tasks.filter((t) => t.status === "Todo");
+  const doneTasks = tasks.filter((t) => t.status === "Done");
 
   function handleDragStart(event) {
-    const task = tasks.find((t) => t.id === event.active.id);
+    const task = tasks.find((t) => t._id === event.active.id);
     setActiveTask(task);
   }
 
@@ -160,7 +159,7 @@ export default function TaskBoard() {
 
     const newStatus = over.id; // "tasks" or "done"
     setTasks((prev) =>
-      prev.map((t) => (t.id === active.id ? { ...t, status: newStatus } : t))
+      prev.map((t) => (t._id === active.id ? { ...t, status: newStatus } : t))
     );
   }
 
@@ -207,9 +206,7 @@ export default function TaskBoard() {
       </div>
 
       <DndContext
-        // snapCenterToCursor keeps the overlay centered exactly under the
-        // pointer/finger, regardless of where on the card you grabbed it —
-        // this is what fixes the "grabbed from a different position" jump.
+
         modifiers={[restrictToWindowEdges, snapCenterToCursor]}
         sensors={sensors}
         onDragStart={handleDragStart}

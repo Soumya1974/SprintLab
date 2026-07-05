@@ -28,11 +28,11 @@ const PRIORITIES = [
 ];
 
 const MAX_DESC_WORDS = 50;
+const MAX_TITLE_WORDS = 30;
 
 function countWords(text) {
-  const trimmed = text.trim();
-  if (!trimmed) return 0;
-  return trimmed.split(/\s+/).length;
+  if (!text) return 0;
+  return text.trim().length;
 }
 
 function withAlpha(hex, alpha) {
@@ -91,11 +91,19 @@ export default function CreateTaskModal() {
   const wordCount = countWords(formData.description);
   const isOverLimit = wordCount > MAX_DESC_WORDS;
 
+  const titleWordCount = countWords(formData.title);
+  const isTitleOverLimit = titleWordCount > MAX_TITLE_WORDS;
+
   const clearTaskForm = useWorkspaceStore((state) => state.clearTaskForm);
   const workspaceData = useWorkspaceStore((state) => state.workspaceData);
   const workspaceDueDate = useWorkspaceStore((state) => state.workspaceDueDate);
 
-  const titleError = !formData.title.trim() ? "Title is required" : "";
+  const titleError = !formData.title.trim()
+    ? "Title is required"
+    : isTitleOverLimit
+      ? `Title must be ${MAX_TITLE_WORDS} words or fewer`
+      : "";
+
   const descriptionError = !formData.description.trim()
     ? "Description is required"
     : isOverLimit
@@ -162,14 +170,13 @@ export default function CreateTaskModal() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-      {/* backdrop */}
+
       <div
         className="absolute inset-0 bg-slate-900/40 animate-fade-in"
       />
 
       <div className="relative bg-white border border-slate-200 shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-scale-in">
 
-        {/* header */}
         <div className="hidden lg:flex items-center justify-between px-6 pt-6 pb-4 sticky top-0 bg-white z-10 border-b border-slate-100">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
@@ -197,12 +204,20 @@ export default function CreateTaskModal() {
 
           {/* title */}
           <div className="mb-4">
-            <label
-              htmlFor="taskTitle"
-              className="text-sm font-medium text-slate-700 mb-1.5 block"
-            >
-              Title <span className="text-rose-500">*</span>
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label
+                htmlFor="taskTitle"
+                className="text-sm font-medium text-slate-700 mb-1.5 block"
+              >
+                Title <span className="text-rose-500">*</span>
+              </label>
+              <span
+                className={`text-xs font-medium transition-colors duration-150 ${isTitleOverLimit ? "text-rose-500" : "text-slate-400"
+                  }`}
+              >
+                {titleWordCount}/{MAX_TITLE_WORDS} words
+              </span>
+            </div>
             <input
               id="taskTitle"
               value={formData.title}
@@ -365,8 +380,8 @@ export default function CreateTaskModal() {
               type="submit"
               disabled={!isValid}
               className={`flex flex-1 items-center justify-center gap-2 text-sm font-medium px-4 py-2.5 rounded-lg transition-all duration-150 ${isValid
-                  ? "text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98]"
-                  : "text-white bg-blue-300 cursor-not-allowed"
+                ? "text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98]"
+                : "text-white bg-blue-300 cursor-not-allowed"
                 }`}
             >
               {submitting && (
