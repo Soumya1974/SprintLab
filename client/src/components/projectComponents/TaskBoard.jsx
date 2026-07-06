@@ -4,6 +4,7 @@ import {
   Plus,
   CheckCircle2,
   Circle,
+  Calendar,
 } from "lucide-react";
 
 import { restrictToWindowEdges, snapCenterToCursor } from "@dnd-kit/modifiers";
@@ -21,6 +22,7 @@ import {
 import useWorkspaceStore from "../../store/workspaceStore";
 import toast from "react-hot-toast";
 import api from "../../api/axios";
+import CreateTaskModal from "../../Modals/CreateTaskModal";
 
 const PRIORITY_STYLES = {
   High: "bg-rose-50 text-rose-600",
@@ -35,6 +37,18 @@ const AVATAR_COLORS = [
   "bg-amber-400",
   "bg-rose-400",
 ];
+
+function formatDate(date) {
+
+  if (date === null) {
+    return "No data"
+  }
+  return new Date(date).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
 
 
 function TaskCard({ task, isOverlay = false }) {
@@ -58,10 +72,10 @@ function TaskCard({ task, isOverlay = false }) {
 
       // task card here
 
-      className={`group touch-none select-none w-full h-30 bg-white border border-slate-300 rounded-md p-3 shadow-sm hover:border-slate-300 hover:shadow-md transition-all duration-150 cursor-grab active:cursor-grabbing ${isDragging && !isOverlay ? "opacity-30" : ""
+      className={`group touch-none select-none w-full h-35 bg-white border border-slate-300 rounded-md p-3 shadow-sm hover:border-slate-300 hover:shadow-md transition-all duration-150 cursor-grab active:cursor-grabbing ${isDragging && !isOverlay ? "opacity-30" : ""
         } ${isOverlay ? "shadow-lg rotate-2" : ""}`}
     >
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-1">
         <p className="min-w-0 text-md font-semibold text-slate-800 leading-snug pr-2 wrap-break-word">
           {task.title}
         </p>
@@ -77,22 +91,31 @@ function TaskCard({ task, isOverlay = false }) {
         )}
       </div>
 
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between h-14">
         <div className="min-w-0 text-gray-400 text-[14px] wrap-break-word">
           {task.description}
         </div>
+      </div>
+
+      <div className="h-px bg-gray-200 rounded-4xl mt" />
+
+      <div className="flex items-center py-2">
         {done ? (
           <CheckCircle2 className="h-4 w-4 text-emerald-500" />
         ) : (
-          <span
-            className={`text-[11px] font-medium px-2 py-1 rounded-md ${PRIORITY_STYLES[task.priority]}`}
-          >
-            {task.priority}
-          </span>
+          <div className="flex justify-between w-full px">
+            <div
+              className={`text-[11px] font-medium px-2 py-1 rounded-md ${PRIORITY_STYLES[task.priority]}`}
+            >
+              {task.priority}
+            </div>
+            <div className="flex items-center gap-1.5 text-slate-400 bg-transparent">
+              <Calendar className="h-3.5 w-3.5" />
+              <span className="text-xs">Due: {formatDate(task.dueDate)}</span>
+            </div>
+          </div>
         )}
       </div>
-
-      <p className="text-xs text-slate-400 mt-2">{task.date}</p>
     </div>
   );
 }
@@ -134,6 +157,7 @@ export default function TaskBoard() {
 
   const setTaskForm = useWorkspaceStore((state) => state.setTaskForm);
   const workspaceData = useWorkspaceStore((state) => state.workspaceData);
+  const taskForm = useWorkspaceStore((state) => state.taskForm);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -203,6 +227,9 @@ export default function TaskBoard() {
             Add Task
           </button>
         </div>
+        {
+          taskForm && <CreateTaskModal handleGetTaskCards={handleGetTaskCards} />
+        }
       </div>
 
       <DndContext

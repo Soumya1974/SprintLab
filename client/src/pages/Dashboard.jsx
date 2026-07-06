@@ -4,7 +4,6 @@ import Topbar from "../components/kanbanComponents/Topbar";
 import LogoutModal from "../components/authComponents/LogoutModal";
 import Workspaces from "../components/kanbanComponents/Workspaces";
 import CreateTaskModal from "../Modals/CreateTaskModal";
-import useWorkspaceStore from "../store/workspaceStore";
 // import ProjectDetail from "../components/kanbanComponents/ProjectDetail";
 
 export default function Dashboard() {
@@ -13,8 +12,6 @@ export default function Dashboard() {
   const [active, setActive] = useState("dashboard");
   const [isOpen, setIsOpen] = useState(false);
   
-  const taskForm = useWorkspaceStore((state) => state.taskForm);
-
   const components = {
     dashboard: <>Dashboard</>,
     workspaces: <Workspaces onOpenClick={() => setProjectForm(true)}/>
@@ -50,10 +47,6 @@ export default function Dashboard() {
         <main className="flex-1 overflow-y-auto">
           {
             components[active]
-          }
-
-          {
-            taskForm && <CreateTaskModal/>
           }
 
         </main>

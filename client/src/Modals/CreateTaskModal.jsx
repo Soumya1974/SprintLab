@@ -11,6 +11,7 @@ import {
 import useWorkspaceStore from "../store/workspaceStore";
 import api from "../api/axios";
 import toast from "react-hot-toast";
+import { createPortal } from "react-dom";
 
 const COLORS = [
   { name: "Blue", value: "#2563eb" },
@@ -27,7 +28,7 @@ const PRIORITIES = [
   { label: "High", dot: "bg-red-500", text: "text-rose-600", bg: "bg-red-50 border-red-200" },
 ];
 
-const MAX_DESC_WORDS = 50;
+const MAX_DESC_WORDS = 60;
 const MAX_TITLE_WORDS = 30;
 
 function countWords(text) {
@@ -80,7 +81,7 @@ function CollapsibleRow({ icon: Icon, label, open, onToggle, preview, children }
   );
 }
 
-export default function CreateTaskModal() {
+export default function CreateTaskModal({ handleGetTaskCards }) {
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [touched, setTouched] = useState({ title: false, description: false });
   const [showDueDate, setShowDueDate] = useState(false);
@@ -141,6 +142,7 @@ export default function CreateTaskModal() {
       if (response.status === 200) {
         toast.success(response.data.message);
       }
+      await handleGetTaskCards();
     }
     catch (err) {
       switch (err.response.status) {
@@ -168,7 +170,7 @@ export default function CreateTaskModal() {
 
   const selectedPriority = PRIORITIES.find((p) => p.label === formData.priority);
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
 
       <div
@@ -411,6 +413,7 @@ export default function CreateTaskModal() {
         .animate-scale-in { animation: scaleIn 0.2s ease-out both; }
         .animate-fade-in-down { animation: fadeInDown 0.15s ease-out both; }
       `}</style>
-    </div>
+    </div>,
+    document.body
   );
 }

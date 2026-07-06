@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import api from "../api/axios";
 import toast from "react-hot-toast";
+import { createPortal } from "react-dom";
 
 const COLORS = [
     { name: "Blue", value: "#2563eb" },
@@ -131,7 +132,7 @@ export default function CreateProjectModal({ onClose, handleGetData }) {
         }
     }
 
-    return (
+    return createPortal(
         <div className="fixed inset-0 z-100 flex items-center justify-center px-4">
             <div
                 className="absolute inset-0 bg-slate-900/40 animate-fade-in"
@@ -349,7 +350,8 @@ export default function CreateProjectModal({ onClose, handleGetData }) {
         .animate-fade-in-down { animation: fadeInDown 0.15s ease-out both; }
         .animate-fade-in-up { animation: fadeInUp 0.15s ease-out both; }
       `}</style>
-        </div>
+        </div>,
+        document.body
     );
 }
 
