@@ -1,93 +1,140 @@
+import React, { useState } from "react";
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Underline from "@tiptap/extension-underline";
+import Placeholder from "@tiptap/extension-placeholder";
 import {
-  Heading,
   Bold,
   Italic,
+  Heading1,
   List,
-  ListOrdered,
-  CheckSquare,
-  Code,
-  Link2,
-  Image,
-  MoreHorizontal,
-  Maximize2,
+  Grid,
+  Save,
 } from "lucide-react";
 
-const TOOLBAR_ICONS = [
-  { icon: Heading, label: "Heading" },
-  { icon: Bold, label: "Bold" },
-  { icon: Italic, label: "Italic" },
-  { icon: List, label: "Bullet list" },
-  { icon: ListOrdered, label: "Numbered list" },
-  { icon: CheckSquare, label: "Checklist" },
-  { icon: Code, label: "Code" },
-  { icon: Link2, label: "Link" },
-  { icon: Image, label: "Image" },
-  { icon: MoreHorizontal, label: "More" },
-];
+const ProjectNotes = () => {
+  const [notes, setNotes] = useState("");
+  const [grid, setGrid] = useState(1);
 
-export default function ProjectNotes() {
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Underline,
+      Placeholder.configure({
+        placeholder: "Start writing your document...",
+      }),
+    ],
+    content: "",
+    onUpdate: ({ editor }) => {
+      setNotes(editor.getHTML());
+    },
+  });
+
+  if (!editor) return null;
+
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-5 w-full mt-5">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-base font-semibold text-slate-800">
-          Project Notes
-        </h2>
-        <button
-          aria-label="Expand"
-          className="h-7 w-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors duration-150"
-        >
-          <Maximize2 className="h-4 w-4" />
-        </button>
-      </div>
-
-      {/* toolbar */}
-      <div className="flex items-center gap-0.5 border border-slate-200 rounded-lg p-1.5 mb-4 bg-slate-50/50 w-fit">
-        {TOOLBAR_ICONS.map(({ icon: Icon, label }) => (
+    <div
+      className="mt-6 rounded-xl border border-gray-300 shadow-lg overflow-hidden bg-gray-100"
+      style={{
+        backgroundImage: `linear-gradient(to bottom, rgba(203,213,225,0.${grid}) 1px, transparent 1px)`,
+        backgroundSize: "40px 30px",
+      }}
+    >
+      {/* Toolbar */}
+      <div className="flex flex-wrap items-center justify-between border-b border-gray-200 bg-white px-3 py-2 sm:px-4 sm:py-3">
+        <div className="flex flex-wrap gap-2">
           <button
-            key={label}
-            aria-label={label}
-            className="h-7 w-7 flex items-center justify-center rounded-md text-slate-500 hover:bg-white hover:text-slate-700 hover:shadow-sm transition-all duration-150"
+            onClick={() => editor.chain().focus().toggleBold().run()}
+            className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
+              editor.isActive("bold")
+                ? "bg-blue-600 text-white"
+                : "bg-white border border-gray-200 hover:bg-gray-100"
+            }`}
           >
-            <Icon className="h-3.5 w-3.5" />
+            <Bold size={18} />
+            <span className="hidden sm:inline">Bold</span>
           </button>
-        ))}
-      </div>
 
-      {/* notepad content */}
-      <div className="min-h-35">
-        <h3 className="text-lg font-semibold text-slate-800 mb-3">
-          Website Redesign Plan
-        </h3>
+          <button
+            onClick={() => editor.chain().focus().toggleItalic().run()}
+            className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
+              editor.isActive("italic")
+                ? "bg-blue-600 text-white"
+                : "bg-white border border-gray-200 hover:bg-gray-100"
+            }`}
+          >
+            <Italic size={18} />
+            <span className="hidden sm:inline">Italic</span>
+          </button>
 
-        <p className="text-sm font-medium text-slate-600 mb-2">Goals:</p>
+          <button
+            onClick={() => editor.chain().focus().toggleUnderline().run()}
+            className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
+              editor.isActive("underline")
+                ? "bg-blue-600 text-white"
+                : "bg-white border border-gray-200 hover:bg-gray-100"
+            }`}
+          >
+            <span className="font-bold">U</span>
+            <span className="hidden sm:inline">Underline</span>
+          </button>
 
-        <div className="flex flex-col gap-2">
-          <label className="flex items-center gap-2.5 cursor-pointer">
-            <span className="h-4 w-4 rounded bg-emerald-500 flex items-center justify-center shrink-0">
-              <CheckSquare className="h-3 w-3 text-white" strokeWidth={3} />
-            </span>
-            <span className="text-sm text-slate-600">
-              Improve user experience and navigation
-            </span>
-          </label>
-          <label className="flex items-center gap-2.5 cursor-pointer">
-            <span className="h-4 w-4 rounded bg-emerald-500 flex items-center justify-center shrink-0">
-              <CheckSquare className="h-3 w-3 text-white" strokeWidth={3} />
-            </span>
-            <span className="text-sm text-slate-600">
-              Make the website fully responsive
-            </span>
-          </label>
-          <label className="flex items-center gap-2.5 cursor-pointer">
-            <span className="h-4 w-4 rounded border-2 border-slate-300 shrink-0" />
-            <span className="text-sm text-slate-600">
-              Increase page load speed
-            </span>
-          </label>
+          <button
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level: 1 }).run()
+            }
+            className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
+              editor.isActive("heading", { level: 1 })
+                ? "bg-blue-600 text-white"
+                : "bg-white border border-gray-200 hover:bg-gray-100"
+            }`}
+          >
+            <Heading1 size={18} />
+            <span className="hidden sm:inline">H1</span>
+          </button>
+
+          <button
+            onClick={() => editor.chain().focus().toggleBulletList().run()}
+            className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
+              editor.isActive("bulletList")
+                ? "bg-blue-600 text-white"
+                : "bg-white border border-gray-200 hover:bg-gray-100"
+            }`}
+          >
+            <List size={18} />
+            <span className="hidden sm:inline">List</span>
+          </button>
+        </div>
+
+        <div className="flex gap-2">
+          <button
+            onClick={grid === 1 ? () => setGrid(9) : () => setGrid(1)}
+            className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
+              grid === 1
+                ? "bg-white border border-gray-200 hover:bg-gray-100"
+                : "bg-blue-600 text-white"
+            }`}
+          >
+            <Grid size={18} />
+            <span className="hidden sm:inline">Grid</span>
+          </button>
+
+          <button
+            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium bg-white border border-gray-200 hover:bg-gray-100 transition active:bg-blue-600 active:text-white"
+          >
+            <Save size={18} />
+            <span className="hidden sm:inline">Save</span>
+          </button>
         </div>
       </div>
 
-      <p className="text-xs text-slate-400 text-right mt-4">Edited 2h ago</p>
+      {/* Editor */}
+      <EditorContent
+        editor={editor}
+        className="min-h-87.5 px-4 py-3 sm:px-6 focus:outline-none text-gray-800"
+      />
     </div>
   );
-}
+};
+
+export default ProjectNotes;

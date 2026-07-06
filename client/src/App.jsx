@@ -24,7 +24,7 @@ function App() {
 
   return (
     <div>
-      <SkeletonTheme baseColor='#BFC6C4' highlightColor='#AEB5B3'>
+      <SkeletonTheme baseColor='#EEEEEE' highlightColor='#D1D3D4'>
         <Toaster
           position='top-right'
           toastOptions={{

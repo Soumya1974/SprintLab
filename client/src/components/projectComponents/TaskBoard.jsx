@@ -5,6 +5,7 @@ import {
   CheckCircle2,
   Circle,
   Calendar,
+  ClipboardList,
 } from "lucide-react";
 
 import { restrictToWindowEdges, snapCenterToCursor } from "@dnd-kit/modifiers";
@@ -262,7 +263,7 @@ export default function TaskBoard() {
   }, []);
 
   return (
-    <div className="bg-gray-200 animate-fade-in-up border border-slate-200 rounded-sm p-4 overflow-y-auto h-120 md:h-175 scrollbar-hide">
+    <div className="bg-gray-200 animate-fade-in-up border border-slate-300 rounded-sm p-4 overflow-y-auto h-120 md:h-175 scrollbar-hide">
       <div className="flex items-center justify-between flex-wrap gap-3 mb-5 rounded-md">
         <h2 className="text-base font-semibold text-slate-800">
           Tasks Overview
@@ -281,42 +282,88 @@ export default function TaskBoard() {
         }
       </div>
 
-      <DndContext
+      {
+        tasks.length === 0 ? (
+          <div className="w-full">
+            <div className="hidden xl:flex flex-col sm:flex-row gap-6">
+              <Column
+                id="todo"
+                title="Tasks"
+                icon={Circle}
+                count={todoTasks.length}
+                tasks={todoTasks}
+              >
+                <button className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:cursor-pointer hover:text-slate-600 px-1 py-1.5 transition-colors duration-150"
+                  onClick={() => setTaskForm(true)}
+                >
+                  <Plus className="h-4 w-4" />
+                  Add Task
+                </button>
+              </Column>
 
-        modifiers={[restrictToWindowEdges, snapCenterToCursor]}
-        sensors={sensors}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-      >
-        <div className="flex flex-col sm:flex-row gap-6">
-          <Column
-            id="todo"
-            title="Tasks"
-            icon={Circle}
-            count={todoTasks.length}
-            tasks={todoTasks}
-          >
-            <button className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:cursor-pointer hover:text-slate-600 px-1 py-1.5 transition-colors duration-150"
-              onClick={() => setTaskForm(true)}
+              <Column
+                id="done"
+                title="Done"
+                dot="bg-emerald-500"
+                count={doneTasks.length}
+                tasks={doneTasks}
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center py-10 text-center">
+              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 border border-slate-200">
+                <ClipboardList className="w-8 h-8 text-slate-400" />
+              </div>
+
+              <h3 className="mt-5 text-lg font-semibold text-slate-700">
+                No tasks yet
+              </h3>
+
+              <p className="mt-2 max-w-xs text-sm text-slate-500">
+                Create your first task or drag one here when you're ready.
+              </p>
+            </div>
+          </div>
+        )
+          :
+          (
+            <DndContext
+
+              modifiers={[restrictToWindowEdges, snapCenterToCursor]}
+              sensors={sensors}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
             >
-              <Plus className="h-4 w-4" />
-              Add Task
-            </button>
-          </Column>
+              <div className="flex flex-col sm:flex-row gap-6">
+                <Column
+                  id="todo"
+                  title="Tasks"
+                  icon={Circle}
+                  count={todoTasks.length}
+                  tasks={todoTasks}
+                >
+                  <button className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:cursor-pointer hover:text-slate-600 px-1 py-1.5 transition-colors duration-150"
+                    onClick={() => setTaskForm(true)}
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add Task
+                  </button>
+                </Column>
 
-          <Column
-            id="done"
-            title="Done"
-            dot="bg-emerald-500"
-            count={doneTasks.length}
-            tasks={doneTasks}
-          />
-        </div>
+                <Column
+                  id="done"
+                  title="Done"
+                  dot="bg-emerald-500"
+                  count={doneTasks.length}
+                  tasks={doneTasks}
+                />
+              </div >
 
-        <DragOverlay>
-          {activeTask ? <TaskCard task={activeTask} isOverlay /> : null}
-        </DragOverlay>
-      </DndContext>
+              <DragOverlay>
+                {activeTask ? <TaskCard task={activeTask} isOverlay /> : null}
+              </DragOverlay>
+            </DndContext >
+          )
+      }
 
       <style>{`
                 @keyframes fadeInUp {
@@ -326,6 +373,6 @@ export default function TaskBoard() {
                 .animate-fade-in-up { animation: fadeInUp 0.4s ease-out both; }
         `}</style>
 
-    </div>
+    </div >
   );
 }

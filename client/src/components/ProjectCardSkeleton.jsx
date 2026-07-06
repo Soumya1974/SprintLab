@@ -4,7 +4,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 
 const ProjectCardSkeleton = () => {
   return (
-    <div className="relative h-full bg-white border border-slate-200 p-5 overflow-hidden shadow-sm">
+    <div className="relative h-full bg-white border border-slate-200 p-5 overflow-hidden shadow-sm animate-pulse">
 
       <span className="absolute left-0 top-0 h-full w-1">
         <Skeleton height="100%" />
