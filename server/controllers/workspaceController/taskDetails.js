@@ -50,12 +50,12 @@ export const handlePostTask = async (req, res) => {
 }
 
 export const handleGetTasks = async (req, res) => {
-    try{
+    try {
         const workflowId = req.params.workspaceData;
 
         const projectData = await Project.find({ workflowId })
 
-        if(!projectData) return res.status(400).json({
+        if (!projectData) return res.status(400).json({
             message: "Task details not found"
         })
 
@@ -63,8 +63,43 @@ export const handleGetTasks = async (req, res) => {
             projectData
         })
     }
-    catch(err) {
-         console.error(err.message);
+    catch (err) {
+        console.error(err.message);
+
+        res.status(500).json({
+            message: err.message
+        });
+    }
+}
+
+export const handleUpdateTaskStatus = async (req, res) => {
+    try {
+        const { taskId } = req.params;
+        const { status } = req.body;
+
+        const task = await Project.findById(taskId);
+
+        if (!task) {
+            return res.status(404).json({
+                message: "Task not found"
+            });
+        }
+
+        task.status = status;
+
+        await task.save();
+
+        if (task.status == 'todo') {
+            res.status(200).json({
+                message: `Task ${task.title} is set to todo`
+            });
+        }
+        res.status(200).json({
+            message: `Task ${task.title} is set to done`
+        });
+    }
+    catch (err) {
+        console.error(err.message);
 
         res.status(500).json({
             message: err.message

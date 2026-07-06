@@ -69,52 +69,72 @@ function TaskCard({ task, isOverlay = false }) {
       style={style}
       {...listeners}
       {...attributes}
-
-      // task card here
-
-      className={`group touch-none select-none w-full h-35 bg-white border border-slate-300 rounded-md p-3 shadow-sm hover:border-slate-300 hover:shadow-md transition-all duration-150 cursor-grab active:cursor-grabbing ${isDragging && !isOverlay ? "opacity-30" : ""
-        } ${isOverlay ? "shadow-lg rotate-2" : ""}`}
+      className={`group flex w-full h-35 bg-white border border-slate-300 rounded-l-md shadow-sm hover:border-slate-300 hover:shadow-md transition-all duration-150 cursor-grab active:cursor-grabbing ${isDragging && !isOverlay ? "opacity-30" : ""
+        } ${isOverlay ? "shadow-lg" : ""}`}
     >
-      <div className="flex items-center justify-between mb-1">
-        <p className="min-w-0 text-md font-semibold text-slate-800 leading-snug pr-2 wrap-break-word">
-          {task.title}
-        </p>
 
-        {!done && (
-          <button
-            aria-label="Task options"
-            onPointerDown={(e) => e.stopPropagation()}
-            className="text-slate-300 hover:text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-150 shrink-0"
-          >
-            <MoreHorizontal className="h-4 w-4" />
-          </button>
-        )}
-      </div>
+      <div
+        className="w-2 rounded-l-md"
+        style={{ backgroundColor: task.color }}
+      />
 
-      <div className="flex items-center justify-between h-14">
-        <div className="min-w-0 text-gray-400 text-[14px] wrap-break-word">
-          {task.description}
-        </div>
-      </div>
+      <div className="flex-1 p-3">
+        <div className="flex items-center justify-between mb-1">
+          <p className="min-w-0 text-md font-semibold text-slate-800 leading-snug pr-2 wrap-break-word">
+            {task.title}
+          </p>
 
-      <div className="h-px bg-gray-200 rounded-4xl mt" />
-
-      <div className="flex items-center py-2">
-        {done ? (
-          <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-        ) : (
-          <div className="flex justify-between w-full px">
-            <div
-              className={`text-[11px] font-medium px-2 py-1 rounded-md ${PRIORITY_STYLES[task.priority]}`}
+          {!done && (
+            <button
+              aria-label="Task options"
+              onPointerDown={(e) => e.stopPropagation()}
+              className="text-slate-300 hover:text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-150 shrink-0"
             >
-              {task.priority}
-            </div>
-            <div className="flex items-center gap-1.5 text-slate-400 bg-transparent">
-              <Calendar className="h-3.5 w-3.5" />
-              <span className="text-xs">Due: {formatDate(task.dueDate)}</span>
-            </div>
+              <MoreHorizontal className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+
+        <div className="flex items-center justify-between h-14">
+          <div className="min-w-0 text-gray-400 text-[14px] wrap-break-word">
+            {task.description}
           </div>
-        )}
+        </div>
+
+        <div className="h-px bg-gray-200 rounded-full" />
+
+        <div className="flex items-center mt-1 py-1">
+          {done ? (
+            <div className="flex justify-between w-full">
+              <div className="flex gap-1 items-center text-[12px] text-gray-400">
+                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                <span>Finished</span>
+              </div>
+
+              <div className="flex items-center gap-1.5 text-slate-400 line-through">
+                <Calendar className="h-3.5 w-3.5" />
+                <span className="text-xs">
+                  Done: {formatDate(task.dueDate)}
+                </span>
+              </div>
+            </div>
+          ) : (
+            <div className="flex justify-between w-full">
+              <div
+                className={`text-[11px] font-medium px-2 py-1 rounded-md ${PRIORITY_STYLES[task.priority]}`}
+              >
+                {task.priority}
+              </div>
+
+              <div className="flex items-center gap-1.5 text-slate-400">
+                <Calendar className="h-3.5 w-3.5" />
+                <span className="text-xs">
+                  Due: {formatDate(task.dueDate)}
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -168,23 +188,44 @@ export default function TaskBoard() {
     })
   );
 
-  const todoTasks = tasks.filter((t) => t.status === "Todo");
-  const doneTasks = tasks.filter((t) => t.status === "Done");
+  const todoTasks = tasks.filter((t) => t.status === "todo");
+  const doneTasks = tasks.filter((t) => t.status === "done");
 
   function handleDragStart(event) {
     const task = tasks.find((t) => t._id === event.active.id);
     setActiveTask(task);
   }
 
-  function handleDragEnd(event) {
+  async function handleDragEnd(event) {
     const { active, over } = event;
+
     setActiveTask(null);
+
     if (!over) return;
 
-    const newStatus = over.id; // "tasks" or "done"
-    setTasks((prev) =>
-      prev.map((t) => (t._id === active.id ? { ...t, status: newStatus } : t))
+    const newStatus = over.id;
+
+    //any how i change the ui optimistic
+    setTasks(prev =>
+      prev.map(task =>
+        task._id === active.id
+          ? { ...task, status: newStatus }
+          : task
+      )
     );
+
+    try {
+      const response = await api.patch(`/api/tasks/${active.id}/status`, {
+        status: newStatus,
+      }, {
+        withCredentials: true
+      });
+      toast.success(response.data.message);
+
+    } catch (err) {
+      toast.error("Couldn't update task.");
+      handleGetTaskCards();
+    }
   }
 
   async function handleGetTaskCards() {
@@ -241,7 +282,7 @@ export default function TaskBoard() {
       >
         <div className="flex flex-col sm:flex-row gap-6">
           <Column
-            id="tasks"
+            id="todo"
             title="Tasks"
             icon={Circle}
             count={todoTasks.length}

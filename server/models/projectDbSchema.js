@@ -17,7 +17,7 @@ const projectSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        default: "Todo"
+        default: "todo"
     },
     priority: {
         type: String,
