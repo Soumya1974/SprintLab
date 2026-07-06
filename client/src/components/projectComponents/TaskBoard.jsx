@@ -69,7 +69,7 @@ function TaskCard({ task, isOverlay = false }) {
       style={style}
       {...listeners}
       {...attributes}
-      className={`group flex w-full h-35 bg-white border border-slate-300 rounded-l-md shadow-sm hover:border-slate-300 hover:shadow-md transition-all duration-150 cursor-grab active:cursor-grabbing ${isDragging && !isOverlay ? "opacity-30" : ""
+      className={`group touch-none select-none flex w-full h-35 bg-white border border-slate-300 rounded-l-md shadow-sm hover:border-slate-300 hover:shadow-md transition-all duration-150 cursor-grab active:cursor-grabbing ${isDragging && !isOverlay ? "opacity-30" : ""
         } ${isOverlay ? "shadow-lg" : ""}`}
     >
 
@@ -184,7 +184,7 @@ export default function TaskBoard() {
       activationConstraint: { distance: 6 },
     }),
     useSensor(TouchSensor, {
-      activationConstraint: { delay: 150, tolerance: 8 },
+      activationConstraint: { delay: 200, tolerance: 10 },
     })
   );
 
@@ -203,9 +203,17 @@ export default function TaskBoard() {
 
     if (!over) return;
 
+    const draggedTask = tasks.find(t => t._id === active.id);
+
+    if (!draggedTask) return;
+
+    const oldStatus = draggedTask.status;
     const newStatus = over.id;
 
-    //any how i change the ui optimistic
+    // No change don't do anything optimizes api call
+    if (oldStatus === newStatus) return;
+
+    // Optimistic update fro the card even if backend didnot set to done
     setTasks(prev =>
       prev.map(task =>
         task._id === active.id
@@ -215,13 +223,13 @@ export default function TaskBoard() {
     );
 
     try {
-      const response = await api.patch(`/api/tasks/${active.id}/status`, {
-        status: newStatus,
-      }, {
-        withCredentials: true
-      });
-      toast.success(response.data.message);
+      const response = await api.patch(
+        `/api/tasks/${active.id}/status`,
+        { status: newStatus },
+        { withCredentials: true }
+      );
 
+      toast.success(response.data.message);
     } catch (err) {
       toast.error("Couldn't update task.");
       handleGetTaskCards();
@@ -254,7 +262,7 @@ export default function TaskBoard() {
   }, []);
 
   return (
-    <div className="bg-gray-200 animate-fade-in-up  border border-slate-200 rounded-sm p-4 overflow-y-scroll h-120 md:h-175 scrollbar-hide">
+    <div className="bg-gray-200 animate-fade-in-up border border-slate-200 rounded-sm p-4 overflow-y-auto h-120 md:h-175 scrollbar-hide">
       <div className="flex items-center justify-between flex-wrap gap-3 mb-5 rounded-md">
         <h2 className="text-base font-semibold text-slate-800">
           Tasks Overview
