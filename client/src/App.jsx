@@ -41,7 +41,6 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/forgotpassword" element={<ForgotPassword />} />
           </Route>
 
           {/* Signup OTP Route */}
@@ -52,6 +51,7 @@ function App() {
           {/* Forgot password route */}
           <Route element={<ForgotPasswordRoute />}>
             <Route path="/resetpassword" element={<SetNewPassword />} />
+            <Route path="/forgotpassword" element={<ForgotPassword />} />
           </Route>
 
           {/* Protected Routes */}

@@ -6,6 +6,20 @@ export const handleNotesData = async (req, res) => {
     const { workspaceData } = req.params;
     const { notes, version } = req.body;
 
+    let  existingNote = await Notes.findOne({ workspaceData });
+
+    if (!existingNote) {
+      existingNote = await Notes.create({
+        workspaceData,
+        notes,
+        version: 1,
+      });
+
+      return res.status(200).json({
+        message: "Notes saved successfully",
+      });
+    }
+
     const updatedNote = await Notes.findOneAndUpdate(
       {
         workspaceData,
@@ -16,18 +30,15 @@ export const handleNotesData = async (req, res) => {
         $inc: { version: 1 },
       },
       {
-        new: true,
+        returnDocument: "after",
       }
     );
 
     if (!updatedNote) {
-      return res.status(409).json({
-        message: "This note has already been modified by another user.",
-      });
+      return res.status(409)
     }
     return res.status(200).json({
       message: "Notes saved successfully",
-      note: updatedNote,
     });
   }
   catch (err) {
@@ -45,9 +56,7 @@ export const handleGetNotes = async (req, res) => {
     const note = await Notes.findOne({ workspaceData });
 
     if (!note) {
-      return res.status(200).json({
-        notes: "",
-      });
+      return res.status(400);
     }
 
     return res.status(200).json({

@@ -12,6 +12,7 @@ export default function LogoutModal({ onCancelClick }) {
     const clearAccessToken = useAuthStore((state) =>
         state.clearAccessToken
     )
+    const clearForgotPasswordProgress = useAuthStore((state) => state.clearForgotPasswordProgress);
 
     const handleLogoutClick = async () => {
         setSubmitting(true);
@@ -24,6 +25,7 @@ export default function LogoutModal({ onCancelClick }) {
 
             setTimeout(() => {
                 clearAccessToken();
+                clearForgotPasswordProgress();
             }, 1000);
         }
         catch (err) {

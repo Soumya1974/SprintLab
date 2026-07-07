@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Underline from "@tiptap/extension-underline";
+// import Underline from "@tiptap/extension-underline";
 import Placeholder from "@tiptap/extension-placeholder";
 import {
   Bold,
@@ -10,22 +10,26 @@ import {
   List,
   Grid,
   Save,
+  RefreshCcw,
 } from "lucide-react";
 import api from "../../api/axios";
 import useWorkspaceStore from "../../store/workspaceStore";
 import toast from "react-hot-toast";
+import NoteConflictModal from "../../Modals/NoteConflictModal";
 
 const ProjectNotes = () => {
   const [notes, setNotes] = useState("");
   const [grid, setGrid] = useState(1);
   const [version, setVersion] = useState(0);
+  const [conflictModal, setConflictModal] = useState(false);
+  const [getNotes, setGetNotes] = useState("");
 
   const workspaceData = useWorkspaceStore((state) => state.workspaceData);
 
   const editor = useEditor({
     extensions: [
       StarterKit,
-      Underline,
+      // Underline,
       Placeholder.configure({
         placeholder: "Start writing your document...",
       }),
@@ -41,6 +45,12 @@ const ProjectNotes = () => {
     if (!notes || editor.getText().trim() === "") {
       return;
     }
+
+    if(notes === getNotes){
+      toast.error("Write up somthing to post");
+      return;
+    }
+
     try {
       const response = await api.put(`/api/post-notes/${workspaceData}`, {
         notes,
@@ -57,7 +67,7 @@ const ProjectNotes = () => {
           toast.error(err.response.data.message);
           break;
         case 409:
-          toast.error(err.response.data.message);
+          setConflictModal(true);
           break;
         case 500:
           toast.error("Internal Server Error");
@@ -68,21 +78,23 @@ const ProjectNotes = () => {
     }
   }
 
-  useEffect(() => {
-    const fetchNotes = async () => {
-      try {
-        const response = await api.get(`/api/get-notes/${workspaceData}`, {
-          withCredentials: true,
-        });
-
-        if (response.data.notes) {
-          editor?.commands.setContent(response.data.notes.notes);
-          setVersion(response.data.notes.version);
-        }
-      } catch (err) {
-        console.error(err);
+  const fetchNotes = async () => {
+    try {
+      const response = await api.get(`/api/get-notes/${workspaceData}`, {
+        withCredentials: true,
+      });
+      
+      if (response.data.notes) {
+        editor?.commands.setContent(response.data.notes.notes);
+        setVersion(response.data.notes.version);
+        setGetNotes(response.data.notes.notes);
       }
-    };
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  
+  useEffect(() => {
 
     if (workspaceData && editor) {
       fetchNotes();
@@ -99,7 +111,10 @@ const ProjectNotes = () => {
         backgroundSize: "40px 30px",
       }}
     >
-      {/* Toolbar */}
+      {
+        conflictModal && <NoteConflictModal onOk={() => setConflictModal(false)}/>
+      }
+      
       <div className="flex flex-wrap items-center justify-between border-b border-gray-200 bg-white px-3 py-2 sm:px-4 sm:py-3">
         <div className="flex flex-wrap gap-2">
           <button
@@ -124,7 +139,7 @@ const ProjectNotes = () => {
             <span className="hidden sm:inline">Italic</span>
           </button>
 
-          <button
+          {/* <button
             onClick={() => editor.chain().focus().toggleUnderline().run()}
             className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${editor.isActive("underline")
                 ? "bg-blue-600 text-white"
@@ -133,7 +148,7 @@ const ProjectNotes = () => {
           >
             <span className="font-bold">U</span>
             <span className="hidden sm:inline">Underline</span>
-          </button>
+          </button> */}
 
           <button
             onClick={() =>
@@ -157,6 +172,14 @@ const ProjectNotes = () => {
           >
             <List size={18} />
             <span className="hidden sm:inline">List</span>
+          </button>
+
+          <button
+            onClick={() => fetchNotes()}
+            className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-200 active:scale-95 transition`}
+          >
+            <RefreshCcw size={18} />
+            <span className="hidden sm:inline">Refresh</span>
           </button>
         </div>
 

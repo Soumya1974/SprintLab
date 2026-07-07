@@ -7,16 +7,12 @@ export default function NoteConflictModal({ onOk }) {
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
             <div className="absolute inset-0 bg-slate-900/40 animate-fade-in" />
 
-            <div className="relative bg-white rounded-2xl border border-slate-200 shadow-xl w-full max-w-sm p-6 animate-scale-in">
+            <div className="relative bg-white border border-slate-200 shadow-xl w-full max-w-sm p-6 animate-scale-in">
 
-                <div className="h-11 w-11 rounded-full bg-amber-50 flex items-center justify-center mb-4">
-                    <TriangleAlert className="h-5 w-5 text-amber-500" />
-                </div>
-
-                <h2 className="text-base font-semibold text-slate-800 mb-2 flex gap items-center">
-                    <div className="h-11 w-11 rounded-full bg-amber-50 flex items-center justify-center mb-4">
-                        <TriangleAlert className="h-5 w-5 text-amber-500" />
-                    </div>
+                <h2 className="text-base font-semibold text-slate-800 mb-4 flex gap-2 items-center">
+                   
+                    <TriangleAlert className="h-5 w-5 text-red-500" />
+                   
                     <span>This note has been updated</span>
                 </h2>
 
