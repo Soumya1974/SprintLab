@@ -18,6 +18,7 @@ import toast from "react-hot-toast";
 const ProjectNotes = () => {
   const [notes, setNotes] = useState("");
   const [grid, setGrid] = useState(1);
+  const [version, setVersion] = useState(0);
 
   const workspaceData = useWorkspaceStore((state) => state.workspaceData);
 
@@ -41,8 +42,9 @@ const ProjectNotes = () => {
       return;
     }
     try {
-      const response = await api.post(`/api/post-notes/${workspaceData}`, {
-        notes
+      const response = await api.put(`/api/post-notes/${workspaceData}`, {
+        notes,
+        version
       }, {
         withCredentials: true
       });
@@ -52,6 +54,9 @@ const ProjectNotes = () => {
     catch (err) {
       switch (err.response.status) {
         case 400:
+          toast.error(err.response.data.message);
+          break;
+        case 409:
           toast.error(err.response.data.message);
           break;
         case 500:
@@ -71,7 +76,8 @@ const ProjectNotes = () => {
         });
 
         if (response.data.notes) {
-          editor?.commands.setContent(response.data.notes);
+          editor?.commands.setContent(response.data.notes.notes);
+          setVersion(response.data.notes.version);
         }
       } catch (err) {
         console.error(err);

@@ -10,6 +10,10 @@ const notesSchema = new mongoose.Schema({
     notes: {
         type: String
     },
+    version: {
+        type: Number,
+        default: 1
+    },
 }, { timestamps: true });
 
 export const Notes = mongoose.model("notesData", notesSchema);

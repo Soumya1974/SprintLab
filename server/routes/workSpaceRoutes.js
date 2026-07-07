@@ -13,7 +13,7 @@ workspaceRouter.post('/workspaces/addtask/:workspaceData', handleAccessToken, ha
 workspaceRouter.get('/workspaces/get-task/:workspaceData', handleAccessToken, handleGetTasks);
 workspaceRouter.patch('/tasks/:taskId/status', handleAccessToken, handleUpdateTaskStatus);
 
-workspaceRouter.post('/post-notes/:workspaceData',handleAccessToken, handleNotesData);
+workspaceRouter.put('/post-notes/:workspaceData',handleAccessToken, handleNotesData);
 workspaceRouter.get('/get-notes/:workspaceData',handleAccessToken, handleGetNotes);
 
 export default workspaceRouter;
