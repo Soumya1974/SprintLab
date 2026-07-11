@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
+import toast from "react-hot-toast";
+import api from "../api/axios";
 import { X, ChevronDown, Mail, UserPlus, Eye, Users } from "lucide-react";
+import useWorkspaceStore from "../store/workspaceStore";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -9,6 +12,8 @@ export default function InviteModal({ onClose }) {
     const [role, setRole] = useState("viewer");
     const [roleOpen, setRoleOpen] = useState(false);
     const [emailError, setEmailError] = useState("");
+
+    const workspaceData = useWorkspaceStore((state) => state.workspaceData);
 
     const validateEmail = (value) => {
         if (!value) {
@@ -29,8 +34,41 @@ export default function InviteModal({ onClose }) {
         if (emailError) validateEmail(value);
     };
 
-    const handleInvite = () => {
+    const handleInvite = async () => {
         if (!validateEmail(email)) return;
+
+        try {
+
+            console.log("first");
+            const response = await api.post("/api/workspaces/invite", {
+                email,
+                role,
+                workspaceData
+            }, {
+                withCredentials: true
+            });
+
+            console.log("second");
+
+            if (response.status === 200) {
+                toast.success(response.data.message);
+                onClose();
+            }
+
+            console.log("third");
+        }
+        catch (err) {
+            switch (err.response.status) {
+                case 400:
+                    toast.error(err.response.data.message);
+                    break;
+                case 500:
+                    toast.error("Internal Server Error");
+                    break;
+                default:
+                    toast.error("Something went wrong");
+            }
+        }
     };
 
     return createPortal(
@@ -76,6 +114,7 @@ export default function InviteModal({ onClose }) {
 
                     <div className="border border-slate-200 rounded-lg overflow-hidden">
                         <button
+                            type="button"
                             onClick={() => setRoleOpen(!roleOpen)}
                             className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-slate-100 transition-colors"
                         >
@@ -140,12 +179,14 @@ export default function InviteModal({ onClose }) {
 
                 <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-100">
                     <button
+                        type="button"
                         onClick={onClose}
                         className="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors"
                     >
                         Cancel
                     </button>
                     <button
+                        type="button"
                         onClick={handleInvite}
                         className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition-colors flex items-center gap-2 disabled:bg-indigo-300 disabled:cursor-not-allowed"
                     >

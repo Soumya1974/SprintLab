@@ -1,11 +1,11 @@
-import { User } from "../../models/userModel.js";
-import { Workspace } from "../../models/workspaceModel.js";
+import { User } from "../../models/userDbSchema.js";
+import { Workspace } from "../../models/workSpaceDbSchema.js";
 
 export const handleSendInvitation = async (req, res) => {
     try{
-        const { email, role, workspaceId } = req.body;
+        const { email, role, workspaceData } = req.body;
 
-        const workspace = await Workspace.findById(workspaceId);
+        const workspace = await Workspace.findById(workspaceData);
 
         if(!workspace) {
             return res.status(404).json({
@@ -32,7 +32,7 @@ export const handleSendInvitation = async (req, res) => {
             })
         }
     }
-    
+
     catch(err) {
         console.error(err);
         res.status(500).json({

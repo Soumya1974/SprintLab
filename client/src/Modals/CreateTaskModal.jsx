@@ -129,7 +129,7 @@ export default function CreateTaskModal({ handleGetTaskCards }) {
     setSubmitting(true);
 
     try {
-      const response = await api.post(`/api/workspaces/addtask/${workspaceData}`, {
+      const response = await api.post(`/api/workspaces/add-task/${workspaceData}`, {
         title,
         description,
         dueDate: dueDate || null,
@@ -139,8 +139,9 @@ export default function CreateTaskModal({ handleGetTaskCards }) {
         withCredentials: true
       });
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         toast.success(response.data.message);
+        clearTaskForm();
       }
       await handleGetTaskCards();
     }
@@ -158,9 +159,6 @@ export default function CreateTaskModal({ handleGetTaskCards }) {
     }
     finally {
       setSubmitting(false);
-      setTimeout(() => {
-        clearTaskForm();
-      }, 1000);
     }
   }
 

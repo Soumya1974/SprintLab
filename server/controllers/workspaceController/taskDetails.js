@@ -36,7 +36,7 @@ export const handlePostTask = async (req, res) => {
             createdBy: req.user.id
         })
 
-        res.status(200).json({
+        res.status(201).json({
             message: "Task created successfully"
         })
     }

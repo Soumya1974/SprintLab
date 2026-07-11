@@ -11,7 +11,7 @@ const workspaceRouter = express.Router();
 workspaceRouter.post('/workspaces', handleAccessToken, handleProjectDetails);
 workspaceRouter.get('/workspaces/get-projects', handleAccessToken, handleGetProjectData);
 
-workspaceRouter.post('/workspaces/addtask/:workspaceData', handleAccessToken, handlePostTask);
+workspaceRouter.post('/workspaces/add-task/:workspaceData', handleAccessToken, handlePostTask);
 workspaceRouter.get('/workspaces/get-task/:workspaceData', handleAccessToken, handleGetTasks);
 workspaceRouter.patch('/tasks/:taskId/status', handleAccessToken, handleUpdateTaskStatus);
 

@@ -104,13 +104,11 @@ export default function CreateProjectModal({ onClose, handleGetData }) {
                 withCredentials: true
             });
 
-            toast.success(response.data.message);
-
-
-            setTimeout(() => {
+            if(response.status === 201) {
+                toast.success("Project created successfully");
+                await handleGetData();
                 onClose();
-            }, 1000);
-            await handleGetData();
+            }
         }
         catch (err) {
             switch (err.response.status) {
