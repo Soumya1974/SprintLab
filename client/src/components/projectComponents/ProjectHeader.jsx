@@ -1,7 +1,11 @@
 import { UserPlus, Share2, Settings, ChevronDown, LogOutIcon } from "lucide-react";
 import useWorkspaceStore from "../../store/workspaceStore";
+import InviteModal from "../../Modals/InviteModal";
+import { useState } from "react";
 
 export default function ProjectHeader() {
+
+  const [isOpen, setIsOpen] = useState(false);
 
   const clearWorkspaceData = useWorkspaceStore((state) => state.clearWorkspaceData);
   const projectDetails = useWorkspaceStore((state) => state.projectDetails);
@@ -30,7 +34,9 @@ export default function ProjectHeader() {
           <LogOutIcon className="h-4 w-4" />
           Back
         </button>
-        <button className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:bg-slate-200 border border-slate-200 px-3.5 py-2 rounded-lg hover:cursor-pointer transition-colors duration-150">
+        <button className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:bg-slate-200 border border-slate-200 px-3.5 py-2 rounded-lg hover:cursor-pointer transition-colors duration-150"
+          onClick={() => setIsOpen(true)}
+        >
           <UserPlus className="h-4 w-4" />
           Invite
         </button>
@@ -40,6 +46,9 @@ export default function ProjectHeader() {
           <ChevronDown className="h-3.5 w-3.5" />
         </button>
       </div>
+        {
+          isOpen && <InviteModal onClose={() => setIsOpen(false)} />
+        }
     </div>
   );
 }
