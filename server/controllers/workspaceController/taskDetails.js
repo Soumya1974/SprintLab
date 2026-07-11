@@ -22,7 +22,7 @@ export const handlePostTask = async (req, res) => {
 
         if (!members || members.role === "viewer") {
             return res.status(400).json({
-                message: "Viewers are not allowed to update tasks"
+                message: "Viewers are not allowed to add tasks"
             })
         }
 
@@ -74,8 +74,25 @@ export const handleGetTasks = async (req, res) => {
 
 export const handleUpdateTaskStatus = async (req, res) => {
     try {
-        const { taskId } = req.params;
+        const { id } = req.user;
+        const { taskId, workspaceData } = req.params;
         const { status } = req.body;
+
+        const workspace = await Workspace.findById(workspaceData);
+
+        if (!workspace) return res.status(400).json({
+            message: "Workspace not found",
+        })
+
+        const members = workspace.members.find(
+            member => member.user._id.toString() === id
+        );
+
+        if (!members || members.role === "viewer") {
+            return res.status(400).json({
+                message: "Viewers are not allowed to update tasks"
+            })
+        }
 
         const task = await Project.findById(taskId);
 

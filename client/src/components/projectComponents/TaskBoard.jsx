@@ -225,14 +225,23 @@ export default function TaskBoard() {
 
     try {
       const response = await api.patch(
-        `/api/tasks/${active.id}/status`,
+        `/api/tasks/${active.id}/${workspaceData}/status`,
         { status: newStatus },
         { withCredentials: true }
       );
 
       toast.success(response.data.message);
     } catch (err) {
-      toast.error("Couldn't update task.");
+      switch (err.response.status) {
+        case 400:
+          toast.error(err.response.data.message);
+          break;
+        case 500:
+          toast.error("Internal Server Error");
+          break;
+        default:
+          toast.error("Something went wrong");
+      }
       handleGetTaskCards();
     }
   }

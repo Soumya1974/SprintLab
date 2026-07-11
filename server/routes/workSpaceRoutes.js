@@ -13,7 +13,7 @@ workspaceRouter.get('/workspaces/get-projects', handleAccessToken, handleGetProj
 
 workspaceRouter.post('/workspaces/add-task/:workspaceData', handleAccessToken, handlePostTask);
 workspaceRouter.get('/workspaces/get-task/:workspaceData', handleAccessToken, handleGetTasks);
-workspaceRouter.patch('/tasks/:taskId/status', handleAccessToken, handleUpdateTaskStatus);
+workspaceRouter.patch('/tasks/:taskId/:workspaceData/status', handleAccessToken, handleUpdateTaskStatus);
 
 workspaceRouter.put('/post-notes/:workspaceData',handleAccessToken, handleNotesData);
 workspaceRouter.get('/get-notes/:workspaceData',handleAccessToken, handleGetNotes);
