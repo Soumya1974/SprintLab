@@ -55,6 +55,9 @@ export default function InviteModal({ onClose }) {
                 case 400:
                     toast.error(err.response.data.message);
                     break;
+                case 403:
+                    toast.error(err.response.data.message);
+                    break;
                 case 500:
                     toast.error("Internal Server Error");
                     break;

@@ -5,12 +5,21 @@ export const handleSendInvitation = async (req, res) => {
     try{
         const { email, role } = req.body;
         const workspaceData = req.params.workspaceData;
+        const { id } = req.user;
 
         const workspace = await Workspace.findById(workspaceData);
 
         if(!workspace) {
             return res.status(404).json({
                 message: "Workspace not found"
+            })
+        }
+
+        const members = workspace.members.find(member => member.user._id.toString() === id);
+
+        if(!members || members.role === "viewer" || members.role === "team" && workspace.owner.toString() !== id) {
+            return res.status(403).json({
+                message: "You are not authorized to send invitations"
             })
         }
 
