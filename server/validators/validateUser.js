@@ -10,3 +10,7 @@ export const userLoginSchema = z.object({
     email: z.email("Not a valid email"),
     password: z.string().min(8, "Entered password must be at least 8 characters")
 });
+
+export const validateEmailSchema = z.object({
+    email: z.string().email("Not a valid email")
+}).passthrough();
