@@ -38,24 +38,17 @@ export default function InviteModal({ onClose }) {
         if (!validateEmail(email)) return;
 
         try {
-
-            console.log("first");
-            const response = await api.post("/api/workspaces/invite", {
+            const response = await api.post(`/api/workspaces/${workspaceData}/invite`, {
                 email,
                 role,
-                workspaceData
             }, {
                 withCredentials: true
             });
-
-            console.log("second");
 
             if (response.status === 200) {
                 toast.success(response.data.message);
                 onClose();
             }
-
-            console.log("third");
         }
         catch (err) {
             switch (err.response.status) {

@@ -3,8 +3,28 @@ import { Workspace } from "../../models/workSpaceDbSchema.js";
 
 export const handleNotesData = async (req, res) => {
   try {
+
+    const { id } = req.user;
     const { workspaceData } = req.params;
     const { notes, version } = req.body;
+
+    const workspace = await Workspace.findById(workspaceData);
+
+    if (!workspace) {
+      return res.status(400).json({
+        message: "Workspace not found",
+      });
+    }
+
+    const members = workspace.members.find( 
+      member => member.user._id.toString() === id 
+    );
+
+    if (!members || members.role === "viewer") {
+      return res.status(400).json({
+        message: "Viewers are not allowed to add notes"
+      })
+    }
 
     let  existingNote = await Notes.findOne({ workspaceData });
 

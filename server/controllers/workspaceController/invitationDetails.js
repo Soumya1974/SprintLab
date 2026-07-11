@@ -3,7 +3,8 @@ import { Workspace } from "../../models/workSpaceDbSchema.js";
 
 export const handleSendInvitation = async (req, res) => {
     try{
-        const { email, role, workspaceData } = req.body;
+        const { email, role } = req.body;
+        const workspaceData = req.params.workspaceData;
 
         const workspace = await Workspace.findById(workspaceData);
 

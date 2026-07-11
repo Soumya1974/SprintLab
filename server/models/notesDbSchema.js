@@ -14,6 +14,11 @@ const notesSchema = new mongoose.Schema({
         type: Number,
         default: 1
     },
+    workspaceId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "workspaceData",
+        required: true,
+    }
 }, { timestamps: true });
 
 export const Notes = mongoose.model("notesData", notesSchema);
