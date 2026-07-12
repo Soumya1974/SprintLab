@@ -12,6 +12,7 @@ export default function InviteModal({ onClose }) {
     const [role, setRole] = useState("viewer");
     const [roleOpen, setRoleOpen] = useState(false);
     const [emailError, setEmailError] = useState("");
+    const [submitting, setSubmitting] = useState(false);
 
     const workspaceData = useWorkspaceStore((state) => state.workspaceData);
 
@@ -36,6 +37,7 @@ export default function InviteModal({ onClose }) {
 
     const handleInvite = async () => {
         if (!validateEmail(email)) return;
+        setSubmitting(true);
 
         try {
             const response = await api.post(`/api/workspaces/${workspaceData}/invite`, {
@@ -64,6 +66,9 @@ export default function InviteModal({ onClose }) {
                 default:
                     toast.error("Something went wrong");
             }
+        }
+        finally{
+            setSubmitting(false);
         }
     };
 
@@ -184,10 +189,20 @@ export default function InviteModal({ onClose }) {
                     <button
                         type="button"
                         onClick={handleInvite}
+                        disabled={submitting}
                         className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition-colors flex items-center gap-2 disabled:bg-indigo-300 disabled:cursor-not-allowed"
                     >
-                        <UserPlus size={16} className="inline-block mr-2" />
-                        Invite
+                        {submitting ? (
+                            <>
+                                <span className="h-4 w-4 rounded-full border-2 border-white/40 border-t-white animate-spin" />
+                                Just a sec...
+                            </>
+                        ) : (
+                            <>
+                                <UserPlus size={16} />
+                                Invite
+                            </>
+                        )}
                     </button>
                 </div>
             </div>
