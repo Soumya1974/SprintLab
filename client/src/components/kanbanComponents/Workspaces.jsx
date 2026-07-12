@@ -67,7 +67,7 @@ export default function Workspaces() {
         ) : (
 
           <>
-            <div className="flex items-center justify-between py-5 px-5">
+            <div className="flex items-center justify-between py-5 px-5 bg-gray-100 border-b border-slate-200 mb-5">
               <h1 className="flex gap-2 text-xl font-semibold text-slate-900">
                 <Users />
                 Workspaces

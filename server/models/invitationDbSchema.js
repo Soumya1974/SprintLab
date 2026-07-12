@@ -2,19 +2,17 @@ import mongoose from "mongoose";
 
 const invitationSchema = new mongoose.Schema({
     
-    projectId: {
-        type: String,
-        required: true,
-        unique: true
+    workspaceId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "workspaceData",
     },
     email: {
         type: String,
         required: true,
-        unique: true
     },
     role: {
         type: String,
-        required: true
+        enum: ["team", "viewer"],
     },
     token: {
         type: String,
@@ -23,11 +21,14 @@ const invitationSchema = new mongoose.Schema({
     expiresAt: {
         type: Date,
     },
-    accepted: {
+    status: {
         type: String,
+        enum: ["pending", "accepted", "rejected"],
+        default: "pending"
     },
-    createdBy: {
-        type: String
+    invitedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "userData",
     }
 
 }, { timestamps: true });

@@ -1,5 +1,7 @@
 import { User } from "../../models/userDbSchema.js";
 import { Workspace } from "../../models/workSpaceDbSchema.js";
+import { Invitation } from "../../models/invitationDbSchema.js";
+import crypto from "crypto";
 
 export const handleSendInvitation = async (req, res) => {
     try{
@@ -34,11 +36,30 @@ export const handleSendInvitation = async (req, res) => {
                 })
             }
 
-            workspace.members.push({ user: user._id, role });
-            await workspace.save();
+            const isInvited = await Invitation.findOne({ workspaceId: workspace._id, email: user.email });
+
+            if(isInvited){
+                return res.status(400).json({
+                    message: "User has already been invited to the workspace"
+                })
+            }
+
+            const token = crypto.randomBytes(6).toString("hex");
+            const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+
+            const invitation = new Invitation({
+                workspaceId: workspace._id,
+                email: user.email,
+                role: role,
+                token: token,
+                expiresAt: expiresAt,
+                invitedBy: id
+            });
+
+            await invitation.save();
 
             return res.status(200).json({
-                message: "User added to the workspace successfully"
+                message: "Invitation sent successfully"
             })
         }
     }

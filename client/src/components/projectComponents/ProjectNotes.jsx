@@ -105,7 +105,7 @@ const ProjectNotes = () => {
 
   return (
     <div
-      className="mt-6 rounded-xl border border-gray-300 shadow-lg overflow-hidden bg-gray-100"
+      className="mt-6 border border-gray-300 shadow-lg overflow-hidden bg-gray-100"
       style={{
         backgroundImage: `linear-gradient(to bottom, rgba(203,213,225,0.${grid}) 1px, transparent 1px)`,
         backgroundSize: "40px 30px",

@@ -17,7 +17,7 @@ export default function ProjectDetail() {
       }}
     >
       <div className="w-full min-h-screen pb-5">
-        <main className="w-full mx-auto sm:px-6 pb-8">
+        <main className="w-full mx-auto sm:px-6">
           <div>
             <ProjectHeader />
           </div>
