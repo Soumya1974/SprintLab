@@ -7,7 +7,7 @@ export function getInviteEmailTemplate({ role, inviteLink, workspaceName }) {
       <h2 style="color: #0f172a; font-size: 18px; margin: 0 0 16px;">SprintLab</h2>
       <p style="color: #334155; font-size: 14px; line-height: 1.6; margin: 0 0 16px;">Hello,</p>
       <p style="color: #334155; font-size: 14px; line-height: 1.6; margin: 0 0 16px;">
-        You have been invited to join SprintLab workspace ${workspaceName} as a <strong>${roleLabel}</strong>.
+        You have been invited to join SprintLab workspace <strong>${workspaceName}</strong> as a <strong>${roleLabel}</strong>.
       </p>
       <p style="color: #334155; font-size: 14px; line-height: 1.6; margin: 0 0 24px;">
         Click the link below to accept the invitation:
