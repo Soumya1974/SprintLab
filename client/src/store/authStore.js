@@ -8,6 +8,7 @@ const useAuthStore = create(
       accessToken: null,
       signupProgress: false,
       forgotPasswordProgress: false,
+      inviteToken: null,
 
       setEmail: (email) => set({ email }),
 
@@ -24,13 +25,18 @@ const useAuthStore = create(
 
       clearSignupProgress: () =>
         set({ signupProgress: false }),
-      
+
       setForgotPasswordProgress: (value) =>
         set({ forgotPasswordProgress: value }),
 
       clearForgotPasswordProgress: () =>
         set({ forgotPasswordProgress: false }),
 
+      setInviteToken: (token) =>
+        set({ inviteToken: token }),
+
+      clearInviteToken: () =>
+        set({ inviteToken: null })
     }),
     {
       name: "auth-storage",

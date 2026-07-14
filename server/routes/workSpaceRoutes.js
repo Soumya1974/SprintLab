@@ -20,5 +20,6 @@ workspaceRouter.get('/get-notes/:workspaceData',handleAccessToken, handleGetNote
 
 
 workspaceRouter.post('/workspaces/:workspaceData/invite', handleAccessToken, handleValidEmail, handleSendInvitation);
+workspaceRouter.get("/invitations/:token", handleGetInvitationDetails);
 
 export default workspaceRouter;

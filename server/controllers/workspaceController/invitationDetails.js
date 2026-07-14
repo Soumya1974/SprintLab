@@ -93,3 +93,45 @@ export const handleSendInvitation = async (req, res) => {
         })
     }
 }
+
+export const handleGetInvitationDetails = async (req, res) => {
+    try {
+        const { token } = req.params;
+
+        const invitation = await Invitation.findOne({ token })
+            .populate("invitedBy", "name")
+            .populate("workspaceId", "name");
+
+        if (!invitation) {
+            return res.status(404).json({
+                success: false,
+                message: "Invitation not found or expired"
+            });
+        }
+
+        if (invitation.status !== "pending") {
+            return res.status(400).json({
+                success: false,
+                message: "Invitation is no longer valid"
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            invitation: {
+                workspaceName: invitation.workspaceId.name,
+                invitedBy: invitation.invitedBy.name,
+                role: invitation.role,
+                email: invitation.email
+            }
+        });
+    }
+    catch (err) {
+        console.error(err);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        });
+    }
+}

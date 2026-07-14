@@ -1,7 +1,10 @@
 import axios from "axios";
 import { Check, X, Wrench } from "lucide-react";
+import { useEffect } from "react";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import useAuthStore from "../../store/authStore";
 
 export default function InvitationPage() {
 
@@ -10,19 +13,27 @@ export default function InvitationPage() {
     const { token } = useParams();
     const navigate = useNavigate();
 
-    const setInviteToken = useInvitationStore(
+    const setInviteToken = useAuthStore(
         (state) => state.setInviteToken
     );
 
 
     const handleGetInvitationData = async () => {
         try{
-            const response = await axios.post('/api/getInvitationData');
+            const response = await axios.get(`/api/invitations/${token}`);
+            setInvitationData(response.data);
         }
         catch(err) {
-
+            toast.error("Invitation not found or expired");
         }
     }
+
+    useEffect(() => {
+        handleGetInvitationData();
+    }, []);
+
+    console.log(invitationData);
+
     return (
         <div className="min-h-screen w-full flex items-center justify-center bg-slate-50 px-4">
             <div className="w-full max-w-md">
@@ -39,14 +50,14 @@ export default function InvitationPage() {
                             You've been invited to SprintLab
                         </h1>
                         <p className="text-sm text-slate-600 leading-relaxed">
-                            <span className="font-medium text-slate-900">{inviterName}</span> invited you to join{" "}
-                            <span className="font-medium text-slate-900">{workspaceName}</span> workspace
+                            <span className="font-medium text-slate-900">{invitationData.invitedBy}</span> invited you to join{" "}
+                            <span className="font-medium text-slate-900">{invitationData.workspaceName}</span> workspace
                         </p>
                     </div>
 
                     <div className="flex items-center justify-center gap-2 mb-6">
                         <span className="text-sm text-slate-500">Role:</span>
-                        <span className="text-sm font-medium text-indigo-600 capitalize">{role}</span>
+                        <span className="text-sm font-medium text-indigo-600 capitalize">{invitationData.role}</span>
                     </div>
 
                     <div className="flex items-center gap-3 mb-6">
