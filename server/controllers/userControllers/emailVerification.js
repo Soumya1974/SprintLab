@@ -45,7 +45,7 @@ export const handleOtpVerification = async (req, res) => {
         const accessToken = jwt.sign({ id: userData._id },
             process.env.JWT_SECRET,
             {
-                expiresIn: "15m"
+                expiresIn: "1d"
             }
         )
 
