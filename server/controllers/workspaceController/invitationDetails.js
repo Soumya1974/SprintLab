@@ -96,11 +96,12 @@ export const handleSendInvitation = async (req, res) => {
 
 export const handleGetInvitationDetails = async (req, res) => {
     try {
-        const { token } = req.params;
+        const token = req.params.token;
 
         const invitation = await Invitation.findOne({ token })
             .populate("invitedBy", "name")
-            .populate("workspaceId", "name");
+            .populate("workspaceId", "title");
+
 
         if (!invitation) {
             return res.status(404).json({
@@ -119,7 +120,7 @@ export const handleGetInvitationDetails = async (req, res) => {
         return res.status(200).json({
             success: true,
             invitation: {
-                workspaceName: invitation.workspaceId.name,
+                workspaceName: invitation.workspaceId.title,
                 invitedBy: invitation.invitedBy.name,
                 role: invitation.role,
                 email: invitation.email
