@@ -15,6 +15,7 @@ import SetNewPassword from './pages/authPages/SetNewPassword'
 import ForgotPasswordRoute from './routes/authRoutes/ForgotPasswordRoute'
 import NotFound from './pages/landingPages/NotFound'
 import { SkeletonTheme } from 'react-loading-skeleton'
+import InvitationPage from './pages/authPages/InvitationPage'
 
 function App() {
 
@@ -41,6 +42,7 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/invite/:token" element={<InvitationPage />} />
           </Route>
 
           {/* Signup OTP Route */}

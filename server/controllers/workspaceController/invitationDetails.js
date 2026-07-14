@@ -4,6 +4,7 @@ import { Invitation } from "../../models/invitationDbSchema.js";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 import { getInviteEmailTemplate } from "../../templates/getInviteEmailTemplate.js";
+import bcrypt from 'bcrypt';
 
 //Nodemailer setup
 const transporter = nodemailer.createTransport({
@@ -56,6 +57,7 @@ export const handleSendInvitation = async (req, res) => {
             }
 
             const token = crypto.randomBytes(6).toString("hex");
+            const hashedToken = await bcrypt.hash(token, 10);
             const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
             const inviteLink = `${process.env.FRONTEND_URL}/invite/${token}`;
 
@@ -63,7 +65,7 @@ export const handleSendInvitation = async (req, res) => {
                 workspaceId: workspace._id,
                 email: user.email,
                 role: role,
-                token: token,
+                token: hashedToken,
                 expiresAt: expiresAt,
                 invitedBy: id
             });
