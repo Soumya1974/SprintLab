@@ -42,8 +42,10 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/invite/:token" element={<InvitationPage />} />
           </Route>
+
+          {/* Invitation route accessible to everyone */}
+          <Route path="/invite/:token" element={<InvitationPage />} />
 
           {/* Signup OTP Route */}
           <Route element={<VerifyOtpRoute />}>

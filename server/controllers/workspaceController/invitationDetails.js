@@ -18,72 +18,88 @@ const transporter = nodemailer.createTransport({
 export const handleSendInvitation = async (req, res) => {
     try {
         const { email, role } = req.body;
-        const workspaceData = req.params.workspaceData;
+        const workspaceId = req.params.workspaceData;
         const { id } = req.user;
 
-        const workspace = await Workspace.findById(workspaceData);
+        const normalizedEmail = email.toLowerCase().trim();
+
+        const workspace = await Workspace.findById(workspaceId);
 
         if (!workspace) {
             return res.status(404).json({
                 message: "Workspace not found"
-            })
+            });
         }
 
-        const members = workspace.members.find(member => member.user._id.toString() === id);
-
-        if (!members || members.role === "viewer" || members.role === "team" && workspace.owner.toString() !== id) {
+        if (workspace.owner.toString() !== id) {
             return res.status(403).json({
                 message: "You are not authorized to send invitations"
-            })
+            });
         }
 
-        const user = await User.findOne({ email });
+        const existingInvitation = await Invitation.findOne({
+            workspaceId: workspace._id,
+            email: normalizedEmail
+        });
 
-        if (user) {
-            const isAlreadyMember = workspace.members.some(member => member.user.toString() === user._id.toString());
-
-            if (isAlreadyMember) {
-                return res.status(400).json({
-                    message: "User is already a member of the workspace"
-                })
-            }
-
-            const isInvited = await Invitation.findOne({ workspaceId: workspace._id, email: user.email });
-
-            if (isInvited) {
-                return res.status(400).json({
-                    message: "User has already been invited to the workspace"
-                })
-            }
-
-            const token = crypto.randomBytes(6).toString("hex");
-            const hashedToken = await bcrypt.hash(token, 10);
-            const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
-            const inviteLink = `${process.env.FRONTEND_URL}/invite/${token}`;
-
-            const invitation = new Invitation({
-                workspaceId: workspace._id,
-                email: user.email,
-                role: role,
-                token: hashedToken,
-                expiresAt: expiresAt,
-                invitedBy: id
+        if (existingInvitation) {
+            return res.status(400).json({
+                message: "User has already been invited to this workspace"
             });
-
-            await invitation.save();
-
-            await transporter.sendMail({
-                from: `"SprintLab" <${process.env.EMAIL_ID}>`,
-                to: email,
-                subject: "SprintLab Invitation",
-                text: `You have been invited to join the ${workspace.title} workspace.`,
-                html: getInviteEmailTemplate({ role, inviteLink, workspaceName: workspace.title }),
-            });
-
-            return res.status(200).json({
-                message: "Invitation sent successfully"
-            })
         }
+
+        const existingUser = await User.findOne({
+            email: normalizedEmail
+        });
+
+        if (existingUser) {
+            const alreadyMember = workspace.members.some(
+                member => member.user.toString() === existingUser._id.toString()
+            );
+
+            if (alreadyMember) {
+                return res.status(400).json({
+                    message: "User is already a member of this workspace"
+                });
+            }
+        }
+
+        const token = crypto.randomBytes(16).toString("hex");
+
+        const expiresAt = new Date(
+            Date.now() + 7 * 24 * 60 * 60 * 1000
+        );
+
+        const invitation = new Invitation({
+            workspaceId: workspace._id,
+            email: normalizedEmail,
+            role,
+            token,
+            expiresAt,
+            invitedBy: id
+        });
+
+        await invitation.save();
+
+        const inviteLink =
+            `${process.env.FRONTEND_URL}/invite/${token}`;
+
+        await transporter.sendMail({
+            from: `"SprintLab" <${process.env.EMAIL_ID}>`,
+            to: normalizedEmail,
+            subject: "SprintLab Invitation",
+            text: `You have been invited to join ${workspace.title}.`,
+            html: getInviteEmailTemplate({
+                role,
+                inviteLink,
+                workspaceName: workspace.title
+            })
+        });
+
+        return res.status(200).json({
+            message: "Invitation sent successfully"
+        });
+
     }
 
     catch (err) {

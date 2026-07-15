@@ -15,6 +15,9 @@ export default function InvitationPage() {
     const setInviteToken = useAuthStore(
         (state) => state.setInviteToken
     );
+    const accessToken = useAuthStore(
+        (state) => state.accessToken
+    )
 
     const handleGetInvitationData = async () => {
         try {
@@ -27,19 +30,28 @@ export default function InvitationPage() {
             toast.error("Invitation not found or expired");
             navigate("/");
         } finally {
-            setTimeout(() => {
-                setLoading(false);
-            }, 5000);
+            setLoading(false);
         }
     };
 
     const handleAccept = () => {
         setInviteToken(token);
-        navigate("/login");
+
+        if (accessToken) {
+            navigate(`/dashboard`);
+        }
+        else {
+            navigate("/login");
+        }
+
     };
 
     const handleReject = () => {
-        navigate("/");
+        if (accessToken) {
+            navigate("/dashboard");
+        } else {
+            navigate("/");
+        }
     };
 
     useEffect(() => {
