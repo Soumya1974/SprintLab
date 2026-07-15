@@ -3,7 +3,7 @@ import { handleAccessToken } from "../middlewares/accessTokenMiddleware.js";
 import { handleGetProjectData, handleProjectDetails } from "../controllers/workspaceController/projectDetails.js";
 import { handleGetTasks, handlePostTask, handleUpdateTaskStatus } from "../controllers/workspaceController/taskDetails.js";
 import { handleGetNotes, handleNotesData } from "../controllers/workspaceController/notesDetails.js";
-import { handleGetInvitationDetails, handleSendInvitation } from "../controllers/workspaceController/invitationDetails.js";
+import { handleAcceptInvitation, handleGetInvitationDetails, handleSendInvitation } from "../controllers/workspaceController/invitationDetails.js";
 import { handleValidEmail } from "../middlewares/authMiddlewares.js";
 
 const workspaceRouter = express.Router();
@@ -21,5 +21,6 @@ workspaceRouter.get('/get-notes/:workspaceData',handleAccessToken, handleGetNote
 
 workspaceRouter.post('/workspaces/:workspaceData/invite', handleAccessToken, handleValidEmail, handleSendInvitation);
 workspaceRouter.get("/invitations/:token", handleGetInvitationDetails);
+workspaceRouter.post("/accept-invitations/:token", handleAccessToken, handleAcceptInvitation);
 
 export default workspaceRouter;

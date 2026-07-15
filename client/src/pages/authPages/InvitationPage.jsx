@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
 import useAuthStore from "../../store/authStore";
+import api from "../../api/axios";
 
 export default function InvitationPage() {
     const [invitationData, setInvitationData] = useState(null);
     const [isLoading, setLoading] = useState(true);
+    const [submitting, setSubmitting] = useState(false);
 
     const { token } = useParams();
     const navigate = useNavigate();
@@ -34,11 +36,45 @@ export default function InvitationPage() {
         }
     };
 
-    const handleAccept = () => {
+    const handleAccept = async () => {
         setInviteToken(token);
-
+        setSubmitting(true);
         if (accessToken) {
-            navigate(`/dashboard`);
+            try {
+                const response = await api.post(`api/accept-invitations/${token}`, {
+                    token
+                }, {
+                    withCredentials: true
+                });
+
+                if (response.status === 200) {
+                    toast.success(response.data.message);
+                    setTimeout(() => {
+                        navigate("/dashboard");
+                    }, 1000);
+                }
+            }
+            catch (err) {
+                switch (err.response.status) {
+                    case 400:
+                        toast.error(err.response.data.message);
+                        break;
+
+                    case 404:
+                        toast.error(err.response.data.message);
+                        break;
+
+                    case 500:
+                        toast.error("Internal Server Error");
+                        break;
+
+                    default:
+                        toast.error("Something went wrong");
+                }
+            }
+            finally{
+                setSubmitting(false);
+            }
         }
         else {
             navigate("/login");
@@ -131,10 +167,23 @@ export default function InvitationPage() {
 
                                 <button
                                     onClick={handleAccept}
-                                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
+                                    disabled={submitting}
+                                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-white transition-colors ${submitting
+                                            ? "bg-indigo-400 cursor-not-allowed"
+                                            : "bg-indigo-600 hover:bg-indigo-700"
+                                        }`}
                                 >
-                                    <Check size={16} />
-                                    Accept
+                                    {submitting ? (
+                                        <>
+                                            <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                            Accepting...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Check size={16} />
+                                            Accept
+                                        </>
+                                    )}
                                 </button>
                             </div>
 

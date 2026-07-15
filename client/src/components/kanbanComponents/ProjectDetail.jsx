@@ -7,16 +7,19 @@ import CommentsSection from "../projectComponents/CommentsSection";
 
 export default function ProjectDetail() {
   return (
-    <div className="w-full flex bg-slate-50 overflow-x-hidden font-sans pt-5"
-      style={{
-        backgroundImage: `
-          linear-gradient(to right, rgb(203 213 225 / 0.7) 1px, transparent 1px),
-          linear-gradient(to bottom, rgb(203 213 225 / 0.7) 1px, transparent 1px)`,
+    <div className="w-full min-h-full overflow-hidden relative font-sans">
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: `
+        linear-gradient(to right, rgb(203 213 225 / 0.7) 1px, transparent 1px),
+        linear-gradient(to bottom, rgb(203 213 225 / 0.7) 1px, transparent 1px)`,
           backgroundSize: "24px 24px",
           backgroundColor: "#F1F5F9",
-      }}
-    >
-      <div className="w-full min-h-screen pb-5">
+        }}
+      />
+
+      <div className="absolute inset-0 overflow-y-auto pt-5 pb-5">
         <main className="w-full mx-auto sm:px-6">
           <div>
             <ProjectHeader />

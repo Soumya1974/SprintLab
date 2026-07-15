@@ -2,8 +2,9 @@ import mongoose from "mongoose";
 
 const notesSchema = new mongoose.Schema({
 
-    workspaceData: {
-        type: String,
+    workspaceId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Workspace",
         required: true,
         unique: true
     },
@@ -13,11 +14,6 @@ const notesSchema = new mongoose.Schema({
     version: {
         type: Number,
         default: 1
-    },
-    workspaceId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "workspaceData",
-        required: true,
     }
 }, { timestamps: true });
 

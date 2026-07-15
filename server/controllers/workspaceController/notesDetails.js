@@ -5,10 +5,11 @@ export const handleNotesData = async (req, res) => {
   try {
 
     const { id } = req.user;
-    const { workspaceData } = req.params;
+    const workspaceId = req.params.workspaceData;
     const { notes, version } = req.body;
 
-    const workspace = await Workspace.findById(workspaceData);
+    const workspace = await Workspace.findById(workspaceId);
+
 
     if (!workspace) {
       return res.status(400).json({
@@ -16,8 +17,8 @@ export const handleNotesData = async (req, res) => {
       });
     }
 
-    const members = workspace.members.find( 
-      member => member.user._id.toString() === id 
+    const members = workspace.members.find(
+      member => member.user._id.toString() === id
     );
 
     if (!members || members.role === "viewer") {
@@ -26,23 +27,24 @@ export const handleNotesData = async (req, res) => {
       })
     }
 
-    let  existingNote = await Notes.findOne({ workspaceData });
+    let existingNote = await Notes.findOne({ workspaceId });
 
     if (!existingNote) {
       existingNote = await Notes.create({
-        workspaceData,
+        workspaceId,
         notes,
         version: 1,
       });
 
       return res.status(200).json({
         message: "Notes saved successfully",
+        version: existingNote.version
       });
     }
 
     const updatedNote = await Notes.findOneAndUpdate(
       {
-        workspaceData,
+        workspaceId,
         version,
       },
       {
@@ -55,10 +57,14 @@ export const handleNotesData = async (req, res) => {
     );
 
     if (!updatedNote) {
-      return res.status(409)
+      return res.status(409).json({
+        message:
+          "This note has been updated by another team member while you were editing."
+      });
     }
     return res.status(200).json({
       message: "Notes saved successfully",
+      version: updatedNote.version
     });
   }
   catch (err) {
@@ -71,9 +77,9 @@ export const handleNotesData = async (req, res) => {
 
 export const handleGetNotes = async (req, res) => {
   try {
-    const { workspaceData } = req.params;
+    const workspaceId = req.params.workspaceData;
 
-    const note = await Notes.findOne({ workspaceData });
+    const note = await Notes.findOne({ workspaceId });
 
     if (!note) {
       return res.status(400);
