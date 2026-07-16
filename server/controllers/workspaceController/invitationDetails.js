@@ -112,7 +112,9 @@ export const handleSendInvitation = async (req, res) => {
 
 export const handleGetInvitationDetails = async (req, res) => {
     try {
-        const token = req.params.token;
+        const token = req.params;
+
+        console.log(token);
 
         const invitation = await Invitation.findOne({ token })
             .populate("invitedBy", "name")

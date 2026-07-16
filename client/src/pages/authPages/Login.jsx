@@ -5,7 +5,7 @@ import { validateEmail, validateLoginPassword } from "../../utils/validators";
 import useAuthStore from "../../store/authStore";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Login({ onNavigate }) {
     const [form, setForm] = useState({ email: "", password: "" });
@@ -16,10 +16,18 @@ export default function Login({ onNavigate }) {
 
     const setAccessToken = useAuthStore((state) =>
         state.setAccessToken
-    )
+    );
     const clearEmail = useAuthStore((state) =>
         state.clearEmail
-    )
+    );
+    const inviteToken = useAuthStore((state) =>
+        state.inviteToken
+    );
+    const clearInviteToken = useAuthStore((state) => 
+        state.clearInviteToken
+    );
+
+    const navigate = useNavigate();
 
     const errors = {
         email: validateEmail(form.email),
@@ -65,13 +73,19 @@ export default function Login({ onNavigate }) {
 
 
             if (response.status === 200) {
-
+                setAccessToken(response.data.accessToken);
                 toast.success(response.data.message);
+                if (inviteToken) {
+                    await axios.post(
+                        `api/accept-invitations/${inviteToken}`,
+                        {},
+                        { withCredentials: true }
+                    );
 
-                setTimeout(() => {
-                    setAccessToken(response.data.accessToken);
-                    clearEmail();
-                }, 1000);
+                    clearInviteToken();
+
+                    navigate("/dashboard");
+                }
             }
         }
         catch (err) {
@@ -158,12 +172,12 @@ export default function Login({ onNavigate }) {
                             to="/forgotpassword"
                         >
                             <button
-                            type="button"
+                                type="button"
 
-                            className="text-xs font-medium hover:cursor-pointer text-blue-600 hover:text-blue-700 transition-colors duration-150"
-                        >
-                            Forgot password?
-                        </button>
+                                className="text-xs font-medium hover:cursor-pointer text-blue-600 hover:text-blue-700 transition-colors duration-150"
+                            >
+                                Forgot password?
+                            </button>
                         </Link>
                     }
                 />

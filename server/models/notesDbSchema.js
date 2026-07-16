@@ -6,7 +6,6 @@ const notesSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Workspace",
         required: true,
-        unique: true
     },
     notes: {
         type: String
