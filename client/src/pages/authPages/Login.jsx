@@ -75,19 +75,19 @@ export default function Login({ onNavigate }) {
 
             if (response.status === 200) {
                 setAccessToken(response.data.accessToken);
-                toast.success(response.data.message);
-
-                console.log(inviteToken);
 
                 if (inviteToken) {
-                    await api.post(
+                    const inviteResponse = await api.post(
                         `/api/accept-invitations/${inviteToken}`,
                         {},
                         { withCredentials: true }
                     );
 
-                    clearInviteToken();
+                    if(inviteResponse.status === 200){
+                        toast.success(inviteResponse.data.message);
+                    }
 
+                    clearInviteToken();
                     navigate("/dashboard");
                 }
             }

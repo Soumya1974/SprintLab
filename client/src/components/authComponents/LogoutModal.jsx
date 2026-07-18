@@ -21,12 +21,9 @@ export default function LogoutModal({ onCancelClick }) {
                 withCredentials: true
             });
 
-            toast.success(response.data.message);
-
-            setTimeout(() => {
-                clearAccessToken();
-                clearForgotPasswordProgress();
-            }, 1000);
+            clearAccessToken();
+            clearForgotPasswordProgress();
+            
         }
         catch (err) {
             console.error(err);

@@ -4,7 +4,8 @@ import AuthLayout from "../../components/authComponents/AuthLayout";
 import useAuthStore from "../../store/authStore";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import api from "../../api/axios";
 
 const OTP_LENGTH = 6;
 
@@ -18,6 +19,10 @@ export default function VerifyOtp() {
     const clearEmail = useAuthStore((state) => state.clearEmail);
     const clearSignupProgress = useAuthStore((state) => state.clearSignupProgress);
     const setAccessToken = useAuthStore((state) => state.setAccessToken);
+    const clearInviteToken = useAuthStore((state) => state.clearInviteToken);
+    const inviteToken = useAuthStore((state) => state.inviteToken);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (resendIn === 0) return;
@@ -70,16 +75,28 @@ export default function VerifyOtp() {
             }
             )
 
-            if (response.status === 200) {
-               
-                toast.success(response.data.message);
+            if(response.status === 200) {
+                setAccessToken(response.data.accessToken);
+
+                if (inviteToken) {
+                    const inviteResponse = await api.post(
+                        `/api/accept-invitations/${inviteToken}`,
+                        {},
+                        { withCredentials: true }
+                    );
+
+                    if(inviteResponse.status === 200){
+                        toast.success(inviteResponse.data.message);
+                    }
+
+                    clearInviteToken();
+                    navigate("/dashboard");
+                }
             }
 
-            setTimeout(() => {
-                setAccessToken(response.data.accessToken);
-                clearEmail();
-                clearSignupProgress();
-            }, 1000);
+            clearEmail();
+            clearSignupProgress();
+        
         }
         catch (err) {
 

@@ -77,17 +77,20 @@ export const handleNotesData = async (req, res) => {
 
 export const handleGetNotes = async (req, res) => {
   try {
+    
     const workspaceId = req.params.workspaceData;
-
+    
     const note = await Notes.findOne({ workspaceId });
 
     if (!note) {
-      return res.status(400);
+      return res.status(404).json({
+        message: "Notes note found"
+      });
     }
-
     return res.status(200).json({
       notes: note,
     });
+
   } catch (err) {
     return res.status(500).json({
       message: err.message,
