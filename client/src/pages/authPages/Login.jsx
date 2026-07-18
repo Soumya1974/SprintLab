@@ -5,6 +5,7 @@ import { validateEmail, validateLoginPassword } from "../../utils/validators";
 import useAuthStore from "../../store/authStore";
 import toast from "react-hot-toast";
 import axios from "axios";
+import api from "../../api/axios";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function Login({ onNavigate }) {
@@ -75,9 +76,12 @@ export default function Login({ onNavigate }) {
             if (response.status === 200) {
                 setAccessToken(response.data.accessToken);
                 toast.success(response.data.message);
+
+                console.log(inviteToken);
+
                 if (inviteToken) {
-                    await axios.post(
-                        `api/accept-invitations/${inviteToken}`,
+                    await api.post(
+                        `/api/accept-invitations/${inviteToken}`,
                         {},
                         { withCredentials: true }
                     );

@@ -16,7 +16,7 @@ workspaceRouter.get('/workspaces/get-task/:workspaceData', handleAccessToken, ha
 workspaceRouter.patch('/tasks/:taskId/:workspaceData/status', handleAccessToken, handleUpdateTaskStatus);
 
 workspaceRouter.put('/post-notes/:workspaceData',handleAccessToken, handleNotesData);
-workspaceRouter.get('/get-notes/:workspaceData',handleAccessToken, handleGetNotes);
+workspaceRouter.get('/get-notes/:workspaceData', handleGetNotes);
 
 
 workspaceRouter.post('/workspaces/:workspaceData/invite', handleAccessToken, handleValidEmail, handleSendInvitation);

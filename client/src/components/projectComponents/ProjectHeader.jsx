@@ -1,12 +1,13 @@
 import { UserPlus, Share2, Settings, ChevronDown, LogOutIcon } from "lucide-react";
 import useWorkspaceStore from "../../store/workspaceStore";
 import InviteModal from "../../Modals/InviteModal";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 export default function ProjectHeader() {
 
   const [isOpen, setIsOpen] = useState(false);
 
+  const inviteBtnRef = useRef(null);
   const clearWorkspaceData = useWorkspaceStore((state) => state.clearWorkspaceData);
   const projectDetails = useWorkspaceStore((state) => state.projectDetails);
 
@@ -17,12 +18,12 @@ export default function ProjectHeader() {
           <h1 className="text-2xl font-semibold text-slate-800">
             {projectDetails.title}
           </h1>
-          <span style={{color: projectDetails.color}}  className="text-xs font-medium bg-violet-50 px-2.5 py-1 rounded-full">
+          <span style={{ color: projectDetails.color }} className="text-xs font-medium bg-violet-50 px-2.5 py-1 rounded-full">
             {projectDetails.status}
           </span>
         </div>
         <p className="text-sm text-slate-500">
-          { projectDetails.description}
+          {projectDetails.description}
         </p>
       </div>
 
@@ -36,6 +37,7 @@ export default function ProjectHeader() {
         </button>
         <button className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:bg-slate-200 border border-slate-200 active:scale-95 px-3.5 py-2 rounded-lg hover:cursor-pointer transition-colors duration-150"
           onClick={() => setIsOpen(true)}
+          ref={inviteBtnRef}
         >
           <UserPlus className="h-4 w-4" />
           Invite
@@ -46,9 +48,12 @@ export default function ProjectHeader() {
           <ChevronDown className="h-3.5 w-3.5" />
         </button>
       </div>
-        {
-          isOpen && <InviteModal onClose={() => setIsOpen(false)} />
-        }
+      {
+        isOpen && <InviteModal
+          anchorRef={inviteBtnRef}
+          onClose={() => setIsOpen(false)}
+        />
+      }
     </div>
   );
 }

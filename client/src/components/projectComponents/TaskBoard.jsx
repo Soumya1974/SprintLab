@@ -65,6 +65,8 @@ function TaskCard({ task, isOverlay = false }) {
   const done = task.status === "done";
 
   return (
+
+    //Task card
     <div
       ref={setNodeRef}
       style={style}
@@ -175,6 +177,7 @@ function Column({ id, title, dot, icon: Icon, count, tasks, children }) {
 export default function TaskBoard() {
   const [tasks, setTasks] = useState([]);
   const [activeTask, setActiveTask] = useState(null);
+  const [loadingTasks, setLoadingTasks] = useState(false);
 
   const setTaskForm = useWorkspaceStore((state) => state.setTaskForm);
   const workspaceData = useWorkspaceStore((state) => state.workspaceData);
@@ -247,6 +250,7 @@ export default function TaskBoard() {
   }
 
   async function handleGetTaskCards() {
+    setLoadingTasks(true);
     try {
       const response = await api.get(`/api/workspaces/get-task/${workspaceData}`);
       setTasks(response.data.projectData);
@@ -264,6 +268,9 @@ export default function TaskBoard() {
         default:
           toast.error("Something went wrong");
       }
+    }
+    finally{
+      setLoadingTasks(false);
     }
   }
 
@@ -291,58 +298,16 @@ export default function TaskBoard() {
         }
       </div>
 
+
       {
-        tasks.length === 0 ? (
-          <div className="w-full">
-            <div className="hidden xl:flex flex-col sm:flex-row gap-6">
-              <Column
-                id="todo"
-                title="Tasks"
-                icon={Circle}
-                count={todoTasks.length}
-                tasks={todoTasks}
-              >
-                <button className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:cursor-pointer hover:text-slate-600 px-1 py-1.5 transition-colors duration-150"
-                  onClick={() => setTaskForm(true)}
-                >
-                  <Plus className="h-4 w-4" />
-                  Add Task
-                </button>
-              </Column>
-
-              <Column
-                id="done"
-                title="Done"
-                dot="bg-emerald-500"
-                count={doneTasks.length}
-                tasks={doneTasks}
-              />
-            </div>
-            <div className="flex flex-col items-center justify-center py-10 text-center">
-              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 border border-slate-200">
-                <ClipboardList className="w-8 h-8 text-slate-400" />
-              </div>
-
-              <h3 className="mt-5 text-lg font-semibold text-slate-700">
-                No tasks yet
-              </h3>
-
-              <p className="mt-2 max-w-xs text-sm text-slate-500">
-                Create your first task or drag one here when you're ready.
-              </p>
-            </div>
+        loadingTasks ? (
+          <div className="flex h-125 items-center justify-center" >
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-300 border-t-blue-600"></div>
           </div>
-        )
-          :
-          (
-            <DndContext
-
-              modifiers={[restrictToWindowEdges, snapCenterToCursor]}
-              sensors={sensors}
-              onDragStart={handleDragStart}
-              onDragEnd={handleDragEnd}
-            >
-              <div className="flex flex-col sm:flex-row gap-6">
+        ) :
+          tasks.length === 0 ? (
+            <div className="w-full">
+              <div className="hidden xl:flex flex-col sm:flex-row gap-6">
                 <Column
                   id="todo"
                   title="Tasks"
@@ -365,13 +330,61 @@ export default function TaskBoard() {
                   count={doneTasks.length}
                   tasks={doneTasks}
                 />
-              </div >
+              </div>
+              <div className="flex flex-col items-center justify-center py-10 text-center">
+                <div className="flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 border border-slate-200">
+                  <ClipboardList className="w-8 h-8 text-slate-400" />
+                </div>
 
-              <DragOverlay>
-                {activeTask ? <TaskCard task={activeTask} isOverlay /> : null}
-              </DragOverlay>
-            </DndContext >
+                <h3 className="mt-5 text-lg font-semibold text-slate-700">
+                  No tasks yet
+                </h3>
+
+                <p className="mt-2 max-w-xs text-sm text-slate-500">
+                  Create your first task or drag one here when you're ready.
+                </p>
+              </div>
+            </div>
           )
+            :
+            (
+              <DndContext
+
+                modifiers={[restrictToWindowEdges, snapCenterToCursor]}
+                sensors={sensors}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+              >
+                <div className="flex flex-col sm:flex-row gap-6">
+                  <Column
+                    id="todo"
+                    title="Tasks"
+                    icon={Circle}
+                    count={todoTasks.length}
+                    tasks={todoTasks}
+                  >
+                    <button className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:cursor-pointer hover:text-slate-600 px-1 py-1.5 transition-colors duration-150"
+                      onClick={() => setTaskForm(true)}
+                    >
+                      <Plus className="h-4 w-4" />
+                      Add Task
+                    </button>
+                  </Column>
+
+                  <Column
+                    id="done"
+                    title="Done"
+                    dot="bg-emerald-500"
+                    count={doneTasks.length}
+                    tasks={doneTasks}
+                  />
+                </div >
+
+                <DragOverlay>
+                  {activeTask ? <TaskCard task={activeTask} isOverlay /> : null}
+                </DragOverlay>
+              </DndContext >
+            )
       }
 
       <style>{`

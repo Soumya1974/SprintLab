@@ -17,6 +17,7 @@ import api from "../../api/axios";
 import useWorkspaceStore from "../../store/workspaceStore";
 import toast from "react-hot-toast";
 import NoteConflictModal from "../../Modals/NoteConflictModal";
+import axios from "axios";
 
 const ProjectNotes = () => {
   const [notes, setNotes] = useState("");
@@ -24,6 +25,7 @@ const ProjectNotes = () => {
   const [version, setVersion] = useState(0);
   const [conflictModal, setConflictModal] = useState(false);
   const [getNotes, setGetNotes] = useState("");
+  const [loadingNotes, setLoadingNotes] = useState(false);
 
   const workspaceData = useWorkspaceStore((state) => state.workspaceData);
 
@@ -86,8 +88,9 @@ const ProjectNotes = () => {
   }
 
   const fetchNotes = async () => {
+    setLoadingNotes(true);
     try {
-      const response = await api.get(`/api/get-notes/${workspaceData}`, {
+      const response = await axios.get(`/api/get-notes/${workspaceData}`, {
         withCredentials: true,
       });
 
@@ -99,10 +102,12 @@ const ProjectNotes = () => {
     } catch (err) {
       console.error(err);
     }
+    finally{
+      setLoadingNotes(false);
+    }
   };
 
   useEffect(() => {
-
     if (workspaceData && editor) {
       fetchNotes();
     }
@@ -212,11 +217,18 @@ const ProjectNotes = () => {
         </div>
       </div>
 
-      {/* Editor */}
-      <EditorContent
-        editor={editor}
-        className="min-h-87.5 px-4 py-3 sm:px-6 focus:outline-none text-gray-800"
-      />
+      <div className="relative">
+        {loadingNotes && (
+          <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/10 backdrop-blur-[1px]">
+            <div className="h-7 w-7 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
+          </div>
+        )}
+
+        <EditorContent
+          editor={editor}
+          className="min-h-87.5 px-4 py-3 sm:px-6 focus:outline-none text-gray-800"
+        />
+      </div>
     </div>
   );
 };

@@ -43,9 +43,13 @@ export const handleSendInvitation = async (req, res) => {
         });
 
         if (existingInvitation) {
-            return res.status(400).json({
-                message: "User has already been invited to this workspace"
-            });
+            if (existingInvitation.expiresAt < Date.now()) {
+                await Invitation.findByIdAndDelete(existingInvitation._id);
+            } else {
+                return res.status(400).json({
+                    message: "User has already been invited to this workspace"
+                });
+            }
         }
 
         const existingUser = await User.findOne({
@@ -112,9 +116,7 @@ export const handleSendInvitation = async (req, res) => {
 
 export const handleGetInvitationDetails = async (req, res) => {
     try {
-        const token = req.params;
-
-        console.log(token);
+        const { token } = req.params;
 
         const invitation = await Invitation.findOne({ token })
             .populate("invitedBy", "name")
@@ -155,66 +157,6 @@ export const handleGetInvitationDetails = async (req, res) => {
     }
 }
 
-export const handleAcceptInvitation = async (req, res) => {
-    try {
-        const { token } = req.params;
-
-        const invitation = await Invitation.findOne({ token })
-            .populate("workspaceId");
-
-        if (!invitation) {
-            return res.status(404).json({
-                message: "Unable to find invitation"
-            });
-        }
-
-        if (invitation.expiresAt < new Date()) {
-            invitation.status = "expired";
-            await invitation.save();
-
-            return res.status(400).json({
-                message: "Invitation has expired"
-            });
-        }
-
-        if (invitation.status !== "pending") {
-            return res.status(400).json({
-                message: "Invitation is no longer valid"
-            });
-        }
-
-        const alreadyMember = invitation.workspaceId.members.some(
-            member => member.user.toString() === req.user.id
-        );
-
-        if (alreadyMember) {
-            return res.status(400).json({
-                message: "You are already a member"
-            });
-        }
-
-        invitation.workspaceId.members.push({
-            user: req.user.id,
-            role: invitation.role
-        });
-
-        await invitation.workspaceId.save();
-
-        invitation.status = "accepted";
-        await invitation.save();
-
-        return res.status(200).json({
-            message: `You have joined as ${invitation.role}`
-        });
-    }
-    catch (err) {
-        console.error(err);
-
-        return res.status(500).json({
-            message: "Internal Server Error"
-        });
-    }
-}
 export const handleAcceptInvitation = async (req, res) => {
     try {
         const { token } = req.params;
