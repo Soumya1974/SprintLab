@@ -1,4 +1,4 @@
-import { LayoutGrid, List, StickyNote, Plus, Users } from "lucide-react";
+import { LayoutGrid, List, StickyNote, Plus, Users, Clock, Filter, Search, X, ArrowUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import api from "../../api/axios";
@@ -14,6 +14,12 @@ export default function Workspaces() {
   const [projectData, setProjectData] = useState([]);
   const [isProjectForm, setProjectForm] = useState(false);
   const [viewMode, setViewMode] = useState("card"); // "card" (default), "list", "note"
+
+  // Filter and Sort states
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [filterDue7Days, setFilterDue7Days] = useState(false);
+  const [sortBy, setSortBy] = useState("default"); // "default", "dueSoon", "mostMembers", "title"
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Start with true so the skeleton appears immediately
   const [isLoading, setLoading] = useState(true);
@@ -47,7 +53,9 @@ export default function Workspaces() {
           toast.error("Something went wrong");
       }
     } finally {
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 5000);
     }
   };
 
@@ -55,28 +63,175 @@ export default function Workspaces() {
     handleGetdata();
   }, []);
 
+  // Compute filtered & sorted projects
+  const filteredProjects = projectData
+    .filter((project) => {
+      // Search query filter
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase();
+        const matchTitle = project.title?.toLowerCase().includes(q);
+        const matchDesc = project.description?.toLowerCase().includes(q);
+        if (!matchTitle && !matchDesc) return false;
+      }
+
+      // Status filter
+      if (filterStatus !== "all" && project.status !== filterStatus) {
+        return false;
+      }
+
+      // Due date under 7 days filter
+      if (filterDue7Days) {
+        if (!project.dueDate) return false;
+        const due = new Date(project.dueDate).getTime();
+        const now = new Date().getTime();
+        const diffDays = (due - now) / (1000 * 60 * 60 * 24);
+        if (diffDays < -1 || diffDays > 7) return false;
+      }
+
+      return true;
+    })
+    .sort((a, b) => {
+      if (sortBy === "mostMembers") {
+        return (b.members?.length || 0) - (a.members?.length || 0);
+      }
+      if (sortBy === "dueSoon") {
+        if (!a.dueDate) return 1;
+        if (!b.dueDate) return -1;
+        return new Date(a.dueDate) - new Date(b.dueDate);
+      }
+      if (sortBy === "title") {
+        return (a.title || "").localeCompare(b.title || "");
+      }
+      return 0;
+    });
+
+  const hasActiveFilters =
+    filterStatus !== "all" || filterDue7Days || sortBy !== "default" || searchQuery.trim() !== "";
+
+  const resetFilters = () => {
+    setFilterStatus("all");
+    setFilterDue7Days(false);
+    setSortBy("default");
+    setSearchQuery("");
+  };
+
   return (
     <div className="h-full">
       {selectedWorkspace ? (
         <ProjectDetail />
       ) : (
         <>
-          <div className="flex flex-wrap items-center justify-between gap-3 py-5 px-5">
-            <h1 className="flex items-center gap-2 text-xl font-semibold text-slate-900">
-              <Users className="h-6 w-6 text-blue-600" />
-              Workspaces
-            </h1>
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 py-4 px-4 sm:px-6 bg-white/50 border-b border-slate-200/80 mb-4">
+            {/* Title & Count Badge */}
+            <div className="flex items-center justify-between sm:justify-start gap-2.5">
+              <div className="flex items-center gap-2">
+                <Users className="h-5 w-5 text-blue-600 shrink-0" />
+                  <h1 className="text-lg sm:text-xl font-bold text-slate-900 shrink-0">
+                    Workspaces
+                  </h1>
+                  <span className="bg-blue-50 text-blue-700 rounded-md text-xs font-semibold px-2.5 py-0.5 border border-blue-200/80 shrink-0">
+                    {filteredProjects.length}
+                  </span>
+              </div>
 
-            <div className="flex items-center gap-3">
+              {/* Mobile View Compact New Button */}
+              <button
+                className="inline-flex sm:hidden items-center gap-1 bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold px-2.5 py-1.5 rounded-lg shadow-xs cursor-pointer shrink-0"
+                onClick={() => setProjectForm(true)}
+              >
+                <Plus className="h-3.5 w-3.5" />
+                <span>New</span>
+              </button>
+            </div>
+
+            {/* Top Controls Bar: Search, Filters, View Toggle, New Workspace */}
+            <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto overflow-x-auto pb-1 lg:pb-0">
+              {/* Search Bar */}
+              <div className="relative flex items-center shrink-0">
+                <Search className="absolute left-2.5 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-8 pr-7 py-1.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-hidden focus:border-blue-500 focus:ring-1 focus:ring-blue-500 w-28 sm:w-36 md:w-44 transition-all"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                )}
+              </div>
+
+              {/* Filter Option Bar */}
+              <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg border border-slate-300/80 shrink-0">
+                {/* Filter: Due <= 7 Days */}
+                <button
+                  onClick={() => setFilterDue7Days(!filterDue7Days)}
+                  className={`flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded transition-all duration-150 cursor-pointer whitespace-nowrap ${filterDue7Days
+                      ? "bg-amber-500 text-white shadow-2xs"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/70"
+                    }`}
+                  title="Filter workspaces due in 7 days or less"
+                >
+                  <Clock className="h-3.5 w-3.5 shrink-0" />
+                  <span className="hidden sm:inline">Due &lt;= 7 Days</span>
+                  <span className="sm:hidden">Due &lt;= 7d</span>
+                </button>
+
+                {/* Filter: Most Members */}
+                <button
+                  onClick={() => setSortBy(sortBy === "mostMembers" ? "default" : "mostMembers")}
+                  className={`flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded transition-all duration-150 cursor-pointer whitespace-nowrap ${sortBy === "mostMembers"
+                      ? "bg-indigo-600 text-white shadow-2xs"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/70"
+                    }`}
+                  title="Sort workspaces by most members"
+                >
+                  <Users className="h-3.5 w-3.5 shrink-0" />
+                  <span className="hidden sm:inline">Most Members</span>
+                  <span className="sm:hidden">Members</span>
+                </button>
+
+                {/* Status Dropdown */}
+                <div className="flex items-center gap-1 px-1">
+                  <Filter className="h-3 w-3 text-slate-400 shrink-0" />
+                  <select
+                    value={filterStatus}
+                    onChange={(e) => setFilterStatus(e.target.value)}
+                    className="py-1 px-1.5 bg-white border border-slate-300 rounded text-xs font-medium text-slate-700 focus:outline-hidden focus:border-blue-500 cursor-pointer max-w-25 sm:max-w-none"
+                  >
+                    <option value="all">All</option>
+                    <option value="pending">Pending</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Review">Review</option>
+                    <option value="Completed">Completed</option>
+                  </select>
+                </div>
+
+                {/* Reset Filters button */}
+                {hasActiveFilters && (
+                  <button
+                    onClick={resetFilters}
+                    className="px-1.5 py-1 text-xs font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-100/80 rounded transition-colors cursor-pointer shrink-0"
+                    title="Reset all filters"
+                  >
+                    Reset
+                  </button>
+                )}
+              </div>
+
               {/* View Switcher Toggle Buttons */}
-              <div className="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200">
+              <div className="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-300/80 shrink-0">
                 <button
                   onClick={() => setViewMode("card")}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 hover:cursor-pointer ${
-                    viewMode === "card"
+                  className={`flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded transition-all duration-150 cursor-pointer ${viewMode === "card"
                       ? "bg-blue-500 text-white shadow-xs font-semibold"
                       : "text-slate-600 hover:text-slate-900"
-                  }`}
+                    }`}
                   title="Card View"
                 >
                   <LayoutGrid className="h-3.5 w-3.5" />
@@ -85,24 +240,22 @@ export default function Workspaces() {
 
                 <button
                   onClick={() => setViewMode("list")}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 hover:cursor-pointer ${
-                    viewMode === "list"
+                  className={`flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded transition-all duration-150 cursor-pointer ${viewMode === "list"
                       ? "bg-blue-500 text-white shadow-xs font-semibold"
                       : "text-slate-600 hover:text-slate-900"
-                  }`}
+                    }`}
                   title="List View (Excel)"
                 >
                   <List className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline">List (Excel)</span>
+                  <span className="hidden sm:inline">Excel</span>
                 </button>
 
                 <button
                   onClick={() => setViewMode("note")}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 hover:cursor-pointer ${
-                    viewMode === "note"
+                  className={`flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded transition-all duration-150 cursor-pointer ${viewMode === "note"
                       ? "bg-blue-500 text-white shadow-xs font-semibold"
                       : "text-slate-600 hover:text-slate-900"
-                  }`}
+                    }`}
                   title="Note View"
                 >
                   <StickyNote className="h-3.5 w-3.5" />
@@ -110,12 +263,13 @@ export default function Workspaces() {
                 </button>
               </div>
 
+              {/* Desktop New Workspace Button */}
               <button
-                className="inline-flex items-center gap-1.5 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 active:scale-95 text-white text-sm font-semibold px-3.5 py-2 rounded-lg transition-all duration-150 shadow-xs hover:cursor-pointer"
+                className="hidden sm:inline-flex items-center gap-1.5 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 active:scale-95 text-white text-xs sm:text-sm font-semibold px-3 py-1.5 rounded-lg transition-all duration-150 shadow-xs cursor-pointer shrink-0"
                 onClick={() => setProjectForm(true)}
               >
                 <Plus className="h-4 w-4" />
-                New Workspace
+                <span>New Workspace</span>
               </button>
             </div>
           </div>
@@ -128,23 +282,48 @@ export default function Workspaces() {
             </div>
           ) : projectData.length > 0 ? (
             <>
-              {viewMode === "card" && (
-                <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 px-5">
-                  {projectData.map((project) => (
-                    <ProjectCard
-                      key={project._id}
-                      projectData={project}
-                    />
-                  ))}
+              {filteredProjects.length > 0 ? (
+                <>
+                  {viewMode === "card" && (
+                    <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 px-5">
+                      {filteredProjects.map((project) => (
+                        <ProjectCard
+                          key={project._id}
+                          projectData={project}
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  {viewMode === "list" && (
+                    <ProjectListView projects={filteredProjects} />
+                  )}
+
+                  {viewMode === "note" && (
+                    <ProjectNoteView projects={filteredProjects} />
+                  )}
+                </>
+              ) : (
+                <div className="mx-5 flex flex-col items-center justify-center text-center bg-slate-50/60 border border-slate-200 rounded-2xl py-16 px-6 animate-fade-in-up">
+                  <div className="h-12 w-12 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center mb-4">
+                    <Filter className="h-5 w-5 text-amber-600" />
+                  </div>
+
+                  <p className="text-base font-semibold text-slate-800 mb-1">
+                    No workspaces match your active filters
+                  </p>
+
+                  <p className="text-sm text-slate-400 mb-5">
+                    Try adjusting your search query, status dropdown, or filter toggles.
+                  </p>
+
+                  <button
+                    className="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-all cursor-pointer shadow-xs"
+                    onClick={resetFilters}
+                  >
+                    Clear Filters
+                  </button>
                 </div>
-              )}
-
-              {viewMode === "list" && (
-                <ProjectListView projects={projectData} />
-              )}
-
-              {viewMode === "note" && (
-                <ProjectNoteView projects={projectData} />
               )}
             </>
           ) : (
@@ -181,4 +360,4 @@ export default function Workspaces() {
       )}
     </div>
   );
-}
+}

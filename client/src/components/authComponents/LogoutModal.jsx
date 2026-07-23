@@ -1,4 +1,4 @@
-import { LogOut, X } from "lucide-react";
+import { X } from "lucide-react";
 import api from "../../api/axios";
 import useAuthStore from "../../store/authStore";
 import toast, { Toaster } from 'react-hot-toast';
@@ -49,10 +49,6 @@ export default function LogoutModal({ onCancelClick }) {
                 >
                     <X className="h-4 w-4" onClick={onCancelClick} />
                 </button>
-
-                <div className="h-11 w-11 rounded-full bg-red-50 flex items-center justify-center mb-4">
-                    <LogOut className="h-5 w-5 text-red-500" />
-                </div>
 
                 <h2 className="text-base font-semibold text-slate-800 mb-1.5">
                     Log out of SprintLab?
