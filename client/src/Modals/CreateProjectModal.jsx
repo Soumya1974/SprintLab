@@ -136,7 +136,7 @@ export default function CreateProjectModal({ onClose, handleGetData }) {
                 className="absolute inset-0 bg-slate-900/40 animate-fade-in"
             />
 
-            <div className="relative bg-white border border-slate-200 shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-scale-in">
+            <div className="relative bg-white border border-slate-200 shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-scale-in bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] bg-size-[24px_24px]">
 
                 <div className="flex items-center justify-between px-6 pt-6 pb-4 sticky top-0 bg-white z-10">
                     <div className="hidden md:flex items-center gap-3">

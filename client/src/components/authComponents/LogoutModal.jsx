@@ -42,7 +42,7 @@ export default function LogoutModal({ onCancelClick }) {
                 className="absolute inset-0 bg-slate-900/40 animate-fade-in"
             />
 
-            <div className="relative bg-white border border-slate-200 shadow-xl w-full max-w-sm p-6 animate-scale-in">
+            <div className="relative bg-white border border-slate-200 shadow-xl w-full max-w-sm p-6 animate-scale-in bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] bg-size-[24px_24px]">
                 <button
                     aria-label="Close"
                     className="absolute top-4 right-4 h-7 w-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors duration-150"

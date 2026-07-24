@@ -53,9 +53,7 @@ export default function Workspaces() {
           toast.error("Something went wrong");
       }
     } finally {
-      setTimeout(() => {
-        setLoading(false);
-      }, 5000);
+      setLoading(false);
     }
   };
 
