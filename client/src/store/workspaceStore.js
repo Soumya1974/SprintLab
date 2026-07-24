@@ -6,6 +6,7 @@ const useWorkspaceStore = create(
         (set) => ({
             workspaceData: null,
             projectDetails: null,
+            workspaceRefreshKey: 0,
             taskForm: false,
             workspaceDueDate: "",
 
@@ -14,6 +15,7 @@ const useWorkspaceStore = create(
 
             setProjectDetails: (data) => set({ projectDetails: data}),
             clearProjectDetails: () => set({ projectDetails: null}),
+            refreshWorkspaces: () => set((state) => ({ workspaceRefreshKey: state.workspaceRefreshKey + 1 })),
 
             setTaskForm: (value) => set({ taskForm: value}),
             clearTaskForm: () => set({ taskForm: false}),

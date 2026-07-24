@@ -19,7 +19,7 @@ import toast from "react-hot-toast";
 import NoteConflictModal from "../../Modals/NoteConflictModal";
 import axios from "axios";
 
-const ProjectNotes = () => {
+const ProjectNotes = ({ fullscreenControl }) => {
   const [notes, setNotes] = useState("");
   const [grid, setGrid] = useState(9);
   const [version, setVersion] = useState(0);
@@ -195,7 +195,7 @@ const ProjectNotes = () => {
           </button>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
           <button
             onClick={grid === 9 ? () => setGrid(1) : () => setGrid(9)}
             className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm transition ${grid === 1
@@ -214,6 +214,7 @@ const ProjectNotes = () => {
             <Download size={18} />
             <span className="hidden sm:inline">Save</span>
           </button>
+          {fullscreenControl}
         </div>
       </div>
 

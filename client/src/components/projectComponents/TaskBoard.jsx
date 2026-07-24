@@ -174,7 +174,7 @@ function Column({ id, title, dot, icon: Icon, count, tasks, children }) {
   );
 }
 
-export default function TaskBoard() {
+export default function TaskBoard({ fullscreenControl }) {
   const [tasks, setTasks] = useState([]);
   const [activeTask, setActiveTask] = useState(null);
   const [loadingTasks, setLoadingTasks] = useState(false);
@@ -275,11 +275,17 @@ export default function TaskBoard() {
   }
 
   useEffect(() => {
+    if (!workspaceData) {
+      setTasks([]);
+      return;
+    }
+
+    setTasks([]);
     handleGetTaskCards();
-  }, []);
+  }, [workspaceData]);
 
   return (
-    <div className="bg-gray-200 animate-fade-in-up border border-slate-300 rounded-sm p-4 overflow-y-auto h-120 md:h-175 scrollbar-hide">
+    <div className="bg-gray-100 animate-fade-in-up border border-slate-300 p-4 overflow-y-auto h-120 md:h-175 scrollbar-hide">
       <div className="flex items-center justify-between flex-wrap gap-3 mb-5 rounded-md">
         <h2 className="text-base font-semibold text-slate-800">
           Tasks Overview
@@ -292,6 +298,7 @@ export default function TaskBoard() {
             <Plus className="h-4 w-4" />
             Add Task
           </button>
+          {fullscreenControl}
         </div>
         {
           taskForm && <CreateTaskModal handleGetTaskCards={handleGetTaskCards} />

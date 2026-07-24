@@ -13,6 +13,7 @@ import {
 import api from "../api/axios";
 import toast from "react-hot-toast";
 import { createPortal } from "react-dom";
+import useWorkspaceStore from "../store/workspaceStore";
 
 const COLORS = [
     { name: "Blue", value: "#2563eb" },
@@ -46,6 +47,7 @@ const INITIAL_FORM_DATA = {
 
 export default function CreateProjectModal({ onClose, handleGetData }) {
     const [formData, setFormData] = useState(INITIAL_FORM_DATA);
+    const refreshWorkspaces = useWorkspaceStore((state) => state.refreshWorkspaces);
 
     const [touched, setTouched] = useState({ name: false, description: false });
 
@@ -107,6 +109,7 @@ export default function CreateProjectModal({ onClose, handleGetData }) {
             if(response.status === 201) {
                 toast.success("Project created successfully");
                 await handleGetData();
+                refreshWorkspaces();
                 onClose();
             }
         }

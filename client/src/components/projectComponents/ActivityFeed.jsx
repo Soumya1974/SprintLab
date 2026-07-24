@@ -89,15 +89,19 @@ const AVATAR_COLORS = [
   "bg-cyan-400",
 ];
 
-export default function ActivityFeed() {
+export default function ActivityFeed({ isFullscreen, onToggleFullscreen }) {
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-5 mb-6 animate-fade-in-up">
+    <div className="bg-white border border-slate-200 p-5 animate-fade-in-up">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-base font-semibold text-slate-800">
           Activity Feed
         </h2>
-        <button className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors duration-150">
-          View all
+        <button
+          type="button"
+          onClick={onToggleFullscreen}
+          className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors duration-150"
+        >
+          {isFullscreen ? "View less" : "View all"}
         </button>
       </div>
 
