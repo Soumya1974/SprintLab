@@ -12,6 +12,8 @@ import {
   LineStyle,
   Plus,
   Download,
+  Minimize2,
+  Maximize2,
 } from "lucide-react";
 import api from "../../api/axios";
 import useWorkspaceStore from "../../store/workspaceStore";
@@ -19,7 +21,7 @@ import toast from "react-hot-toast";
 import NoteConflictModal from "../../Modals/NoteConflictModal";
 import axios from "axios";
 
-const ProjectNotes = ({ fullscreenControl }) => {
+const ProjectNotes = ({ onToggle, maximized }) => {
   const [notes, setNotes] = useState("");
   const [grid, setGrid] = useState(9);
   const [version, setVersion] = useState(0);
@@ -115,9 +117,10 @@ const ProjectNotes = ({ fullscreenControl }) => {
 
   if (!editor) return null;
 
+
   return (
     <div
-      className="mt-6 border border-gray-300 shadow-lg overflow-hidden bg-gray-100"
+      className={`mt-6 flex min-h-0 w-full flex-col overflow-hidden border border-gray-300 bg-gray-100 shadow-lg`}
       style={{
         backgroundImage: `linear-gradient(to bottom, rgba(203,213,225,0.${grid}) 1px, transparent 1px)`,
         backgroundSize: "40px 30px",
@@ -214,11 +217,21 @@ const ProjectNotes = ({ fullscreenControl }) => {
             <Download size={18} />
             <span className="hidden sm:inline">Save</span>
           </button>
-          {fullscreenControl}
+
+           <button
+            onClick={onToggle}
+            className="group flex px-3 py-2 items-center justify-center rounded-lg border-slate-200 border text-slate-500 transition-all duration-200 hover:scale-105 hover:border-slate-300 hover:text-slate-800  active:scale-95"
+          >
+            {maximized ? (
+              <Minimize2 className="h-4 w-4 transition-transform duration-200 group-hover:rotate-3" />
+            ) : (
+              <Maximize2 className="h-4 w-4 transition-transform duration-200 group-hover:-rotate-3" />
+            )}
+          </button>
         </div>
       </div>
 
-      <div className="relative">
+      <div className="relative flex-1 min-h-0 overflow-hidden">
         {loadingNotes && (
           <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/10 backdrop-blur-[1px]">
             <div className="h-7 w-7 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
@@ -227,7 +240,7 @@ const ProjectNotes = ({ fullscreenControl }) => {
 
         <EditorContent
           editor={editor}
-          className="min-h-87.5 px-4 py-3 sm:px-6 focus:outline-none text-gray-800"
+          className="h-full min-h-0 overflow-y-auto px-4 py-3 sm:px-6 focus:outline-none text-gray-800"
         />
       </div>
     </div>

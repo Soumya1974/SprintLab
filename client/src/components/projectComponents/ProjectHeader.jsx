@@ -12,7 +12,7 @@ export default function ProjectHeader() {
   const projectDetails = useWorkspaceStore((state) => state.projectDetails);
 
   return (
-    <div className="flex items-center justify-between gap-4 flex-wrap mb-6 bg-white px-5 py-2 h-full">
+    <div className="sticky top-0 z-20 mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 bg-white/95 px-5 py-2 backdrop-blur supports-backdrop-filter:bg-white/80">
       <div>
         <div className="flex items-center gap-3 mb-1.5">
           <h1 className="text-2xl font-semibold text-slate-800">

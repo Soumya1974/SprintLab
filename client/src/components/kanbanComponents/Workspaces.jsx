@@ -119,7 +119,7 @@ export default function Workspaces() {
         <ProjectDetail />
       ) : (
         <>
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 py-4 px-4 sm:px-6 bg-white/50 border-b border-slate-200/80 mb-4">
+          <div className="sticky top-0 z-20 mb-4 flex flex-col justify-between gap-3 border-b border-slate-200/80 bg-white/95 px-4 py-4 backdrop-blur supports-backdrop-filter:bg-white/80 sm:px-6 lg:flex-row lg:items-center">
             {/* Title & Count Badge */}
             <div className="flex items-center justify-between sm:justify-start gap-2.5">
               <div className="flex items-center gap-2">
@@ -143,7 +143,7 @@ export default function Workspaces() {
             </div>
 
             {/* Top Controls Bar: Search, Filters, View Toggle, New Workspace */}
-            <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto overflow-x-auto pb-1 lg:pb-0">
+            <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto overflow-x-auto pb-1 lg:pb-0 scrollbar-hide">
               {/* Search Bar */}
               <div className="relative flex items-center shrink-0">
                 <Search className="absolute left-2.5 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
@@ -170,7 +170,7 @@ export default function Workspaces() {
                 <button
                   onClick={() => setFilterDue7Days(!filterDue7Days)}
                   className={`flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded transition-all duration-150 cursor-pointer whitespace-nowrap ${filterDue7Days
-                      ? "bg-amber-500 text-white shadow-2xs"
+                      ? "bg-blue-500 text-white shadow-2xs"
                       : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/70"
                     }`}
                   title="Filter workspaces due in 7 days or less"
@@ -184,7 +184,7 @@ export default function Workspaces() {
                 <button
                   onClick={() => setSortBy(sortBy === "mostMembers" ? "default" : "mostMembers")}
                   className={`flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded transition-all duration-150 cursor-pointer whitespace-nowrap ${sortBy === "mostMembers"
-                      ? "bg-indigo-600 text-white shadow-2xs"
+                      ? "bg-blue-500 text-white shadow-2xs"
                       : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/70"
                     }`}
                   title="Sort workspaces by most members"

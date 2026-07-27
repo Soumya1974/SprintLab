@@ -89,19 +89,19 @@ const AVATAR_COLORS = [
   "bg-cyan-400",
 ];
 
-export default function ActivityFeed({ isFullscreen, onToggleFullscreen }) {
+export default function ActivityFeed({ onToggle, maximized }) {
   return (
-    <div className="bg-white border border-slate-200 p-5 animate-fade-in-up">
-      <div className="flex items-center justify-between mb-4">
+    <div className="w-full border border-slate-200 bg-white p-5 animate-fade-in-up">
+      <div className="mb-4 flex items-center justify-between">
         <h2 className="text-base font-semibold text-slate-800">
           Activity Feed
         </h2>
+
         <button
-          type="button"
-          onClick={onToggleFullscreen}
-          className="text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors duration-150"
+          onClick={onToggle}
+          className="text-sm font-medium text-slate-500 transition-colors duration-200 hover:text-blue-600"
         >
-          {isFullscreen ? "View less" : "View all"}
+          {maximized ? "View Less" : "View All"}
         </button>
       </div>
 
@@ -112,9 +112,8 @@ export default function ActivityFeed({ isFullscreen, onToggleFullscreen }) {
             <div key={item.id} className="flex items-start gap-3">
               <div className="relative shrink-0">
                 <div
-                  className={`h-8 w-8 rounded-full ${
-                    AVATAR_COLORS[item.id % AVATAR_COLORS.length]
-                  } ring-2 ring-white`}
+                  className={`h-8 w-8 rounded-full ${AVATAR_COLORS[item.id % AVATAR_COLORS.length]
+                    } ring-2 ring-white`}
                 />
                 <div
                   className={`absolute -bottom-1 -right-1 h-4 w-4 rounded-full ${item.iconBg} ring-2 ring-white flex items-center justify-center`}
@@ -133,7 +132,7 @@ export default function ActivityFeed({ isFullscreen, onToggleFullscreen }) {
         })}
       </div>
 
-         <style>{`
+      <style>{`
                 @keyframes fadeInUp {
                 from { opacity: 0; transform: translateY(8px); }
                 to { opacity: 1; transform: translateY(0); }

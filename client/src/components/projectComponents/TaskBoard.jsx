@@ -6,6 +6,8 @@ import {
   Circle,
   Calendar,
   ClipboardList,
+  Minimize2,
+  Maximize2,
 } from "lucide-react";
 
 import { restrictToWindowEdges, snapCenterToCursor } from "@dnd-kit/modifiers";
@@ -174,7 +176,7 @@ function Column({ id, title, dot, icon: Icon, count, tasks, children }) {
   );
 }
 
-export default function TaskBoard({ fullscreenControl }) {
+export default function TaskBoard({ onToggle, maximized }) {
   const [tasks, setTasks] = useState([]);
   const [activeTask, setActiveTask] = useState(null);
   const [loadingTasks, setLoadingTasks] = useState(false);
@@ -269,7 +271,7 @@ export default function TaskBoard({ fullscreenControl }) {
           toast.error("Something went wrong");
       }
     }
-    finally{
+    finally {
       setLoadingTasks(false);
     }
   }
@@ -284,9 +286,10 @@ export default function TaskBoard({ fullscreenControl }) {
     handleGetTaskCards();
   }, [workspaceData]);
 
+
   return (
-    <div className="bg-gray-100 animate-fade-in-up border border-slate-300 p-4 overflow-y-auto h-120 md:h-175 scrollbar-hide">
-      <div className="flex items-center justify-between flex-wrap gap-3 mb-5 rounded-md">
+    <div className="flex h-full w-full min-h-0 flex-col overflow-hidden overflow-y-scroll rounded-xl border border-slate-300 bg-gray-100 p-4 animate-fade-in-up scrollbar-hide">
+      <div className="flex shrink-0 items-center justify-between flex-wrap gap-3 mb-5 rounded-md">
         <h2 className="text-base font-semibold text-slate-800">
           Tasks Overview
         </h2>
@@ -298,7 +301,17 @@ export default function TaskBoard({ fullscreenControl }) {
             <Plus className="h-4 w-4" />
             Add Task
           </button>
-          {fullscreenControl}
+
+          <button
+            onClick={onToggle}
+            className="group flex h-8 w-8 items-center justify-center rounded-lg border-slate-200 border text-slate-500 transition-all duration-200 hover:scale-105 hover:border-slate-300 hover:text-slate-800  active:scale-95"
+          >
+            {maximized ? (
+              <Minimize2 className="h-4 w-4 transition-transform duration-200 group-hover:rotate-3" />
+            ) : (
+              <Maximize2 className="h-4 w-4 transition-transform duration-200 group-hover:-rotate-3" />
+            )}
+          </button>
         </div>
         {
           taskForm && <CreateTaskModal handleGetTaskCards={handleGetTaskCards} />
@@ -308,7 +321,7 @@ export default function TaskBoard({ fullscreenControl }) {
 
       {
         loadingTasks ? (
-          <div className="flex h-125 items-center justify-center" >
+          <div className="flex flex-1 items-center justify-center" >
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-300 border-t-blue-600"></div>
           </div>
         ) :
@@ -362,7 +375,7 @@ export default function TaskBoard({ fullscreenControl }) {
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
               >
-                <div className="flex flex-col sm:flex-row gap-6">
+                <div className="flex flex-1 flex-col gap-6 overflow-y-auto sm:flex-row">
                   <Column
                     id="todo"
                     title="Tasks"

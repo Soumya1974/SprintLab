@@ -229,7 +229,7 @@ export default function InviteModal({ onClose, anchorRef }) {
 
                 <div
                     style={desktopStyle}
-                    className="absolute w-100 bg-white shadow-xl border border-slate-300 rounded-lg bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] bg-size-[24px_24px]"
+                    className="absolute w-100 bg-white shadow-xl border border-slate-300 bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] bg-size-[24px_24px]"
                 >
                     <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
                         <h2 className="text-lg font-semibold text-slate-900">Invite to workspace</h2>
