@@ -27,11 +27,28 @@ function App() {
     <div>
       <SkeletonTheme baseColor='#EEEEEE' highlightColor='#D1D3D4'>
         <Toaster
-          position='top-right'
+          position="top-right"
           toastOptions={{
+            duration: 3000,
             style: {
-              background: "#1f2937",
-              color: "#fff",
+              background: "#FFFFFF",
+              color: "#0F172A",
+              border: "1px solid #E2E8F0",
+              borderRadius: "10px",
+              fontSize: "14px",
+              padding: "12px 16px",
+            },
+            success: {
+              iconTheme: {
+                primary: "#3B82F6",
+                secondary: "#FFFFFF",
+              },
+            },
+            error: {
+              iconTheme: {
+                primary: "#EF4444",
+                secondary: "#FFFFFF",
+              },
             },
           }}
         />

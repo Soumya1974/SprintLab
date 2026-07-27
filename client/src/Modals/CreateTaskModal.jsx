@@ -28,7 +28,7 @@ const PRIORITIES = [
   { label: "High", dot: "bg-red-500", text: "text-rose-600", bg: "bg-red-50 border-red-200" },
 ];
 
-const MAX_DESC_WORDS = 60;
+const MAX_DESC_WORDS = 160;
 const MAX_TITLE_WORDS = 30;
 
 function countWords(text) {

@@ -11,14 +11,14 @@ export default function ProjectDetail() {
   const [maximized, setMaximized] = useState(null);
 
   return (
-    <div className="relative flex h-screen w-full flex-col overflow-hidden font-sans">
+    <div className="relative flex h-full w-full flex-col overflow-hidden">
       <div
         className="absolute inset-0"
         style={{
           backgroundImage: `
           linear-gradient(to right, rgb(203 213 225 / 0.7) 1px, transparent 1px),
           linear-gradient(to bottom, rgb(203 213 225 / 0.7) 1px, transparent 1px)`,
-          backgroundSize: "24px 24px",
+          backgroundSize: "25px 25px",
           backgroundColor: "#F1F5F9",
         }}
       />

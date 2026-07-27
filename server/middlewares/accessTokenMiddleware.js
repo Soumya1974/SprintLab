@@ -17,7 +17,6 @@ export const handleAccessToken = (req, res, next) => {
         })
 
         req.user = decoded;
-
         next();
     })
 }

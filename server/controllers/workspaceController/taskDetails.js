@@ -76,7 +76,7 @@ export const handleUpdateTaskStatus = async (req, res) => {
     try {
         const { id } = req.user;
         const { taskId, workspaceData } = req.params;
-        const { status } = req.body;
+        const status = req.body.status;
 
         const workspace = await Workspace.findById(workspaceData);
 
@@ -106,14 +106,21 @@ export const handleUpdateTaskStatus = async (req, res) => {
 
         await task.save();
 
-        if (task.status == 'todo') {
-            res.status(200).json({
+        if (task.status === 'todo') {
+            return res.status(200).json({
                 message: `Task ${task.title} is set to todo`
             });
         }
-        res.status(200).json({
-            message: `Task ${task.title} is set to done`
-        });
+        if (task.status === 'in-progress') {
+            return res.status(200).json({
+                message: `Task ${task.title} is set to progress`
+            });
+        }
+        if (task.status === 'done') {
+            res.status(200).json({
+                message: `Task ${task.title} is set to done`
+            });
+        }
     }
     catch (err) {
         console.error(err.message);

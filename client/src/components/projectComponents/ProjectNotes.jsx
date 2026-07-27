@@ -23,7 +23,7 @@ import axios from "axios";
 
 const ProjectNotes = ({ onToggle, maximized }) => {
   const [notes, setNotes] = useState("");
-  const [grid, setGrid] = useState(9);
+  const [grid, setGrid] = useState(1);
   const [version, setVersion] = useState(0);
   const [conflictModal, setConflictModal] = useState(false);
   const [getNotes, setGetNotes] = useState("");
@@ -120,7 +120,9 @@ const ProjectNotes = ({ onToggle, maximized }) => {
 
   return (
     <div
-      className={`mt-6 flex min-h-0 w-full flex-col overflow-hidden border border-gray-300 bg-gray-100 shadow-lg`}
+      className={`flex min-h-0 w-full flex-col overflow-hidden border border-gray-300 bg-gray-100 shadow-lg ${
+        maximized ? "mt-0" : "mt-6"
+      }`}
       style={{
         backgroundImage: `linear-gradient(to bottom, rgba(203,213,225,0.${grid}) 1px, transparent 1px)`,
         backgroundSize: "40px 30px",
