@@ -1,5 +1,6 @@
 import { User } from "../../models/userDbSchema.js";
 import { Workspace } from "../../models/workSpaceDbSchema.js";
+import { logActivity } from "../../utils/logActivity.js";
 
 export const handleProjectDetails = async (req, res) => {
     try {
@@ -24,6 +25,16 @@ export const handleProjectDetails = async (req, res) => {
             }]
         });
 
+        await logActivity({
+            workspaceId: workspaceData._id,
+            userId: workspaceData.owner,
+            action: "WORKSPACE_CREATED",
+            targetId: workspaceData._id,
+            targetType: "Workspace",
+            details: {
+                workspaceTitle: workspaceData.title,
+            }
+        });
 
         return res.status(201).json({
             message: "Workspace created successfully",

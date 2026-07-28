@@ -71,11 +71,13 @@ function TaskCard({ task, onMove }) {
   const canGoPrev = stageIndex > 0;
   const canGoNext = stageIndex < STAGES.length - 1;
 
+  //Task cards
+
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className={`relative bg-white border border-slate-200 rounded-md p-3 touch-none select-none ${isDragging ? "opacity-40" : ""
+      className={`relative bg-white border border-slate-300 p-3 touch-none select-none ${isDragging ? "opacity-90 z-50 border-slate-500" : ""
         }`}
     >
       <div {...listeners} {...attributes} className="cursor-grab active:cursor-grabbing">
