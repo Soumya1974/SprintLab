@@ -46,7 +46,9 @@ const INITIAL_FORM_DATA = {
 
 
 export default function CreateProjectModal({ onClose, handleGetData }) {
+
     const [formData, setFormData] = useState(INITIAL_FORM_DATA);
+
     const refreshWorkspaces = useWorkspaceStore((state) => state.refreshWorkspaces);
 
     const [touched, setTouched] = useState({ name: false, description: false });

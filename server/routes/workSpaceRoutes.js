@@ -5,6 +5,7 @@ import { handleGetTasks, handlePostTask, handleUpdateTaskStatus } from "../contr
 import { handleGetNotes, handleNotesData } from "../controllers/workspaceController/notesDetails.js";
 import { handleAcceptInvitation, handleGetInvitationDetails, handleSendInvitation } from "../controllers/workspaceController/invitationDetails.js";
 import { handleValidEmail } from "../middlewares/authMiddlewares.js";
+import { handleGetWorkspaceActivities } from "../controllers/workspaceController/activityDetails.js";
 
 const workspaceRouter = express.Router();
 
@@ -22,5 +23,8 @@ workspaceRouter.get('/get-notes/:workspaceData', handleGetNotes);
 workspaceRouter.post('/workspaces/:workspaceData/invite', handleAccessToken, handleValidEmail, handleSendInvitation);
 workspaceRouter.get("/invitations/:token", handleGetInvitationDetails);
 workspaceRouter.post("/accept-invitations/:token", handleAccessToken, handleAcceptInvitation);
+
+
+workspaceRouter.get("/activity/:workspaceId", handleAccessToken, handleGetWorkspaceActivities);
 
 export default workspaceRouter;

@@ -1,84 +1,9 @@
+import { useEffect, useState } from "react";
+import { socket } from "../../socket";
 import { CheckCircle2, Upload, MessageSquare, Plus, UserPlus } from "lucide-react";
-
-const ACTIVITY = [
-  {
-    id: 1,
-    icon: CheckCircle2,
-    iconBg: "bg-emerald-50",
-    iconColor: "text-emerald-500",
-    text: (
-      <>
-        <span className="font-semibold">Alice</span> completed{" "}
-        <span className="font-medium">&quot;Design System&quot;</span>
-      </>
-    ),
-    time: "10:30 AM",
-  },
-  {
-    id: 2,
-    icon: Upload,
-    iconBg: "bg-blue-50",
-    iconColor: "text-blue-500",
-    text: (
-      <>
-        <span className="font-semibold">Bob</span> uploaded{" "}
-        <span className="font-medium">&quot;homepage-design.fig&quot;</span>
-      </>
-    ),
-    time: "10:15 AM",
-  },
-  {
-    id: 3,
-    icon: MessageSquare,
-    iconBg: "bg-slate-100",
-    iconColor: "text-slate-500",
-    text: (
-      <>
-        <span className="font-semibold">Charlie</span> commented on{" "}
-        <span className="font-medium">&quot;UI/UX Design&quot;</span>
-      </>
-    ),
-    time: "Yesterday",
-  },
-  {
-    id: 4,
-    icon: Plus,
-    iconBg: "bg-violet-50",
-    iconColor: "text-violet-500",
-    text: (
-      <>
-        <span className="font-semibold">David</span> created a new task{" "}
-        <span className="font-medium">&quot;API Integration&quot;</span>
-      </>
-    ),
-    time: "Yesterday",
-  },
-  {
-    id: 5,
-    icon: UserPlus,
-    iconBg: "bg-amber-50",
-    iconColor: "text-amber-500",
-    text: (
-      <>
-        <span className="font-semibold">Sarah</span> joined the project
-      </>
-    ),
-    time: "2 days ago",
-  },
-  {
-    id: 6,
-    icon: CheckCircle2,
-    iconBg: "bg-emerald-50",
-    iconColor: "text-emerald-500",
-    text: (
-      <>
-        <span className="font-semibold">Mike</span> completed{" "}
-        <span className="font-medium">&quot;Project Setup&quot;</span>
-      </>
-    ),
-    time: "3 days ago",
-  },
-];
+import useWorkspaceStore from "../../store/workspaceStore";
+import { getActivityText } from "../../utils/getActivityText";
+import api from "../../api/axios";
 
 const AVATAR_COLORS = [
   "bg-blue-400",
@@ -90,6 +15,53 @@ const AVATAR_COLORS = [
 ];
 
 export default function ActivityFeed({ onToggle, maximized }) {
+
+  const [activities, setActivities] = useState([]);
+  const workspaceData = useWorkspaceStore((state) => state.workspaceData);
+
+  console.log(activities);
+
+  useEffect(() => {
+    const getActivities = async () => {
+      try {
+        const response = await api.get(`/api/activity/${workspaceData}`);
+
+        setActivities(getActivityText(response.data.activities));
+
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    if (workspaceData) {
+      getActivities();
+    }
+  }, [workspaceData]);
+
+  // Join workspace room
+  useEffect(() => {
+    if (!workspaceData) return;
+
+    socket.emit("join-workspace", workspaceData);
+
+    return () => {
+      socket.emit("leave-workspace", workspaceData);
+    };
+  }, [workspaceData]);
+
+  // Listen for new activities
+  useEffect(() => {
+    socket.on("activity:new", (activity) => {
+      setActivities((prev) => [activity, ...prev]);
+    });
+
+    return () => {
+      socket.off("activity:new");
+    };
+  }, []);
+
+
+
   return (
     <div className="w-full border border-slate-200 bg-white p-5 animate-fade-in-up">
       <div className="mb-4 flex items-center justify-between">
@@ -105,7 +77,7 @@ export default function ActivityFeed({ onToggle, maximized }) {
         </button>
       </div>
 
-      <div className="flex flex-col gap-4">
+      {/* <div className="flex flex-col gap-4">
         {ACTIVITY.map((item) => {
           const Icon = item.icon;
           return (
@@ -115,11 +87,7 @@ export default function ActivityFeed({ onToggle, maximized }) {
                   className={`h-8 w-8 rounded-full ${AVATAR_COLORS[item.id % AVATAR_COLORS.length]
                     } ring-2 ring-white`}
                 />
-                <div
-                  className={`absolute -bottom-1 -right-1 h-4 w-4 rounded-full ${item.iconBg} ring-2 ring-white flex items-center justify-center`}
-                >
-                  <Icon className={`h-2.5 w-2.5 ${item.iconColor}`} />
-                </div>
+
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-slate-600 leading-snug">
@@ -130,7 +98,7 @@ export default function ActivityFeed({ onToggle, maximized }) {
             </div>
           );
         })}
-      </div>
+      </div> */}
 
       <style>{`
                 @keyframes fadeInUp {
