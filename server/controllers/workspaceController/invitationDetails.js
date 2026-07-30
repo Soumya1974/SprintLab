@@ -5,6 +5,9 @@ import crypto from "crypto";
 import nodemailer from "nodemailer";
 import { getInviteEmailTemplate } from "../../templates/getInviteEmailTemplate.js";
 import bcrypt from 'bcrypt';
+import { logActivity } from "../../utils/logActivity.js";
+import { io } from "../../socket.js";
+import { Activity } from "../../models/activityDbSchema.js";
 
 //Nodemailer setup
 const transporter = nodemailer.createTransport({
@@ -100,6 +103,25 @@ export const handleSendInvitation = async (req, res) => {
             })
         });
 
+        const activity = await logActivity({
+            workspaceId: invitation.workspaceId,
+            userId: invitation.invitedBy,
+            action: "MEMBER_INVITED",
+            targetId: invitation.workspaceId,
+            targetType: "Member",
+            details: {
+                email: invitation.email,
+                role: invitation.role,
+            }
+        });
+
+        const populatedActivity = await Activity.findById(activity._id).populate("userId", "name avatar");
+
+        io.to(populatedActivity.workspaceId.toString()).emit(
+            "activity:new",
+            populatedActivity
+        );
+
         return res.status(200).json({
             message: "Invitation sent successfully"
         });
@@ -162,7 +184,7 @@ export const handleAcceptInvitation = async (req, res) => {
         const { token } = req.params;
 
         const invitation = await Invitation.findOne({ token })
-            .populate("workspaceId");
+            .populate("workspaceId", "title members");
 
         if (!invitation) {
             return res.status(404).json({
@@ -204,6 +226,26 @@ export const handleAcceptInvitation = async (req, res) => {
 
         invitation.status = "accepted";
         await invitation.save();
+
+        const activity = await logActivity({
+            workspaceId: invitation.workspaceId._id,
+            userId: invitation.invitedBy,
+            action: "MEMBER_JOINED",
+            targetId: invitation.workspaceId._id,
+            targetType: "Member",
+            details: {
+                email: invitation.email,
+                role: invitation.role,
+                workspace: invitation.workspaceId.title,
+            }
+        });
+
+        const populatedActivity = await Activity.findById(activity._id).populate("userId", "name avatar");
+
+        io.to(populatedActivity.workspaceId.toString()).emit(
+            "activity:new",
+            populatedActivity
+        );
 
         return res.status(200).json({
             message: `You have joined as ${invitation.role}`

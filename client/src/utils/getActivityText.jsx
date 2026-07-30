@@ -28,7 +28,14 @@ export const getActivityText = (activity) => {
     case "MEMBER_INVITED":
       return (
         <>
-          <b className="font-semibold text-slate-800">{name}</b> invited {activity.details.email}
+          <b className="font-semibold text-slate-800">{name}</b> invited {activity.details.email} as a {activity.details.role}
+        </>
+      );
+      
+    case "MEMBER_JOINED":
+      return (
+        <>
+          <b className="font-semibold text-slate-800">{activity.details.email}</b> joined {activity.details.workspace} as a {activity.details.role}
         </>
       );
 
