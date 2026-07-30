@@ -182,9 +182,11 @@ export const handleGetInvitationDetails = async (req, res) => {
 export const handleAcceptInvitation = async (req, res) => {
     try {
         const { token } = req.params;
+        const { id } = req.user;
 
         const invitation = await Invitation.findOne({ token })
-            .populate("workspaceId", "title members");
+            .populate("workspaceId", "title members")
+            .populate("userData", "name avatar")
 
         if (!invitation) {
             return res.status(404).json({
@@ -227,20 +229,24 @@ export const handleAcceptInvitation = async (req, res) => {
         invitation.status = "accepted";
         await invitation.save();
 
+        const user = await User.findById(id).select("name avatar");
+
         const activity = await logActivity({
             workspaceId: invitation.workspaceId._id,
-            userId: invitation.invitedBy,
+            userId: user._id,
             action: "MEMBER_JOINED",
             targetId: invitation.workspaceId._id,
             targetType: "Member",
             details: {
+                memberName: user.name,
+                memberAvatar: user.avatar,
                 email: invitation.email,
                 role: invitation.role,
                 workspace: invitation.workspaceId.title,
             }
         });
 
-        const populatedActivity = await Activity.findById(activity._id).populate("userId", "name avatar");
+        const populatedActivity = await Activity.findById(activity._id);
 
         io.to(populatedActivity.workspaceId.toString()).emit(
             "activity:new",

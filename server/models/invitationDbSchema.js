@@ -14,6 +14,12 @@ const invitationSchema = new mongoose.Schema({
         trim: true
     },
 
+    userData: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "userData",
+        default: null,
+    },
+
     role: {
         type: String,
         enum: ["team", "viewer"],

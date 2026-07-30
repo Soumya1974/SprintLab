@@ -13,8 +13,8 @@ export const getActivityText = (activity) => {
     case "TASK_CREATED":
       return (
         <>
-          <b className="font-semibold text-slate-800">{name}</b> created task "
-          {activity.details.taskTitle}"
+          <b className="font-semibold text-slate-800">{name}</b> created task <b className="font-semibold text-slate-800">"
+          {activity.details.taskTitle}"</b>
         </>
       );
 
@@ -28,14 +28,14 @@ export const getActivityText = (activity) => {
     case "MEMBER_INVITED":
       return (
         <>
-          <b className="font-semibold text-slate-800">{name}</b> invited {activity.details.email} as a {activity.details.role}
+          <b className="font-semibold text-slate-800">{name}</b> invited <b className="font-semibold text-slate-800">{activity.details.email}</b> as a {activity.details.role}
         </>
       );
 
     case "MEMBER_JOINED":
       return (
         <>
-          <b className="font-semibold text-slate-800">{activity.details.email}</b> joined {activity.details.workspace} as a {activity.details.role}
+          <b className="font-semibold text-slate-800">{activity.details.memberName} </b>({activity.details.email}) joined <b className="font-semibold text-slate-800">"{activity.details.workspace}"</b> as a {activity.details.role}
         </>
       );
 

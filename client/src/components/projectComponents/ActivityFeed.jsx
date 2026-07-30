@@ -3,6 +3,15 @@ import { socket } from "../../socket";
 import useWorkspaceStore from "../../store/workspaceStore";
 import { getActivityText } from "../../utils/getActivityText";
 import api from "../../api/axios";
+import {
+  FolderPlus,
+  ListPlus,
+  MessageSquare,
+  UserPlus,
+  UserCheck,
+  ArrowRightLeft,
+  Activity,
+} from "lucide-react";
 
 const AVATAR_COLORS = [
   "bg-blue-400",
@@ -21,6 +30,20 @@ const FILTERS = [
   { key: "comment", label: "Comments" },
   { key: "member", label: "Members" },
 ];
+
+// Maps each activity type to a small, official-looking Lucide icon
+const ACTIVITY_ICONS = {
+  WORKSPACE_CREATED: FolderPlus,
+  TASK_CREATED: ListPlus,
+  COMMENT_ADDED: MessageSquare,
+  MEMBER_INVITED: UserPlus,
+  MEMBER_JOINED: UserCheck,
+  TASK_STATUS_CHANGED: ArrowRightLeft,
+};
+
+function getActivityIcon(action) {
+  return ACTIVITY_ICONS[action] || Activity;
+}
 
 // Deterministic color pick based on a string id, so a user always gets the same color
 function colorForId(id = "") {
@@ -209,6 +232,7 @@ export default function ActivityFeed({ onToggle, maximized }) {
             const user = item.userId || {};
             const initial = user.name ? user.name.charAt(0).toUpperCase() : "?";
             const isLast = index === filteredActivities.length - 1;
+            const ActivityIcon = getActivityIcon(item.action);
 
             return (
               <div
@@ -237,6 +261,11 @@ export default function ActivityFeed({ onToggle, maximized }) {
                       {initial}
                     </div>
                   )}
+
+                  {/* Activity type icon badge */}
+                  <div className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full border border-slate-200 bg-white shadow-sm">
+                    <ActivityIcon className="h-2.5 w-2.5 text-slate-500" strokeWidth={2.25} />
+                  </div>
                 </div>
                 <div className="flex-1 min-w-0 pt-1">
                   <p className="text-sm text-slate-600 leading-snug">
