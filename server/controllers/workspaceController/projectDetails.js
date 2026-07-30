@@ -1,8 +1,6 @@
 import { User } from "../../models/userDbSchema.js";
 import { Workspace } from "../../models/workSpaceDbSchema.js";
-import { logActivity } from "../../utils/logActivity.js";
-import { io } from "../../socket.js";
-import { Activity } from "../../models/activityDbSchema.js";
+// import { Activity } from "../../models/activityDbSchema.js";
 
 export const handleProjectDetails = async (req, res) => {
     try {
@@ -26,24 +24,6 @@ export const handleProjectDetails = async (req, res) => {
                 role: "team",
             }]
         });
-
-        const activity = await logActivity({
-            workspaceId: workspaceData._id,
-            userId: workspaceData.owner,
-            action: "WORKSPACE_CREATED",
-            targetId: workspaceData._id,
-            targetType: "Workspace",
-            details: {
-                workspaceTitle: workspaceData.title,
-            }
-        });
-
-        const populatedActivity = await Activity.findById(activity._id).populate("userId", "name avatar");
-
-        io.to(populatedActivity.workspaceId.toString()).emit(
-            "activity:new",
-            populatedActivity
-        );
 
         return res.status(201).json({
             message: "Workspace created successfully",

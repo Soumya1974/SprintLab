@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { socket } from "../../socket";
-import { CheckCircle2, Upload, MessageSquare, Plus, UserPlus } from "lucide-react";
 import useWorkspaceStore from "../../store/workspaceStore";
 import { getActivityText } from "../../utils/getActivityText";
 import api from "../../api/axios";
@@ -14,22 +13,94 @@ const AVATAR_COLORS = [
   "bg-cyan-400",
 ];
 
-export default function ActivityFeed({ onToggle, maximized }) {
+const FILTERS = [
+  { key: "all", label: "All" },
+  { key: "today", label: "Today" },
+  { key: "week", label: "This Week" },
+  { key: "task", label: "Tasks" },
+  { key: "comment", label: "Comments" },
+  { key: "member", label: "Members" },
+];
 
+// Deterministic color pick based on a string id, so a user always gets the same color
+function colorForId(id = "") {
+  const str = String(id);
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+}
+
+function formatTimestamp(dateStr) {
+  const date = new Date(dateStr);
+  if (isNaN(date)) return "";
+
+  const day = date.getDate();
+  const month = date.toLocaleString("en-US", { month: "short" });
+  const year = date.getFullYear();
+
+  let hours = date.getHours();
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  const ampm = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12;
+  hours = hours === 0 ? 12 : hours;
+
+  return `${day} ${month} ${year}, ${hours}:${minutes} ${ampm}`;
+}
+
+function isToday(dateStr) {
+  const d = new Date(dateStr);
+  const now = new Date();
+  return (
+    d.getDate() === now.getDate() &&
+    d.getMonth() === now.getMonth() &&
+    d.getFullYear() === now.getFullYear()
+  );
+}
+
+function isThisWeek(dateStr) {
+  const d = new Date(dateStr);
+  const now = new Date();
+  const startOfWeek = new Date(now);
+  startOfWeek.setDate(now.getDate() - now.getDay());
+  startOfWeek.setHours(0, 0, 0, 0);
+  return d >= startOfWeek;
+}
+
+function ActivitySkeleton() {
+  return (
+    <div className="flex items-start gap-3 animate-pulse">
+      <div className="h-8 w-8 shrink-0 rounded-full bg-slate-200" />
+      <div className="flex-1 min-w-0 space-y-2">
+        <div className="h-3 w-4/5 rounded bg-slate-200" />
+        <div className="h-2.5 w-1/3 rounded bg-slate-100" />
+      </div>
+    </div>
+  );
+}
+
+export default function ActivityFeed({ onToggle, maximized }) {
   const [activities, setActivities] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [activeFilter, setActiveFilter] = useState("all");
+  const scrollRef = useRef(null);
   const workspaceData = useWorkspaceStore((state) => state.workspaceData);
 
-  console.log(activities);
-
+  // Fetch activities, oldest first so newest lands at the bottom
   useEffect(() => {
     const getActivities = async () => {
+      setLoading(true);
       try {
         const response = await api.get(`/api/activity/${workspaceData}`);
-
-        setActivities(getActivityText(response.data.activities));
-
+        const sorted = [...response.data.activities].sort(
+          (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+        );
+        setActivities(sorted);
       } catch (error) {
         console.error(error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -37,6 +108,13 @@ export default function ActivityFeed({ onToggle, maximized }) {
       getActivities();
     }
   }, [workspaceData]);
+
+  // Scroll to the latest activity once loaded / on refresh
+  useEffect(() => {
+    if (!loading && scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [loading, activities.length]);
 
   // Join workspace room
   useEffect(() => {
@@ -49,22 +127,34 @@ export default function ActivityFeed({ onToggle, maximized }) {
     };
   }, [workspaceData]);
 
-  // Listen for new activities
+  // Listen for new activities — append to the bottom, then auto-scroll down
   useEffect(() => {
-    socket.on("activity:new", (activity) => {
-      setActivities((prev) => [activity, ...prev]);
-    });
+    const handleNewActivity = (activity) => {
+      setActivities((prev) => [...prev, activity]);
+      requestAnimationFrame(() => {
+        if (scrollRef.current) {
+          scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        }
+      });
+    };
+
+    socket.on("activity:new", handleNewActivity);
 
     return () => {
-      socket.off("activity:new");
+      socket.off("activity:new", handleNewActivity);
     };
   }, []);
 
-
+  const filteredActivities = activities.filter((item) => {
+    if (activeFilter === "all") return true;
+    if (activeFilter === "today") return isToday(item.createdAt);
+    if (activeFilter === "week") return isThisWeek(item.createdAt);
+    return item.type === activeFilter;
+  });
 
   return (
     <div className="w-full border border-slate-200 bg-white p-5 animate-fade-in-up">
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-3 flex items-center justify-between">
         <h2 className="text-base font-semibold text-slate-800">
           Activity Feed
         </h2>
@@ -77,37 +167,106 @@ export default function ActivityFeed({ onToggle, maximized }) {
         </button>
       </div>
 
-      {/* <div className="flex flex-col gap-4">
-        {ACTIVITY.map((item) => {
-          const Icon = item.icon;
-          return (
-            <div key={item.id} className="flex items-start gap-3">
-              <div className="relative shrink-0">
-                <div
-                  className={`h-8 w-8 rounded-full ${AVATAR_COLORS[item.id % AVATAR_COLORS.length]
-                    } ring-2 ring-white`}
-                />
+      {/* Filters */}
+      <div className="mb-4 flex flex-wrap gap-1.5">
+        {FILTERS.map((filter) => (
+          <button
+            key={filter.key}
+            onClick={() => setActiveFilter(filter.key)}
+            className={`rounded-full px-3 py-1 text-xs font-medium transition-all duration-200 ${
+              activeFilter === filter.key
+                ? "bg-blue-600 text-white"
+                : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+            }`}
+          >
+            {filter.label}
+          </button>
+        ))}
+      </div>
 
+      <div
+        ref={scrollRef}
+        className={`scrollbar-hide overflow-y-auto pr-1 transition-all duration-300 ${
+          maximized ? "h-[70vh]" : "h-72"
+        }`}
+      >
+        {loading ? (
+          <div className="flex flex-col gap-4">
+            <ActivitySkeleton />
+            <ActivitySkeleton />
+            <ActivitySkeleton />
+            <ActivitySkeleton />
+          </div>
+        ) : filteredActivities.length === 0 ? (
+          <div className="flex h-full flex-col items-center justify-center text-center">
+            <p className="text-sm font-medium text-slate-400">No activities</p>
+            <p className="text-xs text-slate-300 mt-1">
+              Activity will show up here as your team works
+            </p>
+          </div>
+        ) : (
+          filteredActivities.map((item, index) => {
+            const user = item.userId || {};
+            const initial = user.name ? user.name.charAt(0).toUpperCase() : "?";
+            const isLast = index === filteredActivities.length - 1;
+
+            return (
+              <div
+                key={item._id}
+                className="relative flex items-start gap-3 pb-4 animate-fade-in-up"
+                style={{ animationDelay: `${Math.min(index, 10) * 30}ms` }}
+              >
+                {/* Timeline connector line */}
+                {!isLast && (
+                  <span className="absolute left-4 top-8 -translate-x-1/2 w-px bottom-0 bg-slate-200" />
+                )}
+
+                <div className="relative z-10 shrink-0">
+                  {user.avatar ? (
+                    <img
+                      src={user.avatar}
+                      alt={user.name || "User"}
+                      className="h-8 w-8 rounded-full object-cover ring-4 ring-white"
+                    />
+                  ) : (
+                    <div
+                      className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold text-white ring-4 ring-white ${colorForId(
+                        user._id || user.name
+                      )}`}
+                    >
+                      {initial}
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0 pt-1">
+                  <p className="text-sm text-slate-600 leading-snug">
+                    {getActivityText(item)}
+                  </p>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    {formatTimestamp(item.createdAt)}
+                  </p>
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm text-slate-600 leading-snug">
-                  {item.text}
-                </p>
-                <p className="text-xs text-slate-400 mt-0.5">{item.time}</p>
-              </div>
-            </div>
-          );
-        })}
-      </div> */}
+            );
+          })
+        )}
+      </div>
 
       <style>{`
-                @keyframes fadeInUp {
-                from { opacity: 0; transform: translateY(8px); }
-                to { opacity: 1; transform: translateY(0); }
-                }
-                .animate-fade-in-up { animation: fadeInUp 0.4s ease-out both; }
-        `}</style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up { animation: fadeInUp 0.4s ease-out both; }
 
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </div>
   );
 }

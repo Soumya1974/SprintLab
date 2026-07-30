@@ -1,6 +1,9 @@
 import { User } from "../../models/userDbSchema.js";
 import { Workspace } from "../../models/workSpaceDbSchema.js";
 import { Project } from "../../models/projectDbSchema.js";
+import { logActivity } from "../../utils/logActivity.js";
+import { io } from "../../socket.js";
+import { Activity } from "../../models/activityDbSchema.js";
 
 export const handlePostTask = async (req, res) => {
     try {
@@ -35,6 +38,24 @@ export const handlePostTask = async (req, res) => {
             workflowId: id,
             createdBy: req.user.id
         })
+
+        const activity = await logActivity({
+            workspaceId: taskData.workflowId,
+            userId: taskData.createdBy,
+            action: "TASK_CREATED",
+            targetId: taskData.workflowId,
+            targetType: "Task",
+            details: {
+                taskTitle: taskData.title,
+            }
+        });
+
+        const populatedActivity = await Activity.findById(activity._id).populate("userId", "name avatar");
+
+        io.to(populatedActivity.workspaceId.toString()).emit(
+            "activity:new",
+            populatedActivity
+        );
 
         res.status(201).json({
             message: "Task created successfully"
