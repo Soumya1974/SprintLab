@@ -117,26 +117,50 @@ export const handleUpdateTaskStatus = async (req, res) => {
 
         const task = await Project.findById(taskId);
 
+
         if (!task) {
             return res.status(404).json({
                 message: "Task not found"
             });
         }
+        const previousStatus = task.status;
 
         task.status = status;
 
         await task.save();
+
+        const activity = await logActivity({
+            workspaceId: workspace._id,
+            userId: id,
+            action: "TASK_STATUS_CHANGED",
+            targetId: task._id,
+            targetType: "Task",
+            details: {
+                taskTitle: task.title,
+                previousStatus: previousStatus,
+                currentStatus: task.status,
+            }
+        });
+
+        const populatedActivity = await Activity.findById(activity._id).populate("userId", "name avatar");
+
+        io.to(populatedActivity.workspaceId.toString()).emit(
+            "activity:new",
+            populatedActivity
+        );
 
         if (task.status === 'todo') {
             return res.status(200).json({
                 message: `Task ${task.title} is set to todo`
             });
         }
+
         if (task.status === 'in-progress') {
             return res.status(200).json({
                 message: `Task ${task.title} is set to progress`
             });
         }
+
         if (task.status === 'done') {
             res.status(200).json({
                 message: `Task ${task.title} is set to done`

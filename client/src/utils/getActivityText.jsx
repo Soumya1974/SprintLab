@@ -31,11 +31,18 @@ export const getActivityText = (activity) => {
           <b className="font-semibold text-slate-800">{name}</b> invited {activity.details.email} as a {activity.details.role}
         </>
       );
-      
+
     case "MEMBER_JOINED":
       return (
         <>
           <b className="font-semibold text-slate-800">{activity.details.email}</b> joined {activity.details.workspace} as a {activity.details.role}
+        </>
+      );
+
+    case "TASK_STATUS_CHANGED":
+      return (
+        <>
+          <b className="font-semibold text-slate-800">{name}</b> set Task: <b className="font-semibold text-slate-800">"{activity.details.taskTitle}"</b> from {activity.details.previousStatus} to {activity.details.currentStatus}
         </>
       );
 
