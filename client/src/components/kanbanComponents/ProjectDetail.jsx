@@ -91,6 +91,7 @@ export default function ProjectDetail() {
                 <div className="space-y-6">
                   <ActivityFeed
                     maximized={false}
+                    onlineUsers={onlineUsers}
                     onToggle={() => setMaximized("activity")}
                   />
 

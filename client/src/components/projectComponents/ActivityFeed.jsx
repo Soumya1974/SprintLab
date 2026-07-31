@@ -102,7 +102,7 @@ function ActivitySkeleton() {
   );
 }
 
-export default function ActivityFeed({ onToggle, maximized }) {
+export default function ActivityFeed({ onToggle, maximized, onlineUsers }) {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState("all");
@@ -181,7 +181,7 @@ export default function ActivityFeed({ onToggle, maximized }) {
   });
 
   return (
-    <div className="w-full border border-slate-200 bg-white p-5 animate-fade-in-up">
+    <div className="w-full border border-slate-200 bg-white p-5 animate-fade-in-up overflow-y-scroll">
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-base font-semibold text-slate-800">
           Activity Feed
@@ -233,9 +233,14 @@ export default function ActivityFeed({ onToggle, maximized }) {
         ) : (
           filteredActivities.map((item, index) => {
             const user = item.userId || {};
-            const initial = user.name ? user.name.charAt(0).toUpperCase() : "?";
+            const isOnline = onlineUsers?.includes(user._id?.toString());
+            const initial = user.name
+              ? user.name.charAt(0).toUpperCase()
+              : "?";
+
             const isLast = index === filteredActivities.length - 1;
             const ActivityIcon = getActivityIcon(item.action);
+
 
             return (
               <div
@@ -265,18 +270,34 @@ export default function ActivityFeed({ onToggle, maximized }) {
                     </div>
                   )}
 
-                  {/* Activity type icon badge */}
+                  {/* Activity icon */}
                   <div className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full border border-slate-200 bg-white shadow-sm">
-                    <ActivityIcon className="h-2.5 w-2.5 text-slate-500" strokeWidth={2.25} />
+                    <ActivityIcon
+                      className="h-2.5 w-2.5 text-slate-500"
+                      strokeWidth={2.25}
+                    />
                   </div>
                 </div>
+
                 <div className="flex-1 min-w-0 pt-1">
                   <p className="text-sm text-slate-600 leading-snug">
                     {getActivityText(item)}
                   </p>
-                  <p className="text-xs text-slate-400 mt-0.5">
-                    {formatTimestamp(item.createdAt)}
-                  </p>
+
+                  <div className="mt-0.5 flex items-center gap-1.5">
+                    <p className="text-xs text-slate-400">{formatTimestamp(item.createdAt)}</p>
+
+                    <span className="text-slate-300">·</span>
+
+                    <span
+                      className={`inline-flex items-center gap-1 border border-slate-100 px-1 py-0.2 text-[10px] font-medium ${isOnline
+                          ? "bg-emerald-50 text-emerald-700"
+                          : "bg-slate-100 text-slate-500"
+                        }`}
+                    >
+                      {isOnline ? "Online" : "Offline"}
+                    </span>
+                  </div>
                 </div>
               </div>
             );
