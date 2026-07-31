@@ -12,6 +12,7 @@ import {
   ArrowRightLeft,
   Activity,
 } from "lucide-react";
+import useAuthStore from "../../store/authStore";
 
 const AVATAR_COLORS = [
   "bg-blue-400",
@@ -31,7 +32,6 @@ const FILTERS = [
   { key: "member", label: "Members" },
 ];
 
-// Maps each activity type to a small, official-looking Lucide icon
 const ACTIVITY_ICONS = {
   WORKSPACE_CREATED: FolderPlus,
   TASK_CREATED: ListPlus,
@@ -45,7 +45,6 @@ function getActivityIcon(action) {
   return ACTIVITY_ICONS[action] || Activity;
 }
 
-// Deterministic color pick based on a string id, so a user always gets the same color
 function colorForId(id = "") {
   const str = String(id);
   let hash = 0;
@@ -108,20 +107,26 @@ export default function ActivityFeed({ onToggle, maximized }) {
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState("all");
   const scrollRef = useRef(null);
+
   const workspaceData = useWorkspaceStore((state) => state.workspaceData);
 
   // Fetch activities, oldest first so newest lands at the bottom
   useEffect(() => {
+
     const getActivities = async () => {
       setLoading(true);
+
       try {
         const response = await api.get(`/api/activity/${workspaceData}`);
         const sorted = [...response.data.activities].sort(
           (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
         );
+
         setActivities(sorted);
+
       } catch (error) {
         console.error(error);
+
       } finally {
         setLoading(false);
       }
@@ -139,26 +144,25 @@ export default function ActivityFeed({ onToggle, maximized }) {
     }
   }, [loading, activities.length]);
 
-  // Join workspace room
-  useEffect(() => {
-    if (!workspaceData) return;
-
-    socket.emit("join-workspace", workspaceData);
-
-    return () => {
-      socket.emit("leave-workspace", workspaceData);
-    };
-  }, [workspaceData]);
-
   // Listen for new activities — append to the bottom, then auto-scroll down
   useEffect(() => {
+
     const handleNewActivity = (activity) => {
-      setActivities((prev) => [...prev, activity]);
+
+      setActivities(prev => [
+        ...prev,
+        activity,
+      ]);
+
       requestAnimationFrame(() => {
+
         if (scrollRef.current) {
-          scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+          scrollRef.current.scrollTop =
+            scrollRef.current.scrollHeight;
         }
+
       });
+
     };
 
     socket.on("activity:new", handleNewActivity);
@@ -166,6 +170,7 @@ export default function ActivityFeed({ onToggle, maximized }) {
     return () => {
       socket.off("activity:new", handleNewActivity);
     };
+
   }, []);
 
   const filteredActivities = activities.filter((item) => {
@@ -196,11 +201,10 @@ export default function ActivityFeed({ onToggle, maximized }) {
           <button
             key={filter.key}
             onClick={() => setActiveFilter(filter.key)}
-            className={`rounded-full px-3 py-1 text-xs font-medium transition-all duration-200 ${
-              activeFilter === filter.key
-                ? "bg-blue-600 text-white"
-                : "bg-slate-100 text-slate-500 hover:bg-slate-200"
-            }`}
+            className={`rounded-full px-3 py-1 text-xs font-medium transition-all duration-200 ${activeFilter === filter.key
+              ? "bg-blue-600 text-white"
+              : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+              }`}
           >
             {filter.label}
           </button>
@@ -209,9 +213,8 @@ export default function ActivityFeed({ onToggle, maximized }) {
 
       <div
         ref={scrollRef}
-        className={`scrollbar-hide overflow-y-auto pr-1 transition-all duration-300 ${
-          maximized ? "h-[70vh]" : "h-72"
-        }`}
+        className={`scrollbar-hide overflow-y-auto pr-1 transition-all duration-300 ${maximized ? "h-[70vh]" : "h-72"
+          }`}
       >
         {loading ? (
           <div className="flex flex-col gap-4">

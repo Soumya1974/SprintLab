@@ -1,14 +1,65 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProjectHeader from "../projectComponents/ProjectHeader";
 import TaskBoard from "../projectComponents/TaskBoard";
 import ProjectNotes from "../projectComponents/ProjectNotes";
 import ActivityFeed from "../projectComponents/ActivityFeed";
 import CommentsSection from "../projectComponents/CommentsSection";
+import useWorkspaceStore from "../../store/workspaceStore";
+import useAuthStore from "../../store/authStore";
+import { socket } from "../../socket";
 // import StatsRow from "../projectComponents/StatsRow";
 
 export default function ProjectDetail() {
 
   const [maximized, setMaximized] = useState(null);
+  const [onlineUsers, setOnlineUsers] = useState([]);
+
+  const workspaceId = useWorkspaceStore(state => state.workspaceData);
+  const accessToken = useAuthStore(state => state.accessToken);
+
+  useEffect(() => {
+
+    socket.on("workspace:online-users", users => {
+
+      setOnlineUsers(users);
+
+    });
+
+    return () => {
+
+      socket.off("workspace:online-users");
+
+    };
+
+  }, []);
+
+  useEffect(() => {
+
+    if (!workspaceId || !accessToken) return;
+
+    socket.auth = {
+      token: accessToken,
+    };
+
+    if (!socket.connected) {
+      socket.connect();
+    }
+
+    socket.emit("join-workspace", {
+      workspaceId,
+    });
+
+    return () => {
+
+      socket.emit("leave-workspace", {
+        workspaceId,
+      });
+
+      socket.disconnect();
+    };
+
+  }, [workspaceId, accessToken]);
+
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">

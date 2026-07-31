@@ -27,10 +27,8 @@ app.use(express.json());
 app.use("/api", authRouter);
 app.use("/api", workspaceRouter);
 
-// Create HTTP Server
 const server = http.createServer(app);
 
-// Initialize socket.io through function call
 initializeSocket(server);
 
 connectDb();
