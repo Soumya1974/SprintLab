@@ -9,7 +9,7 @@ export const handlePostTask = async (req, res) => {
     try {
         const id = req.params.workspaceData;
 
-        const { title, description, dueDate, priority, color } = req.body;
+        const { title, description, dueDate, priority, color, assignedTo } = req.body;
 
         const workSpace = await Workspace.findById(id)
             .populate("dueDate")
@@ -35,6 +35,7 @@ export const handlePostTask = async (req, res) => {
             dueDate,
             priority,
             color,
+            assignedTo: assignedTo || null,
             workflowId: id,
             createdBy: req.user.id
         })
@@ -74,7 +75,7 @@ export const handleGetTasks = async (req, res) => {
     try {
         const workflowId = req.params.workspaceData;
 
-        const projectData = await Project.find({ workflowId })
+        const projectData = await Project.find({ workflowId }).populate("assignedTo", "name avatar email");
 
         if (!projectData) return res.status(400).json({
             message: "Task details not found"

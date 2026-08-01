@@ -7,6 +7,8 @@ import {
   ChevronDown,
   Flag,
   Palette,
+  UserRound,
+  Check,
 } from "lucide-react";
 import useWorkspaceStore from "../store/workspaceStore";
 import api from "../api/axios";
@@ -46,6 +48,7 @@ const INITIAL_FORM = {
   dueDate: "",
   priority: "Low",
   color: COLORS[0].value,
+  assignedTo: "",
 };
 
 function CollapsibleRow({ icon: Icon, label, open, onToggle, preview, children }) {
@@ -87,6 +90,7 @@ export default function CreateTaskModal({ handleGetTaskCards }) {
   const [showDueDate, setShowDueDate] = useState(false);
   const [showPriority, setShowPriority] = useState(false);
   const [showColor, setShowColor] = useState(false);
+  const [showAssignTo, setShowAssignTo] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const wordCount = countWords(formData.description);
@@ -98,6 +102,26 @@ export default function CreateTaskModal({ handleGetTaskCards }) {
   const clearTaskForm = useWorkspaceStore((state) => state.clearTaskForm);
   const workspaceData = useWorkspaceStore((state) => state.workspaceData);
   const workspaceDueDate = useWorkspaceStore((state) => state.workspaceDueDate);
+  const projectDetails = useWorkspaceStore((state) => state.projectDetails);
+
+  const rawMembers = projectDetails?.members || [];
+  const membersList = [];
+  const seenIds = new Set();
+
+  if (projectDetails?.owner && typeof projectDetails.owner === "object" && projectDetails.owner._id) {
+    seenIds.add(projectDetails.owner._id.toString());
+    membersList.push(projectDetails.owner);
+  }
+
+  for (const m of rawMembers) {
+    const u = m.user || m;
+    if (u && u._id && !seenIds.has(u._id.toString())) {
+      seenIds.add(u._id.toString());
+      membersList.push(u);
+    }
+  }
+
+  const selectedMember = membersList.find((m) => m._id === formData.assignedTo);
 
   const titleError = !formData.title.trim()
     ? "Title is required"
@@ -125,7 +149,7 @@ export default function CreateTaskModal({ handleGetTaskCards }) {
     e.preventDefault();
     setTouched({ title: true, description: true });
     if (!isValid) return;
-    const { title, description, dueDate, priority, color } = formData;
+    const { title, description, dueDate, priority, color, assignedTo } = formData;
     setSubmitting(true);
 
     try {
@@ -135,6 +159,7 @@ export default function CreateTaskModal({ handleGetTaskCards }) {
         dueDate: dueDate || null,
         priority: priority,
         color,
+        assignedTo: assignedTo || null,
       }, {
         withCredentials: true
       });
@@ -364,6 +389,63 @@ export default function CreateTaskModal({ handleGetTaskCards }) {
                   style={{ backgroundColor: c.value }}
                 />
               ))}
+            </div>
+          </CollapsibleRow>
+
+          {/* assign to */}
+          <CollapsibleRow
+            icon={UserRound}
+            label="Assign To"
+            open={showAssignTo}
+            onToggle={() => setShowAssignTo(!showAssignTo)}
+            preview={
+              !showAssignTo && selectedMember && (
+                <span className="text-xs font-medium text-slate-600 truncate max-w-[120px]">
+                  {selectedMember.name}
+                </span>
+              )
+            }
+          >
+            <div className="pt-1 pb-3 max-h-48 overflow-y-auto space-y-1.5 pr-1">
+              {membersList.length === 0 ? (
+                <p className="text-xs text-slate-400 italic px-2 py-1">No workspace members found</p>
+              ) : (
+                membersList.map((member) => {
+                  const isSelected = formData.assignedTo === member._id;
+                  return (
+                    <button
+                      key={member._id}
+                      type="button"
+                      onClick={() => updateField("assignedTo", isSelected ? "" : member._id)}
+                      className={`w-full flex items-center justify-between px-3 py-2 rounded-lg border text-left text-xs transition-all duration-150 ${isSelected
+                        ? "border-blue-500 bg-blue-50/80 text-blue-900 font-medium"
+                        : "border-slate-200 hover:bg-slate-50 text-slate-700"
+                        }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        {member.avatar ? (
+                          <img
+                            src={member.avatar}
+                            alt={member.name}
+                            className="h-6 w-6 rounded-full object-cover shrink-0"
+                          />
+                        ) : (
+                          <div className="h-6 w-6 rounded-full bg-slate-200 text-slate-600 font-semibold flex items-center justify-center text-[10px] shrink-0">
+                            {member.name ? member.name.charAt(0).toUpperCase() : "U"}
+                          </div>
+                        )}
+                        <div className="truncate">
+                          <p className="truncate font-medium leading-tight">{member.name}</p>
+                          {member.email && (
+                            <p className="truncate text-[10px] text-slate-400 font-normal">{member.email}</p>
+                          )}
+                        </div>
+                      </div>
+                      {isSelected && <Check className="h-4 w-4 text-blue-600 shrink-0" />}
+                    </button>
+                  );
+                })
+              )}
             </div>
           </CollapsibleRow>
 

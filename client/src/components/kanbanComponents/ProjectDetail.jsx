@@ -75,7 +75,7 @@ export default function ProjectDetail() {
       />
 
       <div className="relative z-10 flex h-full flex-col overflow-hidden">
-        <ProjectHeader />
+        <ProjectHeader onlineUsers={onlineUsers} />
 
         <div className="flex-1 overflow-y-auto scrollbar-hide">
           {maximized === null ? (
