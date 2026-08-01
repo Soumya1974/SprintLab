@@ -2,10 +2,15 @@ import { Calendar, ArrowUpRight, Folder, FileSpreadsheet, Users, Clock } from "l
 import useWorkspaceStore from "../../store/workspaceStore";
 
 const STATUS_STYLES = {
-  pending: "bg-green-100 text-green-800 border border-green-300",
+  pending: "bg-slate-100 text-slate-700 border border-slate-300",
+  Todo: "bg-slate-100 text-slate-700 border border-slate-300",
+  todo: "bg-slate-100 text-slate-700 border border-slate-300",
   "In Progress": "bg-blue-100 text-blue-800 border border-blue-300",
+  "in-progress": "bg-blue-100 text-blue-800 border border-blue-300",
   Review: "bg-amber-100 text-amber-800 border border-amber-300",
   Completed: "bg-emerald-100 text-emerald-800 border border-emerald-300",
+  Done: "bg-emerald-100 text-emerald-800 border border-emerald-300",
+  done: "bg-emerald-100 text-emerald-800 border border-emerald-300",
 };
 
 const AVATAR_FALLBACK_COLORS = [

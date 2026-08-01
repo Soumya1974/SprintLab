@@ -5,6 +5,29 @@ import { logActivity } from "../../utils/logActivity.js";
 import { io } from "../../socket.js";
 import { Activity } from "../../models/activityDbSchema.js";
 
+export const syncWorkspaceStatus = async (workspaceId) => {
+    const tasks = await Project.find({ workflowId: workspaceId });
+    let newStatus = "Pending";
+
+    if (tasks.length > 0) {
+        const allDone = tasks.every((t) => t.status === "done" || t.status === "Done");
+        const hasInProgress = tasks.some((t) => t.status === "in-progress" || t.status === "In Progress");
+
+        if (allDone) {
+            newStatus = "Done";
+        } else if (hasInProgress) {
+            newStatus = "In Progress";
+        } else {
+            newStatus = "Todo";
+        }
+    } else {
+        newStatus = "Pending";
+    }
+
+    await Workspace.findByIdAndUpdate(workspaceId, { status: newStatus });
+    return newStatus;
+};
+
 export const handlePostTask = async (req, res) => {
     try {
         const id = req.params.workspaceData;
@@ -40,6 +63,13 @@ export const handlePostTask = async (req, res) => {
             createdBy: req.user.id
         })
 
+        const projectStatus = await syncWorkspaceStatus(id);
+
+        io.to(id.toString()).emit("workspace:status-updated", {
+            workspaceId: id,
+            status: projectStatus
+        });
+
         const activity = await logActivity({
             workspaceId: taskData.workflowId,
             userId: taskData.createdBy,
@@ -59,7 +89,8 @@ export const handlePostTask = async (req, res) => {
         );
 
         res.status(201).json({
-            message: "Task created successfully"
+            message: "Task created successfully",
+            projectStatus
         })
     }
     catch (err) {
@@ -130,6 +161,13 @@ export const handleUpdateTaskStatus = async (req, res) => {
 
         await task.save();
 
+        const projectStatus = await syncWorkspaceStatus(workspaceData);
+
+        io.to(workspaceData.toString()).emit("workspace:status-updated", {
+            workspaceId: workspaceData,
+            status: projectStatus
+        });
+
         const activity = await logActivity({
             workspaceId: workspace._id,
             userId: id,
@@ -150,23 +188,10 @@ export const handleUpdateTaskStatus = async (req, res) => {
             populatedActivity
         );
 
-        if (task.status === 'todo') {
-            return res.status(200).json({
-                message: `Task ${task.title} is set to todo`
-            });
-        }
-
-        if (task.status === 'in-progress') {
-            return res.status(200).json({
-                message: `Task ${task.title} is set to progress`
-            });
-        }
-
-        if (task.status === 'done') {
-            res.status(200).json({
-                message: `Task ${task.title} is set to done`
-            });
-        }
+        res.status(200).json({
+            message: `Task ${task.title} is set to ${task.status}`,
+            projectStatus
+        });
     }
     catch (err) {
         console.error(err.message);

@@ -25,13 +25,29 @@ export default function ProjectDetail() {
 
     });
 
+    const handleStatusUpdated = ({ workspaceId: updatedId, status }) => {
+      if (updatedId === workspaceId) {
+        const currentDetails = useWorkspaceStore.getState().projectDetails;
+        if (currentDetails) {
+          useWorkspaceStore.getState().setProjectDetails({
+            ...currentDetails,
+            status,
+          });
+        }
+      }
+      useWorkspaceStore.getState().refreshWorkspaces();
+    };
+
+    socket.on("workspace:status-updated", handleStatusUpdated);
+
     return () => {
 
       socket.off("workspace:online-users");
+      socket.off("workspace:status-updated", handleStatusUpdated);
 
     };
 
-  }, []);
+  }, [workspaceId]);
 
   useEffect(() => {
 

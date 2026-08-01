@@ -18,6 +18,7 @@ export const handleProjectDetails = async (req, res) => {
             description,
             color,
             dueDate,
+            status: "Pending",
             owner,
             members: [{
                 user: owner,

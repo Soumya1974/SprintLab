@@ -3,16 +3,26 @@ import useWorkspaceStore from "../../store/workspaceStore";
 
 const STATUS_STYLES = {
   pending: "bg-slate-100 text-slate-700 border border-slate-300",
+  Todo: "bg-slate-100 text-slate-700 border border-slate-300",
+  todo: "bg-slate-100 text-slate-700 border border-slate-300",
   "In Progress": "bg-blue-100 text-blue-800 border border-blue-300",
+  "in-progress": "bg-blue-100 text-blue-800 border border-blue-300",
   Review: "bg-amber-100 text-amber-900 border border-amber-300",
   Completed: "bg-emerald-100 text-emerald-900 border border-emerald-300",
+  Done: "bg-emerald-100 text-emerald-900 border border-emerald-300",
+  done: "bg-emerald-100 text-emerald-900 border border-emerald-300",
 };
 
 const STATUS_LABELS = {
   pending: "TO DO",
+  Todo: "TO DO",
+  todo: "TO DO",
   "In Progress": "IN PROGRESS",
+  "in-progress": "IN PROGRESS",
   Review: "IN REVIEW",
   Completed: "DONE",
+  Done: "DONE",
+  done: "DONE",
 };
 
 const AVATAR_FALLBACK_COLORS = [

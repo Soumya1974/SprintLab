@@ -2,11 +2,17 @@ import { useState } from "react";
 import { Calendar, ArrowUpRight, Crown, Users, User, ChevronDown, ChevronUp } from "lucide-react";
 import useWorkspaceStore from "../../store/workspaceStore";
 
-const STATUS_STYLES = {
-    pending: "bg-green-50 text-gray-600 border border-green-200",
-    "In Progress": "bg-blue-50 text-blue-600 border border-blue-200",
-    Review: "bg-amber-50 text-amber-600 border border-amber-200",
-    Completed: "bg-emerald-50 text-emerald-600 border border-emerald-200",
+const STATUS_TEXT_STYLES = {
+    Pending: "text-slate-600 border-slate-300",
+    pending: "text-slate-600 border-slate-300",
+    Todo: "text-blue-600 border-blue-300",
+    todo: "text-blue-600 border-blue-300",
+    "In Progress": "text-amber-600 border-amber-300",
+    "in-progress": "text-amber-600 border-amber-300",
+    Review: "text-purple-600 border-purple-300",
+    Completed: "text-emerald-600 border-emerald-300",
+    Done: "text-emerald-600 border-emerald-300",
+    done: "text-emerald-600 border-emerald-300",
 };
 
 const AVATAR_FALLBACK_COLORS = [
@@ -169,9 +175,7 @@ export default function ProjectCard({ projectData }) {
     const ownerObj = getOwnerInfo(owner, members);
 
     return (
-        <div className="relative animate-fade-in-up h-full bg-white bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-size-[20px_20px] border border-slate-200 p-4 overflow-hidden hover:border-slate-300 hover:shadow-lg shadow-sm hover:-translate-y-0.5 transition-all duration-200 ease-out flex flex-col">
-
-            <span className="absolute left-6 top-0 h-full w-px bg-red-200/70" />
+        <div className="relative animate-fade-in-up h-full bg-white border border-slate-200 p-4 overflow-hidden hover:border-slate-300 hover:shadow-lg shadow-sm hover:-translate-y-0.5 transition-all duration-200 ease-out flex flex-col">
 
             <div className="pl-3 flex-1">
                 <div className="flex items-start justify-between gap-3 mb-1.5">
@@ -180,8 +184,9 @@ export default function ProjectCard({ projectData }) {
                     </h3>
                     <div className="flex items-center gap-2 shrink-0">
                         <span
-                            className={`text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap shadow-2xs ${STATUS_STYLES[status] || "bg-slate-100 text-slate-600 border border-slate-200"
-                                }`}
+                            className={`text-xs font-semibold px-2.5 py-0.5 rounded border whitespace-nowrap ${
+                                STATUS_TEXT_STYLES[status] || "text-slate-600 border-slate-300"
+                            }`}
                         >
                             {status}
                         </span>

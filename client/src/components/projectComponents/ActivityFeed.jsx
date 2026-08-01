@@ -248,10 +248,7 @@ export default function ActivityFeed({ onToggle, maximized, onlineUsers }) {
                 className="relative flex items-start gap-3 pb-4 animate-fade-in-up"
                 style={{ animationDelay: `${Math.min(index, 10) * 30}ms` }}
               >
-                {/* Timeline connector line */}
-                {!isLast && (
-                  <span className="absolute left-4 top-8 -translate-x-1/2 w-px bottom-0 bg-slate-200" />
-                )}
+                
 
                 <div className="relative z-10 shrink-0">
                   {user.avatar ? (

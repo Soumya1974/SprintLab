@@ -372,6 +372,17 @@ export default function TaskBoard({ onToggle, maximized }) {
         { withCredentials: true }
       );
       toast.success(response.data.message);
+
+      if (response.data?.projectStatus) {
+        const currentDetails = useWorkspaceStore.getState().projectDetails;
+        if (currentDetails) {
+          useWorkspaceStore.getState().setProjectDetails({
+            ...currentDetails,
+            status: response.data.projectStatus,
+          });
+        }
+        useWorkspaceStore.getState().refreshWorkspaces();
+      }
     } catch (err) {
       setTasks(previousTasks);
       switch (err.response?.status) {
