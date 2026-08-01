@@ -1,11 +1,13 @@
 import { UserPlus, Share2, Settings, ChevronDown, LogOutIcon } from "lucide-react";
 import useWorkspaceStore from "../../store/workspaceStore";
 import InviteModal from "../../Modals/InviteModal";
-import { useRef, useState } from "react";
+import { socket } from "../../socket";
+import { useEffect, useRef, useState } from "react";
 
 export default function ProjectHeader({ onlineUsers = [] }) {
 
   const [isOpen, setIsOpen] = useState(false);
+  const [realtimeOnlineUsers, setRealtimeOnlineUsers] = useState(onlineUsers);
 
   const inviteBtnRef = useRef(null);
   const clearWorkspaceData = useWorkspaceStore((state) => state.clearWorkspaceData);
@@ -29,8 +31,25 @@ export default function ProjectHeader({ onlineUsers = [] }) {
     }
   }
 
+  useEffect(() => {
+    setRealtimeOnlineUsers(onlineUsers);
+  }, [onlineUsers]);
+
+  useEffect(() => {
+    const handleOnlineUsers = (users) => {
+      setRealtimeOnlineUsers(users);
+    };
+
+    socket.on("workspace:online-users", handleOnlineUsers);
+
+    return () => {
+      socket.off("workspace:online-users", handleOnlineUsers);
+    };
+  }, []);
+
+  const onlineUserIds = new Set((realtimeOnlineUsers || []).map((id) => id?.toString()));
   const onlineCount = membersList.filter((m) =>
-    onlineUsers.includes(m._id?.toString())
+    onlineUserIds.has(m._id?.toString())
   ).length;
 
   return (
@@ -55,7 +74,7 @@ export default function ProjectHeader({ onlineUsers = [] }) {
           <div className="flex items-center gap-2 border-r border-slate-200 pr-4">
             <div className="flex items-center -space-x-1.5 overflow-hidden">
               {membersList.map((member) => {
-                const isOnline = onlineUsers.includes(member._id?.toString());
+                const isOnline = onlineUserIds.has(member._id?.toString());
                 const initial = member.name ? member.name.charAt(0).toUpperCase() : "?";
 
                 return (

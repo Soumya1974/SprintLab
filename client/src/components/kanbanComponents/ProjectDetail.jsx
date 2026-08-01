@@ -79,16 +79,6 @@ export default function ProjectDetail() {
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: `
-          linear-gradient(to right, rgb(203 213 225 / 0.7) 1px, transparent 1px),
-          linear-gradient(to bottom, rgb(203 213 225 / 0.7) 1px, transparent 1px)`,
-          backgroundSize: "25px 25px",
-          backgroundColor: "#F1F5F9",
-        }}
-      />
 
       <div className="relative z-10 flex h-full flex-col overflow-hidden">
         <ProjectHeader onlineUsers={onlineUsers} />

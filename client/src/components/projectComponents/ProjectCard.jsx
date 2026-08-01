@@ -184,8 +184,8 @@ export default function ProjectCard({ projectData }) {
                     </h3>
                     <div className="flex items-center gap-2 shrink-0">
                         <span
-                            className={`text-xs font-semibold px-2.5 py-0.5 rounded border whitespace-nowrap ${
-                                STATUS_TEXT_STYLES[status] || "text-slate-600 border-slate-300"
+                            className={`text-xs font-semibold px-2.5 py-0.5 rounded whitespace-nowrap ${
+                                STATUS_TEXT_STYLES[status] || "text-slate-600"
                             }`}
                         >
                             {status}

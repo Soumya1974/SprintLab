@@ -35,18 +35,19 @@ export const handlePostTask = async (req, res) => {
         const { title, description, dueDate, priority, color, assignedTo } = req.body;
 
         const workSpace = await Workspace.findById(id)
-            .populate("dueDate")
             .populate("members.user", "name email avatar")
 
         if (!workSpace) return res.status(400).json({
             message: "Workspace not found",
         })
 
-        const members = workSpace.members.find(
-            member => member.user._id.toString() === req.user.id
-        );
+        const isWorkspaceOwner = workSpace.owner?.toString() === req.user.id;
+        const members = workSpace.members.find((member) => {
+            const memberUserId = member.user?._id?.toString?.() || member.user?.toString?.();
+            return memberUserId === req.user.id;
+        });
 
-        if (!members || members.role === "viewer") {
+        if (!isWorkspaceOwner && (!members || members.role === "viewer")) {
             return res.status(400).json({
                 message: "Viewers are not allowed to add tasks"
             })
@@ -63,12 +64,17 @@ export const handlePostTask = async (req, res) => {
             createdBy: req.user.id
         })
 
+        const populatedTask = await Project.findById(taskData._id).populate("assignedTo", "name avatar email");
+
         const projectStatus = await syncWorkspaceStatus(id);
 
         io.to(id.toString()).emit("workspace:status-updated", {
             workspaceId: id,
             status: projectStatus
         });
+
+        io.to(id.toString()).emit("task:created", populatedTask);
+        io.to(id.toString()).emit("task:updated", populatedTask);
 
         const activity = await logActivity({
             workspaceId: taskData.workflowId,
@@ -125,23 +131,87 @@ export const handleGetTasks = async (req, res) => {
     }
 }
 
+export const handleDeleteTask = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const { taskId, workspaceData } = req.params;
+
+        const workspace = await Workspace.findById(workspaceData)
+            .populate("members.user", "name email avatar");
+
+        if (!workspace) {
+            return res.status(400).json({
+                message: "Workspace not found",
+            });
+        }
+
+        const isWorkspaceOwner = workspace.owner?.toString() === id;
+        const members = workspace.members.find((member) => {
+            const memberUserId = member.user?._id?.toString?.() || member.user?.toString?.();
+            return memberUserId === id;
+        });
+
+        if (!isWorkspaceOwner && (!members || members.role === "viewer")) {
+            return res.status(400).json({
+                message: "Viewers are not allowed to delete tasks"
+            });
+        }
+
+        const task = await Project.findById(taskId);
+
+        if (!task) {
+            return res.status(404).json({
+                message: "Task not found"
+            });
+        }
+
+        await Project.findByIdAndDelete(taskId);
+
+        const projectStatus = await syncWorkspaceStatus(workspaceData);
+
+        io.to(workspaceData.toString()).emit("workspace:status-updated", {
+            workspaceId: workspaceData,
+            status: projectStatus
+        });
+
+        io.to(workspaceData.toString()).emit("task:deleted", {
+            taskId: task._id.toString(),
+            workspaceId: workspaceData.toString(),
+        });
+
+        res.status(200).json({
+            message: `Task ${task.title} deleted successfully`,
+            projectStatus,
+        });
+    } catch (err) {
+        console.error(err.message);
+
+        res.status(500).json({
+            message: err.message
+        });
+    }
+};
+
 export const handleUpdateTaskStatus = async (req, res) => {
     try {
         const { id } = req.user;
         const { taskId, workspaceData } = req.params;
         const status = req.body.status;
 
-        const workspace = await Workspace.findById(workspaceData);
+        const workspace = await Workspace.findById(workspaceData)
+            .populate("members.user", "name email avatar");
 
         if (!workspace) return res.status(400).json({
             message: "Workspace not found",
         })
 
-        const members = workspace.members.find(
-            member => member.user._id.toString() === id
-        );
+        const isWorkspaceOwner = workspace.owner?.toString() === id;
+        const members = workspace.members.find((member) => {
+            const memberUserId = member.user?._id?.toString?.() || member.user?.toString?.();
+            return memberUserId === id;
+        });
 
-        if (!members || members.role === "viewer") {
+        if (!isWorkspaceOwner && (!members || members.role === "viewer")) {
             return res.status(400).json({
                 message: "Viewers are not allowed to update tasks"
             })
@@ -161,12 +231,17 @@ export const handleUpdateTaskStatus = async (req, res) => {
 
         await task.save();
 
+        const populatedTask = await Project.findById(task._id).populate("assignedTo", "name avatar email");
+
         const projectStatus = await syncWorkspaceStatus(workspaceData);
 
         io.to(workspaceData.toString()).emit("workspace:status-updated", {
             workspaceId: workspaceData,
             status: projectStatus
         });
+
+        io.to(workspaceData.toString()).emit("task:status-changed", populatedTask);
+        io.to(workspaceData.toString()).emit("task:updated", populatedTask);
 
         const activity = await logActivity({
             workspaceId: workspace._id,

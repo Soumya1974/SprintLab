@@ -29,6 +29,7 @@ import useWorkspaceStore from "../../store/workspaceStore";
 import toast from "react-hot-toast";
 import api from "../../api/axios";
 import CreateTaskModal from "../../Modals/CreateTaskModal";
+import { socket } from "../../socket";
 
 
 const STAGES = [
@@ -314,6 +315,24 @@ function ExcelView({ tasks, onMove }) {
   );
 }
 
+function upsertTask(tasks, incomingTask) {
+  if (!incomingTask?._id) return tasks;
+
+  const existingIndex = tasks.findIndex((task) => task._id === incomingTask._id);
+
+  if (existingIndex === -1) {
+    return [incomingTask, ...tasks];
+  }
+
+  const nextTasks = [...tasks];
+  nextTasks[existingIndex] = {
+    ...nextTasks[existingIndex],
+    ...incomingTask,
+  };
+
+  return nextTasks;
+}
+
 export default function TaskBoard({ onToggle, maximized }) {
   const [tasks, setTasks] = useState([]);
   const [loadingTasks, setLoadingTasks] = useState(false);
@@ -442,8 +461,45 @@ export default function TaskBoard({ onToggle, maximized }) {
       setTasks([]);
       return;
     }
+
     setTasks([]);
     handleGetTaskCards();
+  }, [workspaceData]);
+
+  useEffect(() => {
+    if (!workspaceData) return undefined;
+
+    const handleTaskCreated = (task) => {
+      if (!task || task.workflowId?.toString?.() !== workspaceData?.toString?.()) return;
+      setTasks((prev) => upsertTask(prev, task));
+    };
+
+    const handleTaskUpdated = (task) => {
+      if (!task || task.workflowId?.toString?.() !== workspaceData?.toString?.()) return;
+      setTasks((prev) => upsertTask(prev, task));
+    };
+
+    const handleTaskDeleted = ({ taskId, workspaceId }) => {
+      if (workspaceId?.toString?.() !== workspaceData?.toString?.()) return;
+      setTasks((prev) => prev.filter((task) => task._id !== taskId));
+    };
+
+    const handleTaskStatusChanged = (task) => {
+      if (!task || task.workflowId?.toString?.() !== workspaceData?.toString?.()) return;
+      setTasks((prev) => upsertTask(prev, task));
+    };
+
+    socket.on("task:created", handleTaskCreated);
+    socket.on("task:updated", handleTaskUpdated);
+    socket.on("task:deleted", handleTaskDeleted);
+    socket.on("task:status-changed", handleTaskStatusChanged);
+
+    return () => {
+      socket.off("task:created", handleTaskCreated);
+      socket.off("task:updated", handleTaskUpdated);
+      socket.off("task:deleted", handleTaskDeleted);
+      socket.off("task:status-changed", handleTaskStatusChanged);
+    };
   }, [workspaceData]);
 
   return (

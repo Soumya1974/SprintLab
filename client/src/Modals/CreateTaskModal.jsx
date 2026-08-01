@@ -168,7 +168,6 @@ export default function CreateTaskModal({ handleGetTaskCards }) {
         toast.success(response.data.message);
         clearTaskForm();
       }
-      await handleGetTaskCards();
     }
     catch (err) {
       switch (err.response.status) {
