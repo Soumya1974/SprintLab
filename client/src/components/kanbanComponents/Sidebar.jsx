@@ -44,9 +44,9 @@ export default function Sidebar({
   const [workspaces, setWorkspaces] = useState([]);
   const [workspacesOpen, setWorkspacesOpen] = useState(true);
   const [tasksState, setTasksState] = useState({});
-  const setWorkspaceData = useWorkspaceStore((state) => state.setWorkspaceData);
-  const setProjectDetails = useWorkspaceStore((state) => state.setProjectDetails);
+  const selectWorkspace = useWorkspaceStore((state) => state.selectWorkspace);
   const setWorkspaceDueDate = useWorkspaceStore((state) => state.setWorkspaceDueDate);
+  const setAllWorkspaces = useWorkspaceStore((state) => state.setAllWorkspaces);
   const workspaceRefreshKey = useWorkspaceStore((state) => state.workspaceRefreshKey);
 
   useEffect(() => {
@@ -56,7 +56,9 @@ export default function Sidebar({
       try {
         const response = await api.get("/api/workspaces/get-projects");
         if (isMounted) {
-          setWorkspaces(response.data.userProjects || []);
+          const payload = response.data.userProjects || [];
+          setWorkspaces(payload);
+          setAllWorkspaces(payload);
         }
       } catch (error) {
         if (isMounted && error.response?.status !== 401) {
@@ -73,8 +75,7 @@ export default function Sidebar({
   }, [workspaceRefreshKey]);
 
   const openWorkspace = (workspace) => {
-    setWorkspaceData(workspace._id);
-    setProjectDetails(workspace);
+    selectWorkspace(workspace._id, workspace, workspace.dueDate);
     setWorkspaceDueDate(workspace.dueDate);
     setActive("workspaces");
     setMobileOpen(false);

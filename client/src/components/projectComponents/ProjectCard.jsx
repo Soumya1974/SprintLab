@@ -156,9 +156,7 @@ function ExpandedMemberList({ members = [] }) {
 export default function ProjectCard({ projectData }) {
     const [isExpanded, setIsExpanded] = useState(false);
 
-    const setWorkspaceData = useWorkspaceStore((state) => state.setWorkspaceData);
-    const setProjectDetails = useWorkspaceStore((state) => state.setProjectDetails);
-    const setWorkspaceDueDate = useWorkspaceStore((state) => state.setWorkspaceDueDate);
+    const selectWorkspace = useWorkspaceStore((state) => state.selectWorkspace);
 
     const {
         _id,
@@ -268,9 +266,7 @@ export default function ProjectCard({ projectData }) {
                 <button
                     className="group w-full flex items-center justify-center gap-1.5 text-sm font-semibold py-2 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 hover:text-blue-700 transition-all duration-150 shadow-2xs hover:cursor-pointer active:scale-98"
                     onClick={() => {
-                        setWorkspaceData(_id);
-                        setProjectDetails(projectData);
-                        setWorkspaceDueDate(dueDate);
+                        selectWorkspace(_id, projectData, dueDate);
                     }}
                 >
                     Open

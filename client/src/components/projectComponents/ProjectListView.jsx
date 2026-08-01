@@ -81,14 +81,10 @@ function MemberAvatars({ members = [] }) {
 }
 
 export default function ProjectListView({ projects = [] }) {
-  const setWorkspaceData = useWorkspaceStore((state) => state.setWorkspaceData);
-  const setProjectDetails = useWorkspaceStore((state) => state.setProjectDetails);
-  const setWorkspaceDueDate = useWorkspaceStore((state) => state.setWorkspaceDueDate);
+  const selectWorkspace = useWorkspaceStore((state) => state.selectWorkspace);
 
   const handleOpen = (project) => {
-    setWorkspaceData(project._id);
-    setProjectDetails(project);
-    setWorkspaceDueDate(project.dueDate);
+    selectWorkspace(project._id, project, project.dueDate);
   };
 
   const totalWorkspaces = projects.length;
