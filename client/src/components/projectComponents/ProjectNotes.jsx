@@ -45,6 +45,33 @@ import toast from "react-hot-toast";
 import NoteConflictModal from "../../Modals/NoteConflictModal";
 import axios from "axios";
 
+const SPRINTLAB_STARTER_CONTENT = `
+  <h2>SprintLab Workflow</h2>
+  <p>This space is for tracking notes, decisions, and context for this project. Here's a quick reference for how work moves through SprintLab.</p>
+
+  <h2>1. Board structure</h2>
+  <p>Every project has a Kanban board with three default columns: <strong>To Do</strong>, <strong>In Progress</strong>, and <strong>Done</strong>. Tasks move across columns via drag-and-drop, and status updates sync in real time for all members.</p>
+
+  <h2>2. Creating tasks</h2>
+  <ul>
+    <li>Click <strong>+ New Task</strong> from any column to add work.</li>
+    <li>Assign an owner, set a priority, and add a due date.</li>
+    <li>Use labels to group related tasks (e.g. Frontend, Backend, Bug).</li>
+  </ul>
+
+  <h2>3. Inviting your team</h2>
+  <p>Use the <strong>Invite</strong> flow from the sidebar to add teammates by email. Invited members get access based on their assigned role — Admin, Member, or Viewer.</p>
+
+  <h2>4. Views</h2>
+  <p>Switch between <em>Board</em>, <em>List</em>, and <em>Calendar</em> views depending on how you want to plan or review work.</p>
+
+  <blockquote>Tip: use this Notes panel for anything that doesn't belong on a task card — meeting notes, decisions, or context for new teammates.</blockquote>
+
+  <hr>
+
+  <p>Start typing below to replace this with your own notes.</p>
+`;
+
 const TEXT_COLORS = [
   { label: "Default", value: null },
   { label: "Slate", value: "#475569" },
@@ -69,33 +96,6 @@ const HEADING_OPTIONS = [
   { label: "Heading 2", icon: Heading2, level: 2 },
   { label: "Heading 3", icon: Heading3, level: 3 },
 ];
-
-const SPRINTLAB_STARTER_CONTENT = `
-  <h1>SprintLab Workflow</h1>
-  <p>This space is for tracking notes, decisions, and context for this project. Here's a quick reference for how work moves through SprintLab.</p>
-
-  <h2>1. Board structure</h2>
-  <p>Every project has a Kanban board with three default columns: <strong>To Do</strong>, <strong>In Progress</strong>, and <strong>Done</strong>. Tasks move across columns via drag-and-drop (dnd), and status updates sync in real time for all members.</p>
-
-  <h2>2. Creating tasks</h2>
-  <ul>
-    <li>Click <strong>+ New Task</strong> from any column to add work.</li>
-    <li>Assign an owner, set a priority, and add a due date.</li>
-    <li>Use labels to group related tasks (e.g. Frontend, Backend, Bug).</li>
-  </ul>
-
-  <h2>3. Inviting your team</h2>
-  <p>Use the <strong>Invite</strong> flow from the sidebar to add teammates by email. Invited members get access based on their assigned role Admin, Member, or Viewer.</p>
-
-  <h2>4. Views</h2>
-  <p>Switch between <em>Board</em>, <em>List</em>, and <em>Calendar</em> views depending on how you want to plan or review work.</p>
-
-  <blockquote>Tip: use this Notes panel for anything that doesn't belong on a task card meeting notes, decisions, or context for new teammates.</blockquote>
-
-  <hr>
-
-  <p>Start typing below to replace this with your own notes.</p>
-`;
 
 function ToolbarButton({ onClick, active, disabled, title, children }) {
   return (
@@ -312,7 +312,7 @@ const ProjectNotes = ({ onToggle, maximized }) => {
 
   return (
     <div
-      className={`flex min-h-0 w-full flex-col overflow-hidden border border-slate-200 bg-white shadow-sm ${maximized ? "mt-0" : "mt-6"
+      className={`flex min-h-0 w-full flex-col overflow-hidden border border-slate-200 bg-white ${maximized ? "mt-0" : "mt-6"
         }`}
     >
       {conflictModal && <NoteConflictModal onOk={() => setConflictModal(false)} />}

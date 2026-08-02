@@ -1,10 +1,10 @@
-import { LayoutGrid, List, StickyNote, Plus, Users, Clock, Filter, Search, X, ArrowUpDown } from "lucide-react";
+import { LayoutGrid, List, CalendarRange, Plus, Users, Clock, Filter, Search, X, ArrowUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import api from "../../api/axios";
 import ProjectCard from "../projectComponents/ProjectCard";
 import ProjectListView from "../projectComponents/ProjectListView";
-import ProjectNoteView from "../projectComponents/ProjectNoteView";
+import ProjectTimelineView from "../projectComponents/ProjectTimelineView";
 import CreateProjectModal from "../../Modals/CreateProjectModal";
 import ProjectDetail from "./ProjectDetail";
 import useWorkspaceStore from "../../store/workspaceStore";
@@ -254,10 +254,10 @@ export default function Workspaces() {
                       ? "bg-blue-500 text-white shadow-xs font-semibold"
                       : "text-slate-600 hover:text-slate-900"
                     }`}
-                  title="Note View"
+                  title="Timeline View"
                 >
-                  <StickyNote className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline">Note</span>
+                  <CalendarRange className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Timeline</span>
                 </button>
               </div>
 
@@ -298,7 +298,7 @@ export default function Workspaces() {
                   )}
 
                   {viewMode === "note" && (
-                    <ProjectNoteView projects={filteredProjects} />
+                    <ProjectTimelineView projects={filteredProjects} />
                   )}
                 </>
               ) : (
