@@ -13,14 +13,14 @@ const FEATURES = [
     title: "Workspaces per team",
     description:
       "Spin up a separate workspace for each team or project, invite members, and keep permissions scoped to exactly who needs access.",
-    accent: "bg-violet-50 text-violet-600",
+    accent: "bg-blue-50 text-blue-600",
   },
   {
     icon: Bell,
-    title: "Updates without the noise",
+    title: "Real time updates",
     description:
       "Get notified when a task you own changes status or gets a comment nothing else. No digest emails, no alert fatigue.",
-    accent: "bg-emerald-50 text-emerald-600",
+    accent: "bg-blue-50 text-blue-600",
   },
 ];
 
@@ -45,7 +45,7 @@ export default function Features() {
             return (
               <div
                 key={feature.title}
-                className="group bg-white border border-slate-200 rounded-2xl p-6 hover:border-slate-300 hover:shadow-lg hover:shadow-slate-100 hover:-translate-y-1 transition-all duration-300 ease-out animate-fade-in-up"
+                className="group bg-white border border-slate-200 p-6 hover:border-blue-500 hover:shadow-lg hover:shadow-slate-100 hover:-translate-y-1 transition-all duration-300 ease-out animate-fade-in-up"
                 style={{ animationDelay: `${i * 100}ms` }}
               >
                 <div

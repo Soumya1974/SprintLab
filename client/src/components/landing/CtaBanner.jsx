@@ -5,7 +5,7 @@ export default function CtaBanner() {
     return (
         <section className="px-5 sm:px-6 py-20">
             <div className="max-w-6xl mx-auto">
-                <div className="relative bg-blue-600 rounded-3xl px-6 sm:px-12 py-14 sm:py-16 text-center overflow-hidden animate-fade-in-up">
+                <div className="relative bg-blue-500 px-6 sm:px-12 py-14 sm:py-16 text-center overflow-hidden animate-fade-in-up">
                     <div
                         className="absolute z-0 top-0 right-0 w-72 h-72 bg-blue-500/40 rounded-full blur-3xl"
                         aria-hidden="true"

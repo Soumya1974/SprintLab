@@ -1,15 +1,15 @@
 import { Clock, MessageSquare } from "lucide-react";
 
 const STAGES = [
-  { key: "todo", label: "To Do", dot: "bg-slate-400" },
+  { key: "todo", label: "Pending", dot: "bg-slate-400" },
   { key: "progress", label: "In Progress", dot: "bg-blue-500" },
-  { key: "done", label: "Done", dot: "bg-emerald-500" },
+  { key: "done", label: "Completed", dot: "bg-emerald-500" },
 ];
 
 export default function HeroKanban() {
   return (
     <div className="relative w-full max-w-md mx-auto">
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-xl shadow-slate-200/60 p-4 sm:p-5">
+      <div className="bg-white border border-slate-200 p-4 sm:p-5">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-1.5">
             <span className="h-2.5 w-2.5 rounded-full bg-rose-300" />
@@ -17,7 +17,7 @@ export default function HeroKanban() {
             <span className="h-2.5 w-2.5 rounded-full bg-emerald-300" />
           </div>
           <span className="text-xs font-medium text-slate-400">
-            SprintLab · Live
+            SprintLab
           </span>
         </div>
 
@@ -25,13 +25,13 @@ export default function HeroKanban() {
           {STAGES.map((stage) => (
             <div key={stage.key} className="flex flex-col gap-2">
               <div className="flex items-center gap-1.5 px-0.5">
-                <span className={`h-1.5 w-1.5 rounded-full ${stage.dot}`} />
+                <span className={`h-1.5 w-1.5  ${stage.dot}`} />
                 <span className="text-[11px] font-medium text-slate-500">
                   {stage.label}
                 </span>
               </div>
               <div
-                className="bg-slate-50/70 rounded-xl border border-slate-100 p-1.5 flex flex-col gap-1.5 min-h-37.5"
+                className="bg-slate-50/70  border border-slate-100 p-1.5 flex flex-col gap-1.5 min-h-37.5"
                 id={`hero-col-${stage.key}`}
               />
             </div>
@@ -40,7 +40,7 @@ export default function HeroKanban() {
       </div>
 
       {/* the moving card - positioned via animation keyframes referencing column slots */}
-      <div className="hero-kanban-card absolute bg-white border border-blue-100 rounded-lg shadow-md px-2.5 py-2 w-[28%]">
+      <div className="hero-kanban-card absolute bg-white border border-blue-100  shadow-md px-2.5 py-2 w-[28%]">
         <div className="h-1.5 w-8 bg-blue-200 rounded-full mb-1.5" />
         <p className="text-[10px] font-medium text-slate-700 leading-tight mb-1.5">
           Ship landing page

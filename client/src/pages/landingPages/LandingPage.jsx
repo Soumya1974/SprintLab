@@ -1,6 +1,5 @@
 import Navbar from "../../components/landing/Navbar";
 import Hero from "../../components/landing/Hero";
-import TrustStrip from "../../components/landing/TrustStrip";
 import Features from "../../components/landing/Features";
 import HowItWorks from "../../components/landing/HowItWorks";
 import CtaBanner from "../../components/landing/CtaBanner";
@@ -14,7 +13,6 @@ export default function LandingPage() {
 
       <main>
         <Hero/>
-        <TrustStrip />
         <Features />
         <HowItWorks />
         <CtaBanner/>
