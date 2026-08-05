@@ -34,9 +34,9 @@ export default function Topbar({ onMenuClick }) {
         <div className="relative" ref={wsRef}>
           <button
             onClick={() => setWsOpen(!wsOpen)}
-            className="flex items-center gap-2 text-sm font-medium text-slate-700 border border-slate-200 rounded-lg px-3 py-2 hover:bg-slate-50 hover:border-slate-300 transition-colors duration-150"
+            className="flex items-center gap-2 text-sm font-medium text-slate-700 border border-slate-200 px-3 py-2 hover:bg-slate-50 hover:border-slate-300 transition-colors duration-150"
           >
-            <span className="max-w-[180px] truncate">
+            <span className="max-w-45 truncate">
               {selectedWorkspace?.title || "Select Workspace"}
             </span>
             <ChevronDown
@@ -45,7 +45,7 @@ export default function Topbar({ onMenuClick }) {
           </button>
 
           {wsOpen && (
-            <div className="absolute left-0 top-[calc(100%+8px)] z-50 w-72 rounded-xl border border-slate-200 bg-white p-2 shadow-xl">
+            <div className="absolute left-0 top-[calc(100%+8px)] z-50 w-72 border border-slate-200 bg-white p-2 shadow-xl">
               <div className="max-h-72 overflow-y-auto">
                 {allWorkspaces.length > 0 ? (
                   allWorkspaces.map((workspace) => (
@@ -55,10 +55,10 @@ export default function Topbar({ onMenuClick }) {
                         selectWorkspace(workspace._id, workspace, workspace.dueDate);
                         setWsOpen(false);
                       }}
-                      className={`flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left transition-colors ${workspaceData === workspace._id ? "bg-blue-50 text-blue-700" : "hover:bg-slate-50 text-slate-700"}`}
+                      className={`flex w-full items-center gap-2 px-2 py-2 text-left transition-colors ${workspaceData === workspace._id ? "bg-blue-50 text-blue-700" : "hover:bg-slate-50 text-slate-700"}`}
                     >
                       <span
-                        className="flex h-7 w-7 items-center justify-center rounded-md text-[10px] font-bold text-white"
+                        className="flex h-7 w-7 items-center justify-center text-[10px] font-bold text-white"
                         style={{ backgroundColor: workspace.color || "#2563EB" }}
                       >
                         {workspace.title?.charAt(0)?.toUpperCase() || "W"}
@@ -88,8 +88,8 @@ export default function Topbar({ onMenuClick }) {
           className="h-9 w-9 rounded-full active:scale-95 transition-all duration-150"
         >
           <img 
-            src="https://imgs.search.brave.com/gqMXrbzzUd8ga0aULDgdlPi6nb6-Cjp1N6wcHFE9Pmk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/dmVjdG9yc3RvY2su/Y29tL2kvNTAwcC81/Ni8xNC9kZWZhdWx0/LWF2YXRhci1tYW4t/dG8tc29jaWFsLXVz/ZXItdmVjdG9yLTE3/ODY1NjE0LmpwZw"
-            className="h-9 w-9 rounded-full active:scale-95 hover:scale-110 hover:cursor-pointer transition-all duration-150"
+            src="https://imgs.search.brave.com/ZoU5fx3pmmXzWQLQn4uHDt7fxhzEKvZKvM7Bmhrj11U/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/aWNvbnM4LmNvbS9l/eHRlcm5hbC10YWwt/cmV2aXZvLXRyaXRv/bmUtdGFsLXJldml2/by8xMjAwL2V4dGVy/bmFsLXF1ZXN0aW9u/LW1hcmstZm9yLXVz/ZXItdG8tc29sdmUt/cHJvYmxlbXMtY2xv/c2V1cG1hbi10cml0/b25lLXRhbC1yZXZp/dm8uanBn"
+            className="h-9 w-9 rounded-full hover:scale-102 hover:cursor-pointer transition-all duration-150"
             alt="Account"
           />
         </button>

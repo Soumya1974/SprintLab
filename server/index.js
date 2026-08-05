@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import http from "http";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+// import path from "path";
 
 import { connectDb } from "./config/connectDb.js";
 import authRouter from "./routes/authRoutes.js";
@@ -13,6 +14,13 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 5000;
+
+// const__dirname = path.resolve();
+app.use(express.static("public"));
+
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "public", "index.html"));
+// });
 
 app.use(
   cors({
