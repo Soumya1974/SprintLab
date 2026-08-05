@@ -199,7 +199,7 @@ export default function CreateTaskModal({ handleGetTaskCards }) {
         className="absolute inset-0 bg-slate-900/40 animate-fade-in"
       />
 
-      <div className="relative bg-white border border-slate-200 shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-scale-in bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] bg-size-[24px_24px]">
+      <div className="relative bg-white border border-slate-200 shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto animate-scale-in bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_0.1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] bg-size-[24px_24px]">
 
         <div className="hidden lg:flex items-center justify-between px-6 pt-6 pb-4 sticky top-0 bg-white z-10 border-b border-slate-100">
           <div className="flex items-center gap-3">
@@ -334,7 +334,7 @@ export default function CreateTaskModal({ handleGetTaskCards }) {
             preview={
               !showPriority && selectedPriority && (
                 <span
-                  className={`text-xs font-medium px-2 py-0.5 rounded-full border ${selectedPriority.bg} ${selectedPriority.text}`}
+                  className={`text-xs font-medium px-2 py-0.5  border ${selectedPriority.bg} ${selectedPriority.text}`}
                 >
                   {selectedPriority.label}
                 </span>
@@ -347,12 +347,11 @@ export default function CreateTaskModal({ handleGetTaskCards }) {
                   key={p.label}
                   type="button"
                   onClick={() => updateField("priority", p.label)}
-                  className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border transition-all duration-150 ${formData.priority === p.label
+                  className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 border transition-all duration-150 ${formData.priority === p.label
                     ? `${p.bg} ${p.text} border-current scale-105`
                     : "border-slate-200 text-slate-500 hover:bg-slate-50"
                     }`}
                 >
-                  <span className={`h-2 w-2 rounded-full ${p.dot}`} />
                   {p.label}
                 </button>
               ))}
@@ -399,7 +398,7 @@ export default function CreateTaskModal({ handleGetTaskCards }) {
             onToggle={() => setShowAssignTo(!showAssignTo)}
             preview={
               !showAssignTo && selectedMember && (
-                <span className="text-xs font-medium text-slate-600 truncate max-w-[120px]">
+                <span className="text-xs font-medium text-slate-600 truncate max-w-30">
                   {selectedMember.name}
                 </span>
               )
