@@ -517,7 +517,7 @@ export default function TaskBoard({ onToggle, maximized }) {
 
         <div className="flex items-center gap-2">
           <button
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 px-3.5 py-2 rounded-md transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 px-3.5 py-2 transition-colors"
             onClick={() => setTaskForm(true)}
           >
             <Plus className="h-4 w-4" />
@@ -526,7 +526,7 @@ export default function TaskBoard({ onToggle, maximized }) {
 
           <button
             onClick={onToggle}
-            className="flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:text-slate-800 transition-colors"
+            className="flex h-8 w-8 items-center justify-center border border-slate-200 text-slate-500 hover:text-slate-800 transition-colors"
           >
             {maximized ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
           </button>
@@ -544,14 +544,14 @@ export default function TaskBoard({ onToggle, maximized }) {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search tasks..."
-              className="pl-8 pr-3 py-1.5 text-sm rounded-md border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-40 sm:w-52"
+              className="pl-8 pr-3 py-1.5 text-sm border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-40 sm:w-52"
             />
           </div>
 
           <button
             type="button"
             onClick={() => setDueSoonOnly((v) => !v)}
-            className={`flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-md border transition-colors ${dueSoonOnly
+            className={`flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 border transition-colors ${dueSoonOnly
               ? "bg-blue-50 border-blue-200 text-blue-600"
               : "border-slate-200 text-slate-500 hover:text-slate-700 hover:bg-slate-50"
               }`}
@@ -563,7 +563,7 @@ export default function TaskBoard({ onToggle, maximized }) {
           <select
             value={priorityFilter}
             onChange={(e) => setPriorityFilter(e.target.value)}
-            className="text-xs font-medium px-2.5 py-1.5 rounded-md border border-slate-200 text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="text-xs font-medium px-2.5 py-1.5 border border-slate-200 text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="All">All priorities</option>
             <option value="High">High</option>
@@ -574,7 +574,7 @@ export default function TaskBoard({ onToggle, maximized }) {
           <button
             type="button"
             onClick={() => setRevisionsOnly((v) => !v)}
-            className={`flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 rounded-md border transition-colors ${revisionsOnly
+            className={`flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 border transition-colors ${revisionsOnly
               ? "bg-blue-50 border-blue-200 text-blue-600"
               : "border-slate-200 text-slate-500 hover:text-slate-700 hover:bg-slate-50"
               }`}
@@ -584,12 +584,12 @@ export default function TaskBoard({ onToggle, maximized }) {
           </button>
         </div>
 
-        <div className="flex items-center gap-1 border border-slate-200 rounded-md p-0.5">
+        <div className="flex items-center gap-1 border border-slate-200 p-0.5">
           <button
             type="button"
             onClick={() => setViewMode("board")}
             aria-label="Board view"
-            className={`flex h-7 w-7 items-center justify-center rounded transition-colors ${viewMode === "board" ? "bg-slate-200 text-slate-800" : "text-slate-400 hover:text-slate-600"
+            className={`flex h-7 w-7 items-center justify-center transition-colors ${viewMode === "board" ? "bg-slate-200 text-slate-800" : "text-slate-400 hover:text-slate-600"
               }`}
           >
             <LayoutGrid className="h-3.5 w-3.5" />
@@ -598,7 +598,7 @@ export default function TaskBoard({ onToggle, maximized }) {
             type="button"
             onClick={() => setViewMode("list")}
             aria-label="List view"
-            className={`flex h-7 w-7 items-center justify-center rounded transition-colors ${viewMode === "list" ? "bg-slate-200 text-slate-800" : "text-slate-400 hover:text-slate-600"
+            className={`flex h-7 w-7 items-center justify-center transition-colors ${viewMode === "list" ? "bg-slate-200 text-slate-800" : "text-slate-400 hover:text-slate-600"
               }`}
           >
             <List className="h-3.5 w-3.5" />
@@ -607,7 +607,7 @@ export default function TaskBoard({ onToggle, maximized }) {
             type="button"
             onClick={() => setViewMode("excel")}
             aria-label="Excel view"
-            className={`flex h-7 w-7 items-center justify-center rounded transition-colors ${viewMode === "excel" ? "bg-slate-200 text-slate-800" : "text-slate-400 hover:text-slate-600"
+            className={`flex h-7 w-7 items-center justify-center transition-colors ${viewMode === "excel" ? "bg-slate-200 text-slate-800" : "text-slate-400 hover:text-slate-600"
               }`}
           >
             <FileSpreadsheet className="h-3.5 w-3.5" />

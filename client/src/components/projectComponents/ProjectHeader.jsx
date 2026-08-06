@@ -59,7 +59,7 @@ export default function ProjectHeader({ onlineUsers = [] }) {
           <h1 className="text-2xl font-semibold text-slate-800">
             {projectDetails?.title}
           </h1>
-          <span style={{ color: projectDetails?.color }} className="text-xs font-medium bg-violet-50 px-2.5 py-1 rounded-full">
+          <span style={{ color: projectDetails?.color }} className="text-xs font-medium bg-violet-50 px-2.5 py-1">
             {projectDetails?.status}
           </span>
         </div>
@@ -108,20 +108,20 @@ export default function ProjectHeader({ onlineUsers = [] }) {
         )}
 
         <div className="flex gap-2">
-          <button className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:bg-slate-200 border border-slate-200 active:scale-95 px-3.5 py-2 rounded-lg hover:cursor-pointer transition-colors duration-150"
+          <button className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:bg-slate-200 border border-slate-200 active:scale-95 px-3.5 py-2 hover:cursor-pointer transition-colors duration-150"
             onClick={restorePreviousWorkspace}
           >
             <LogOutIcon className="h-4 w-4" />
             Back
           </button>
-          <button className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:bg-slate-200 border border-slate-200 active:scale-95 px-3.5 py-2 rounded-lg hover:cursor-pointer transition-colors duration-150"
+          <button className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:bg-slate-200 border border-slate-200 active:scale-95 px-3.5 py-2 hover:cursor-pointer transition-colors duration-150"
             onClick={() => setIsOpen(true)}
             ref={inviteBtnRef}
           >
             <UserPlus className="h-4 w-4" />
             Invite
           </button>
-          <button className="inline-flex items-center gap-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 active:scale-95 px-3.5 py-2 rounded-lg hover:cursor-pointer transition-all duration-150">
+          <button className="inline-flex items-center gap-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 active:scale-95 px-3.5 py-2 hover:cursor-pointer transition-all duration-150">
             <Settings className="h-4 w-4" />
             Settings
             <ChevronDown className="h-3.5 w-3.5" />

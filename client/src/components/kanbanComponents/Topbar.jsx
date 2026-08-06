@@ -79,7 +79,7 @@ export default function Topbar({ onMenuClick }) {
       <div className="flex items-center gap-2 sm:gap-3">
         <button
           aria-label="Notifications"
-          className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 hover:border-slate-300 active:scale-95 transition-all duration-150"
+          className="relative flex h-9 w-9 items-center justify-center rounded-sm border border-slate-200 text-slate-500 hover:bg-slate-50 hover:border-slate-300 active:scale-95 transition-all duration-150"
         >
           <Bell className="h-4.5 w-4.5" />
         </button>

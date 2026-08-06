@@ -201,7 +201,7 @@ export default function ActivityFeed({ onToggle, maximized, onlineUsers }) {
           <button
             key={filter.key}
             onClick={() => setActiveFilter(filter.key)}
-            className={`rounded-full px-3 py-1 text-xs font-medium transition-all duration-200 ${activeFilter === filter.key
+            className={`px-3 py-1 text-xs font-medium transition-all duration-200 ${activeFilter === filter.key
               ? "bg-blue-600 text-white"
               : "bg-slate-100 text-slate-500 hover:bg-slate-200"
               }`}
