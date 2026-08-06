@@ -86,15 +86,15 @@ export default function ProjectDetail() {
         <div className="flex-1 overflow-y-auto scrollbar-hide">
           {maximized === null ? (
             <main className="mx-auto w-full px-0 pb-5 sm:px-6">
-              <div className="grid grid-cols-1 gap-3 xl:grid-cols-3">
-                <div className="xl:col-span-2">
+              <div className="grid grid-cols-1 gap-3 xl:grid-cols-[minmax(0,1.3fr)_minmax(320px,0.7fr)]">
+                <div className="h-full xl:col-span-1">
                   <TaskBoard
                     maximized={false}
                     onToggle={() => setMaximized("task")}
                   />
                 </div>
 
-                <div className="space-y-6">
+                <div className="flex h-full flex-col gap-6">
                   <ActivityFeed
                     maximized={false}
                     onlineUsers={onlineUsers}

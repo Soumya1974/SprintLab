@@ -16,6 +16,7 @@ import ForgotPasswordRoute from './routes/authRoutes/ForgotPasswordRoute'
 import NotFound from './pages/landingPages/NotFound'
 import { SkeletonTheme } from 'react-loading-skeleton'
 import InvitationPage from './pages/authPages/InvitationPage'
+import ProfilePage from './components/ApplicationPages/ProfilePage'
 
 function App() {
 
@@ -78,6 +79,7 @@ function App() {
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/userprofile" element={<ProfilePage />} />
           </Route>
 
           <Route path='*' element={<NotFound />} />

@@ -373,6 +373,11 @@ export default function TaskBoard({ onToggle, maximized }) {
     });
   }, [tasks, search, dueSoonOnly, priorityFilter, revisionsOnly]);
 
+  const taskCount = filteredTasks.length;
+  const boardMinHeight = maximized
+    ? `${Math.max(70, Math.min(100, 70 + Math.max(0, taskCount - 8) * 4))}vh`
+    : undefined;
+
   const tasksByStage = (stageId) => filteredTasks.filter((t) => t.status === stageId);
 
   async function updateTaskStatus(taskId, newStatus) {
@@ -503,7 +508,10 @@ export default function TaskBoard({ onToggle, maximized }) {
   }, [workspaceData]);
 
   return (
-    <div className="flex h-full w-full min-h-0 flex-col overflow-hidden border border-slate-200 bg-white p-4">
+    <div
+      className={`flex h-full w-full min-h-0 flex-col overflow-hidden border border-slate-200 bg-white p-4 ${maximized ? "min-h-[70vh]" : ""}`}
+      style={maximized ? { minHeight: boardMinHeight } : undefined}
+    >
       <div className="flex shrink-0 items-center justify-between flex-wrap gap-3 mb-3">
         <h2 className="text-base font-semibold text-slate-800">Tasks Overview</h2>
 
@@ -627,7 +635,7 @@ export default function TaskBoard({ onToggle, maximized }) {
         <ExcelView tasks={filteredTasks} onMove={handleMoveButton} />
       ) : (
         <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-          <div className="flex flex-1 flex-col gap-6 overflow-y-auto sm:flex-row">
+          <div className="flex flex-1 min-h-0 flex-col gap-6 overflow-y-auto sm:flex-row">
             {STAGES.map((stage) => (
               <Column
                 key={stage.id}

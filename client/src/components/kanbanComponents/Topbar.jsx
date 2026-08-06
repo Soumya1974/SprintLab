@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown, Bell, Menu } from "lucide-react";
 import useWorkspaceStore from "../../store/workspaceStore";
+import { Link } from "react-router-dom";
 
 export default function Topbar({ onMenuClick }) {
   const [wsOpen, setWsOpen] = useState(false);
@@ -87,11 +88,15 @@ export default function Topbar({ onMenuClick }) {
           aria-label="Account"
           className="h-9 w-9 rounded-full active:scale-95 transition-all duration-150"
         >
-          <img 
-            src="https://imgs.search.brave.com/ZoU5fx3pmmXzWQLQn4uHDt7fxhzEKvZKvM7Bmhrj11U/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/aWNvbnM4LmNvbS9l/eHRlcm5hbC10YWwt/cmV2aXZvLXRyaXRv/bmUtdGFsLXJldml2/by8xMjAwL2V4dGVy/bmFsLXF1ZXN0aW9u/LW1hcmstZm9yLXVz/ZXItdG8tc29sdmUt/cHJvYmxlbXMtY2xv/c2V1cG1hbi10cml0/b25lLXRhbC1yZXZp/dm8uanBn"
-            className="h-9 w-9 rounded-full hover:scale-102 hover:cursor-pointer transition-all duration-150"
-            alt="Account"
-          />
+          <Link
+            to="/userprofile"
+          >
+            <img
+              src="https://imgs.search.brave.com/ZoU5fx3pmmXzWQLQn4uHDt7fxhzEKvZKvM7Bmhrj11U/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/aWNvbnM4LmNvbS9l/eHRlcm5hbC10YWwt/cmV2aXZvLXRyaXRv/bmUtdGFsLXJldml2/by8xMjAwL2V4dGVy/bmFsLXF1ZXN0aW9u/LW1hcmstZm9yLXVz/ZXItdG8tc29sdmUt/cHJvYmxlbXMtY2xv/c2V1cG1hbi10cml0/b25lLXRhbC1yZXZp/dm8uanBn"
+              className="h-9 w-9 rounded-full hover:scale-102 hover:cursor-pointer transition-all duration-150"
+              alt="Account"
+            />
+          </Link>
         </button>
       </div>
     </header>
