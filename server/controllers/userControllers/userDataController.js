@@ -2,7 +2,7 @@ import { User } from "../../models/userDbSchema.js";
 
 export const handleGetUserData = async (req, res) => {
     try {
-        const  id = req.body.id;
+        const  {id} = req.user;
 
         const user = await User.findById(id);
 

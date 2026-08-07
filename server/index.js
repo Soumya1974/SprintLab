@@ -5,6 +5,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { connectDb } from "./config/connectDb.js";
 import authRouter from "./routes/authRoutes.js";
+import userRouter from "./routes/userRoutes.js";
 import workspaceRouter from "./routes/workSpaceRoutes.js";
 import { initializeSocket } from "./socket.js";
 import { v2 as cloudinary } from "cloudinary";
@@ -31,6 +32,7 @@ app.use(express.json());
 
 app.use("/api", authRouter);
 app.use("/api", workspaceRouter);
+app.use("/api", userRouter);
 
 const server = http.createServer(app);
 

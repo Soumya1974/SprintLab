@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
     User,
     Camera,
@@ -20,6 +20,7 @@ import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import ImageCropper from "./ImageCropper";
 import { getCroppedImg } from "../../utils/cropImage";
+import api from "../../api/axios";
 
 const CARD = "border border-[#E5E7EB] bg-white";
 
@@ -61,9 +62,8 @@ function TextInput({ error, ...props }) {
     return (
         <input
             {...props}
-            className={`w-full border bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-colors focus:border-blue-600 ${
-                error ? "border-rose-400 focus:border-rose-500" : "border-[#E5E7EB]"
-            } ${props.className || ""}`}
+            className={`w-full border bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-colors focus:border-blue-600 ${error ? "border-rose-400 focus:border-rose-500" : "border-[#E5E7EB]"
+                } ${props.className || ""}`}
         />
     );
 }
@@ -259,11 +259,10 @@ function GenderPicker({ value, onChange }) {
                 <button
                     key={g}
                     onClick={() => onChange(g)}
-                    className={`border px-3 py-1.5 text-xs font-medium transition-colors ${
-                        value === g
-                            ? "border-blue-600 bg-blue-600 text-white"
-                            : "border-[#E5E7EB] bg-white text-slate-700 hover:bg-slate-50"
-                    }`}
+                    className={`border px-3 py-1.5 text-xs font-medium transition-colors ${value === g
+                        ? "border-blue-600 bg-blue-600 text-white"
+                        : "border-[#E5E7EB] bg-white text-slate-700 hover:bg-slate-50"
+                        }`}
                 >
                     {g}
                 </button>
@@ -344,14 +343,38 @@ export default function ProfilePage() {
     const [avatarPreview, setAvatarPreview] = useState(null);
 
     // General tab state
-    const [name, setName] = useState("Soumya Ranjan Sahoo");
+    const [userData, setUserData] = useState(null); //After get req
+    const [name, setName] = useState("");
     const [bio, setBio] = useState("");
     const [gender, setGender] = useState("Male");
-    const email = "soumya.sahoo@example.com";
 
-    console.log(name);
-    console.log(bio);
-    console.log(gender);
+    const handleGetUserData = async () => {
+        try {
+            const response = await api.get('/api/profile/get-userdata');
+
+            if (response.status === 200) {
+                setUserData(response.data.user);
+                setGender(response.data.user.gender || "Male");
+                setName(response.data.user.name || "");
+            }
+        }
+        catch (err) {
+            switch (err.response?.status) {
+                case 400:
+                    toast.error(err.response.data.message);
+                    break;
+                case 500:
+                    toast.error("Internal Server Error");
+                    break;
+                default:
+                    toast.error("Something went wrong");
+            }
+        }
+    }
+
+    useEffect(() => {
+        handleGetUserData();
+    }, [])
 
     // Address tab state
     const [address, setAddress] = useState({
@@ -414,16 +437,16 @@ export default function ProfilePage() {
     };
 
     const handleSave = () => {
-        
+
     };
 
     const handleSaveAddress = () => {
-        
+
     };
 
     const handleUpdatePassword = () => {
         if (!validatePasswords()) return;
-        
+
     };
 
     return (
@@ -462,11 +485,10 @@ export default function ProfilePage() {
                                 <button
                                     key={t.key}
                                     onClick={() => setTab(t.key)}
-                                    className={`flex w-full items-center justify-between px-3 py-2 text-left text-sm font-medium transition-colors ${
-                                        tab === t.key
-                                            ? "bg-blue-50 text-blue-600"
-                                            : "text-slate-600 hover:bg-slate-50"
-                                    }`}
+                                    className={`flex w-full items-center justify-between px-3 py-2 text-left text-sm font-medium transition-colors ${tab === t.key
+                                        ? "bg-blue-50 text-blue-600"
+                                        : "text-slate-600 hover:bg-slate-50"
+                                        }`}
                                 >
                                     {t.label}
                                     {tab === t.key && <ChevronRight className="h-3.5 w-3.5" />}
@@ -517,7 +539,7 @@ export default function ProfilePage() {
                                         <div>
                                             <FieldLabel>Email address</FieldLabel>
                                             <div className="relative">
-                                                <TextInput value={email} className="pl-9" disabled readOnly />
+                                                <TextInput value={userData?.email || ""} className="pl-9" disabled readOnly />
                                                 <Mail className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                                             </div>
                                         </div>
@@ -528,7 +550,7 @@ export default function ProfilePage() {
                                         <TextArea
                                             rows={4}
                                             maxLength={200}
-                                            value={bio}
+                                            value={userData?.bio || ""}
                                             onChange={(e) => setBio(e.target.value)}
                                             placeholder="Tell your team a bit about yourself role, focus areas, or anything worth knowing."
                                         />
