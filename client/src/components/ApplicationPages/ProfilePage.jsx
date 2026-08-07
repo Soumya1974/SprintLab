@@ -17,6 +17,7 @@ import {
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import ImageCropper from "./ImageCropper";
+import { getCroppedImg } from "../../utils/cropImage";
 
 const CARD = "border border-[#E5E7EB] bg-white";
 
@@ -95,6 +96,8 @@ function AvatarUploader({ name }) {
     const inputRef = useRef(null);
     const [preview, setPreview] = useState(null);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+    const [showCropper, setShowCropper] = useState(false);
+    const [processing, setProcessing] = useState(false);
 
     const handleFile = (file) => {
         if (!file) return;
@@ -117,12 +120,10 @@ function AvatarUploader({ name }) {
 
         const url = URL.createObjectURL(file);
         setPreview(url);
+        setShowCropper(true);
     };
 
     const handleCropComplete = (croppedArea, croppedAreaPixels) => {
-        console.log("Crop area:", croppedArea);
-        console.log("Pixel coordinates:", croppedAreaPixels);
-
         setCroppedAreaPixels(croppedAreaPixels);
     };
 
@@ -138,7 +139,16 @@ function AvatarUploader({ name }) {
             <div className="group relative">
                 <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-[#E5E7EB] bg-blue-50 text-xl font-semibold text-blue-600">
                     {!preview ? (
-                        <span>{initials}</span>
+                        <>
+                            <input
+                                ref={inputRef}
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={(e) => handleFile(e.target.files?.[0])}
+                            />
+                            <span>{initials}</span>
+                        </>
                     ) : (
                         <img
                             src={preview}
@@ -147,6 +157,68 @@ function AvatarUploader({ name }) {
                         />
                     )}
                 </div>
+                {showCropper && preview && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                        <div className="w-125 bg-white p-5">
+
+                            <h2 className="mb-4 text-lg font-semibold">
+                                Crop profile picture
+                            </h2>
+
+                            <div className="relative h-100 w-full">
+                                <ImageCropper
+                                    image={preview}
+                                    onCropComplete={handleCropComplete}
+                                />
+                            </div>
+
+                            <div className="mt-4 flex justify-end gap-3">
+                                {
+                                    processing ? (
+                                        <>
+                                        </>
+                                    ) : (
+                                        <button
+                                            onClick={() => setShowCropper(false)}
+                                        >
+                                            Cancel
+                                        </button>
+                                    )
+                                }
+
+                                <button
+                                    onClick={async () => {
+                                        setProcessing(true);
+                                        try {
+                                            const croppedBlob = await getCroppedImg(
+                                                preview,
+                                                croppedAreaPixels
+                                            );
+
+                                            const croppedUrl = URL.createObjectURL(croppedBlob);
+                                            setPreview(croppedUrl);
+                                            setShowCropper(false);
+                                            
+                                        } catch (error) {
+                                            console.error("Cropping failed:", error);
+                                        } finally {
+                                            setProcessing(false);
+                                        }
+                                    }}
+                                >
+                                    {processing ? (
+                                        <div className="flex items-center gap-1">
+                                            <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-black/30 border-t-black" />
+                                            <span>Processing...</span>
+                                        </div>
+                                    ) : (
+                                        "Crop"
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
                 <button
                     onClick={() => inputRef.current?.click()}
                     className="absolute inset-0 flex items-center justify-center rounded-full bg-slate-900/0 text-white opacity-0 transition-all group-hover:bg-slate-900/40 group-hover:opacity-100"
@@ -170,7 +242,7 @@ function AvatarUploader({ name }) {
                         </button>
                     )}
                 </div>
-                <p className="mt-2 text-xs text-slate-400">JPG, PNG or GIF. Max size 4MB.</p>
+                <p className="mt-2 text-xs text-slate-400">JPG, PNG or WEBP. Max size 4MB.</p>
             </div>
         </div>
     );
