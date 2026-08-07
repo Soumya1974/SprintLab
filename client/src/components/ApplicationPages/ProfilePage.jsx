@@ -15,6 +15,8 @@ import {
     Upload,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
+import ImageCropper from "./ImageCropper";
 
 const CARD = "border border-[#E5E7EB] bg-white";
 
@@ -92,11 +94,36 @@ function GhostButton({ children, ...props }) {
 function AvatarUploader({ name }) {
     const inputRef = useRef(null);
     const [preview, setPreview] = useState(null);
+    const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
 
     const handleFile = (file) => {
         if (!file) return;
+
+        const allowedTypes = [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+        ];
+
+        if (!allowedTypes.includes(file.type)) {
+            toast.error("Only JPG, PNG and WEBP are allowed");
+            return;
+        }
+
+        if (file.size > 4 * 1024 * 1024) {
+            toast.error("Image must be less than 4MB");
+            return;
+        }
+
         const url = URL.createObjectURL(file);
         setPreview(url);
+    };
+
+    const handleCropComplete = (croppedArea, croppedAreaPixels) => {
+        console.log("Crop area:", croppedArea);
+        console.log("Pixel coordinates:", croppedAreaPixels);
+
+        setCroppedAreaPixels(croppedAreaPixels);
     };
 
     const initials = name
@@ -110,10 +137,14 @@ function AvatarUploader({ name }) {
         <div className="flex items-center gap-5">
             <div className="group relative">
                 <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-[#E5E7EB] bg-blue-50 text-xl font-semibold text-blue-600">
-                    {preview ? (
-                        <img src={preview} alt="Avatar preview" className="h-full w-full object-cover" />
+                    {!preview ? (
+                        <span>{initials}</span>
                     ) : (
-                        initials
+                        <img
+                            src={preview}
+                            alt="Profile preview"
+                            className="h-full w-full object-cover"
+                        />
                     )}
                 </div>
                 <button
@@ -122,13 +153,6 @@ function AvatarUploader({ name }) {
                 >
                     <Camera className="h-5 w-5" />
                 </button>
-                <input
-                    ref={inputRef}
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => handleFile(e.target.files?.[0])}
-                />
             </div>
             <div>
                 <div className="flex items-center gap-2">
@@ -196,7 +220,7 @@ function DeleteAccountModal({ onClose }) {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
-            <div className={`${CARD} w-full max-w-md p-6`}>      
+            <div className={`${CARD} w-full max-w-md p-6`}>
                 <h3 className="mt-4 text-base font-semibold text-slate-900">Delete account</h3>
                 <p className="mt-1.5 text-sm text-slate-500">
                     This permanently removes your account, workspaces you own, and all associated data.
