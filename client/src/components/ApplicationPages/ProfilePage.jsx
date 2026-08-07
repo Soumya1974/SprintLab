@@ -10,9 +10,11 @@ import {
     Eye,
     EyeOff,
     ChevronRight,
+    ChevronLeft,
     Check,
     X,
     Upload,
+    AlertCircle,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -28,6 +30,9 @@ const TABS = [
 ];
 
 const GENDERS = ["Male", "Female", "Prefer not to say"];
+
+// At least 8 chars, one uppercase, one lowercase, one number, one special char
+const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
 
 function SectionHeader({ eyebrow, title, description }) {
     return (
@@ -52,11 +57,13 @@ function FieldLabel({ children, hint }) {
     );
 }
 
-function TextInput(props) {
+function TextInput({ error, ...props }) {
     return (
         <input
             {...props}
-            className={`w-full border border-[#E5E7EB] bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-colors focus:border-blue-600 ${props.className || ""}`}
+            className={`w-full border bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-colors focus:border-blue-600 ${
+                error ? "border-rose-400 focus:border-rose-500" : "border-[#E5E7EB]"
+            } ${props.className || ""}`}
         />
     );
 }
@@ -67,6 +74,16 @@ function TextArea(props) {
             {...props}
             className={`w-full resize-none border border-[#E5E7EB] bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-colors focus:border-blue-600 ${props.className || ""}`}
         />
+    );
+}
+
+function ErrorText({ children }) {
+    if (!children) return null;
+    return (
+        <p className="mt-1.5 flex items-center gap-1 text-xs text-rose-600">
+            <AlertCircle className="h-3 w-3" />
+            {children}
+        </p>
     );
 }
 
@@ -92,21 +109,17 @@ function GhostButton({ children, ...props }) {
     );
 }
 
-function AvatarUploader({ name }) {
+function AvatarUploader({ name, avatarFile, setAvatarFile, avatarPreview, setAvatarPreview }) {
     const inputRef = useRef(null);
-    const [preview, setPreview] = useState(null);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
     const [showCropper, setShowCropper] = useState(false);
+    const [rawPreview, setRawPreview] = useState(null);
     const [processing, setProcessing] = useState(false);
 
     const handleFile = (file) => {
         if (!file) return;
 
-        const allowedTypes = [
-            "image/jpeg",
-            "image/png",
-            "image/webp",
-        ];
+        const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
 
         if (!allowedTypes.includes(file.type)) {
             toast.error("Only JPG, PNG and WEBP are allowed");
@@ -119,7 +132,7 @@ function AvatarUploader({ name }) {
         }
 
         const url = URL.createObjectURL(file);
-        setPreview(url);
+        setRawPreview(url);
         setShowCropper(true);
     };
 
@@ -129,6 +142,7 @@ function AvatarUploader({ name }) {
 
     const initials = name
         .split(" ")
+        .filter(Boolean)
         .map((part) => part[0])
         .join("")
         .slice(0, 2)
@@ -138,7 +152,7 @@ function AvatarUploader({ name }) {
         <div className="flex items-center gap-5">
             <div className="group relative">
                 <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-[#E5E7EB] bg-blue-50 text-xl font-semibold text-blue-600">
-                    {!preview ? (
+                    {!avatarPreview ? (
                         <>
                             <input
                                 ref={inputRef}
@@ -147,58 +161,44 @@ function AvatarUploader({ name }) {
                                 className="hidden"
                                 onChange={(e) => handleFile(e.target.files?.[0])}
                             />
-                            <span>{initials}</span>
+                            <span>{initials || "U"}</span>
                         </>
                     ) : (
                         <img
-                            src={preview}
+                            src={avatarPreview}
                             alt="Profile preview"
                             className="h-full w-full object-cover"
                         />
                     )}
                 </div>
-                {showCropper && preview && (
+
+                {showCropper && rawPreview && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
                         <div className="w-125 bg-white p-5">
-
-                            <h2 className="mb-4 text-lg font-semibold">
-                                Crop profile picture
-                            </h2>
+                            <h2 className="mb-4 text-lg font-semibold">Crop profile picture</h2>
 
                             <div className="relative h-100 w-full">
-                                <ImageCropper
-                                    image={preview}
-                                    onCropComplete={handleCropComplete}
-                                />
+                                <ImageCropper image={rawPreview} onCropComplete={handleCropComplete} />
                             </div>
 
                             <div className="mt-4 flex justify-end gap-3">
-                                {
-                                    processing ? (
-                                        <>
-                                        </>
-                                    ) : (
-                                        <button
-                                            onClick={() => setShowCropper(false)}
-                                        >
-                                            Cancel
-                                        </button>
-                                    )
-                                }
+                                {!processing && (
+                                    <button onClick={() => setShowCropper(false)}>Cancel</button>
+                                )}
 
                                 <button
                                     onClick={async () => {
                                         setProcessing(true);
                                         try {
                                             const croppedBlob = await getCroppedImg(
-                                                preview,
+                                                rawPreview,
                                                 croppedAreaPixels
                                             );
 
                                             const croppedUrl = URL.createObjectURL(croppedBlob);
-                                            setPreview(croppedUrl);
+                                            setAvatarPreview(croppedUrl);
+                                            setAvatarFile(croppedBlob);
                                             setShowCropper(false);
-                                            
                                         } catch (error) {
                                             console.error("Cropping failed:", error);
                                         } finally {
@@ -219,6 +219,7 @@ function AvatarUploader({ name }) {
                         </div>
                     </div>
                 )}
+
                 <button
                     onClick={() => inputRef.current?.click()}
                     className="absolute inset-0 flex items-center justify-center rounded-full bg-slate-900/0 text-white opacity-0 transition-all group-hover:bg-slate-900/40 group-hover:opacity-100"
@@ -232,9 +233,12 @@ function AvatarUploader({ name }) {
                         <Upload className="h-3.5 w-3.5" />
                         Upload photo
                     </GhostButton>
-                    {preview && (
+                    {avatarPreview && (
                         <button
-                            onClick={() => setPreview(null)}
+                            onClick={() => {
+                                setAvatarPreview(null);
+                                setAvatarFile(null);
+                            }}
                             className="inline-flex items-center gap-1 px-2 py-2 text-sm font-medium text-slate-500 hover:text-rose-600"
                         >
                             <X className="h-3.5 w-3.5" />
@@ -255,10 +259,11 @@ function GenderPicker({ value, onChange }) {
                 <button
                     key={g}
                     onClick={() => onChange(g)}
-                    className={`border px-3 py-1.5 text-xs font-medium transition-colors ${value === g
-                        ? "border-blue-600 bg-blue-600 text-white"
-                        : "border-[#E5E7EB] bg-white text-slate-700 hover:bg-slate-50"
-                        }`}
+                    className={`border px-3 py-1.5 text-xs font-medium transition-colors ${
+                        value === g
+                            ? "border-blue-600 bg-blue-600 text-white"
+                            : "border-[#E5E7EB] bg-white text-slate-700 hover:bg-slate-50"
+                    }`}
                 >
                     {g}
                 </button>
@@ -267,13 +272,20 @@ function GenderPicker({ value, onChange }) {
     );
 }
 
-function PasswordField({ label, placeholder }) {
+function PasswordField({ label, placeholder, value, onChange, error }) {
     const [visible, setVisible] = useState(false);
     return (
         <div>
             <FieldLabel>{label}</FieldLabel>
             <div className="relative">
-                <TextInput type={visible ? "text" : "password"} placeholder={placeholder} className="pr-10" />
+                <TextInput
+                    type={visible ? "text" : "password"}
+                    placeholder={placeholder}
+                    value={value}
+                    onChange={onChange}
+                    error={!!error}
+                    className="pr-10"
+                />
                 <button
                     type="button"
                     onClick={() => setVisible((v) => !v)}
@@ -282,13 +294,14 @@ function PasswordField({ label, placeholder }) {
                     {visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
             </div>
+            <ErrorText>{error}</ErrorText>
         </div>
     );
 }
 
 function DeleteAccountModal({ onClose }) {
     const [confirmText, setConfirmText] = useState("");
-    const canDelete = confirmText === "DELETE";
+    const canDelete = confirmText === "Delete";
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
@@ -324,26 +337,99 @@ function DeleteAccountModal({ onClose }) {
 
 export default function ProfilePage() {
     const [tab, setTab] = useState("general");
-    const [name, setName] = useState("Soumya Ranjan Sahoo");
-    const [gender, setGender] = useState("Male");
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [savedToast, setSavedToast] = useState(false);
+
+    // Avatar state
+    const [avatarFile, setAvatarFile] = useState(null);
+    const [avatarPreview, setAvatarPreview] = useState(null);
+
+    // General tab state
+    const [name, setName] = useState("Soumya Ranjan Sahoo");
+    const [bio, setBio] = useState("");
+    const [gender, setGender] = useState("Male");
+    const email = "soumya.sahoo@example.com"; // left as-is, not editable
+
+    // Address tab state
+    const [address, setAddress] = useState({
+        street: "",
+        city: "",
+        state: "",
+        postalCode: "",
+        country: "",
+    });
+
+    const handleAddressChange = (field) => (e) => {
+        setAddress((prev) => ({ ...prev, [field]: e.target.value }));
+    };
+
+    // Account tab — password state
+    const [passwords, setPasswords] = useState({
+        current: "",
+        newPassword: "",
+        confirmPassword: "",
+    });
+    const [passwordErrors, setPasswordErrors] = useState({
+        current: "",
+        newPassword: "",
+        confirmPassword: "",
+    });
+
+    const handlePasswordChange = (field) => (e) => {
+        setPasswords((prev) => ({ ...prev, [field]: e.target.value }));
+        setPasswordErrors((prev) => ({ ...prev, [field]: "" }));
+    };
+
+    const validatePasswords = () => {
+        const errors = { current: "", newPassword: "", confirmPassword: "" };
+        let isValid = true;
+
+        if (!passwords.current) {
+            errors.current = "Current password is required";
+            isValid = false;
+        }
+
+        if (!passwords.newPassword) {
+            errors.newPassword = "New password is required";
+            isValid = false;
+        } else if (!PASSWORD_REGEX.test(passwords.newPassword)) {
+            errors.newPassword =
+                "Min 8 characters, with uppercase, lowercase, number and special character";
+            isValid = false;
+        }
+
+        if (!passwords.confirmPassword) {
+            errors.confirmPassword = "Please confirm your new password";
+            isValid = false;
+        } else if (passwords.newPassword !== passwords.confirmPassword) {
+            errors.confirmPassword = "Passwords do not match";
+            isValid = false;
+        }
+
+        setPasswordErrors(errors);
+        return isValid;
+    };
 
     const handleSave = () => {
-        setSavedToast(true);
-        setTimeout(() => setSavedToast(false), 2200);
+        // Payload shape ready for backend — e.g. api.patch("/api/users/profile", profilePayload)
+        const profilePayload = { name, bio, gender, avatarFile };
+        toast.success("Changes saved");
+    };
+
+    const handleSaveAddress = () => {
+        // e.g. api.patch("/api/users/address", address)
+        toast.success("Address saved");
+    };
+
+    const handleUpdatePassword = () => {
+        if (!validatePasswords()) return;
+        // e.g. api.patch("/api/users/password", passwords)
+        toast.success("Password updated");
+        setPasswords({ current: "", newPassword: "", confirmPassword: "" });
     };
 
     return (
         <div className="min-h-screen w-full bg-slate-50 font-sans">
             {showDeleteModal && <DeleteAccountModal onClose={() => setShowDeleteModal(false)} />}
-
-            {savedToast && (
-                <div className="fixed right-6 top-6 z-50 flex items-center gap-2 border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-medium text-emerald-700 shadow-sm">
-                    <Check className="h-4 w-4" />
-                    Changes saved
-                </div>
-            )}
 
             <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
                 <div className="mb-1 flex items-center gap-1.5 text-xs text-slate-400">
@@ -351,18 +437,21 @@ export default function ProfilePage() {
                     <ChevronRight className="h-3 w-3" />
                     <span className="text-slate-600">Profile settings</span>
                 </div>
+
                 <div className="flex items-center justify-between">
-                    <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Profile settings</h1>
+                    <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
+                        Profile settings
+                    </h1>
 
-                    <button className="font-semibold text-blue-500 px-4 py-2 bg-blue-100 hover:text-blue-600 hover:bg-blue-200 transition-all duration-200">
-                        <Link
-                            to="/dashboard"
-                        >
-                            Back to dashboard
-                        </Link>
-                    </button>
-
+                    <Link
+                        to="/dashboard"
+                        className="inline-flex items-center gap-1.5 border border-[#E5E7EB] bg-white px-3.5 py-2 text-sm font-medium text-slate-700 transition-colors hover:border-blue-600 hover:text-blue-600"
+                    >
+                        <ChevronLeft className="h-3.5 w-3.5" />
+                        Back to dashboard
+                    </Link>
                 </div>
+
                 <p className="mt-1 text-sm text-slate-500">
                     Manage your personal information and account preferences.
                 </p>
@@ -374,10 +463,11 @@ export default function ProfilePage() {
                                 <button
                                     key={t.key}
                                     onClick={() => setTab(t.key)}
-                                    className={`flex w-full items-center justify-between px-3 py-2 text-left text-sm font-medium transition-colors ${tab === t.key
-                                        ? "bg-blue-50 text-blue-600"
-                                        : "text-slate-600 hover:bg-slate-50"
-                                        }`}
+                                    className={`flex w-full items-center justify-between px-3 py-2 text-left text-sm font-medium transition-colors ${
+                                        tab === t.key
+                                            ? "bg-blue-50 text-blue-600"
+                                            : "text-slate-600 hover:bg-slate-50"
+                                    }`}
                                 >
                                     {t.label}
                                     {tab === t.key && <ChevronRight className="h-3.5 w-3.5" />}
@@ -405,7 +495,13 @@ export default function ProfilePage() {
                                         title="Your photo"
                                         description="This is displayed on your profile and across your workspaces."
                                     />
-                                    <AvatarUploader name={name} />
+                                    <AvatarUploader
+                                        name={name}
+                                        avatarFile={avatarFile}
+                                        setAvatarFile={setAvatarFile}
+                                        avatarPreview={avatarPreview}
+                                        setAvatarPreview={setAvatarPreview}
+                                    />
                                 </div>
 
                                 <div className={`${CARD} p-6`}>
@@ -422,22 +518,20 @@ export default function ProfilePage() {
                                         <div>
                                             <FieldLabel>Email address</FieldLabel>
                                             <div className="relative">
-                                                <TextInput
-                                                    defaultValue="soumya.sahoo@example.com"
-                                                    className="pl-9"
-                                                    disabled
-                                                />
+                                                <TextInput value={email} className="pl-9" disabled readOnly />
                                                 <Mail className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                                             </div>
                                         </div>
                                     </div>
 
                                     <div className="mt-4">
-                                        <FieldLabel hint="Max 200 characters">Bio</FieldLabel>
+                                        <FieldLabel hint={`${bio.length}/200`}>Bio</FieldLabel>
                                         <TextArea
                                             rows={4}
-                                            placeholder="Tell your team a bit about yourself — role, focus areas, or anything worth knowing."
-                                            defaultValue="Full-stack developer building SprintLab. MERN stack, Tailwind, and a bit too much time spent tweaking sidebars."
+                                            maxLength={200}
+                                            value={bio}
+                                            onChange={(e) => setBio(e.target.value)}
+                                            placeholder="Tell your team a bit about yourself role, focus areas, or anything worth knowing."
                                         />
                                     </div>
 
@@ -448,7 +542,17 @@ export default function ProfilePage() {
                                 </div>
 
                                 <div className="flex justify-end gap-2">
-                                    <GhostButton>Discard</GhostButton>
+                                    <GhostButton
+                                        onClick={() => {
+                                            setName("Soumya Ranjan Sahoo");
+                                            setBio("");
+                                            setGender("Male");
+                                            setAvatarPreview(null);
+                                            setAvatarFile(null);
+                                        }}
+                                    >
+                                        Discard
+                                    </GhostButton>
                                     <PrimaryButton onClick={handleSave}>
                                         <Check className="h-3.5 w-3.5" />
                                         Save changes
@@ -469,32 +573,65 @@ export default function ProfilePage() {
                                         <div className="sm:col-span-2">
                                             <FieldLabel>Street address</FieldLabel>
                                             <div className="relative">
-                                                <TextInput placeholder="123 MG Road" className="pl-9" />
+                                                <TextInput
+                                                    value={address.street}
+                                                    onChange={handleAddressChange("street")}
+                                                    placeholder="123 MG Road"
+                                                    className="pl-9"
+                                                />
                                                 <MapPin className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                                             </div>
                                         </div>
                                         <div>
                                             <FieldLabel>City</FieldLabel>
-                                            <TextInput placeholder="Bhubaneswar" />
+                                            <TextInput
+                                                value={address.city}
+                                                onChange={handleAddressChange("city")}
+                                                placeholder="Bhubaneswar"
+                                            />
                                         </div>
                                         <div>
                                             <FieldLabel>State / Province</FieldLabel>
-                                            <TextInput placeholder="Odisha" />
+                                            <TextInput
+                                                value={address.state}
+                                                onChange={handleAddressChange("state")}
+                                                placeholder="Odisha"
+                                            />
                                         </div>
                                         <div>
                                             <FieldLabel>Postal code</FieldLabel>
-                                            <TextInput placeholder="751001" />
+                                            <TextInput
+                                                value={address.postalCode}
+                                                onChange={handleAddressChange("postalCode")}
+                                                placeholder="751001"
+                                            />
                                         </div>
                                         <div>
                                             <FieldLabel>Country</FieldLabel>
-                                            <TextInput placeholder="India" />
+                                            <TextInput
+                                                value={address.country}
+                                                onChange={handleAddressChange("country")}
+                                                placeholder="India"
+                                            />
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className="flex justify-end gap-2">
-                                    <GhostButton>Discard</GhostButton>
-                                    <PrimaryButton onClick={handleSave}>
+                                    <GhostButton
+                                        onClick={() =>
+                                            setAddress({
+                                                street: "",
+                                                city: "",
+                                                state: "",
+                                                postalCode: "",
+                                                country: "",
+                                            })
+                                        }
+                                    >
+                                        Discard
+                                    </GhostButton>
+                                    <PrimaryButton onClick={handleSaveAddress}>
                                         <Check className="h-3.5 w-3.5" />
                                         Save changes
                                     </PrimaryButton>
@@ -511,14 +648,36 @@ export default function ProfilePage() {
                                         description="Use a strong password you're not using elsewhere."
                                     />
                                     <div className="space-y-4">
-                                        <PasswordField label="Current password" placeholder="Enter current password" />
+                                        <PasswordField
+                                            label="Current password"
+                                            placeholder="Enter current password"
+                                            value={passwords.current}
+                                            onChange={handlePasswordChange("current")}
+                                            error={passwordErrors.current}
+                                        />
                                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                            <PasswordField label="New password" placeholder="Enter new password" />
-                                            <PasswordField label="Confirm new password" placeholder="Re-enter new password" />
+                                            <PasswordField
+                                                label="New password"
+                                                placeholder="Enter new password"
+                                                value={passwords.newPassword}
+                                                onChange={handlePasswordChange("newPassword")}
+                                                error={passwordErrors.newPassword}
+                                            />
+                                            <PasswordField
+                                                label="Confirm new password"
+                                                placeholder="Re-enter new password"
+                                                value={passwords.confirmPassword}
+                                                onChange={handlePasswordChange("confirmPassword")}
+                                                error={passwordErrors.confirmPassword}
+                                            />
                                         </div>
+                                        <p className="text-[11px] text-slate-400">
+                                            Must be at least 8 characters and include an uppercase letter,
+                                            a lowercase letter, a number, and a special character.
+                                        </p>
                                     </div>
                                     <div className="mt-4 flex justify-end">
-                                        <PrimaryButton onClick={handleSave}>
+                                        <PrimaryButton onClick={handleUpdatePassword}>
                                             <Lock className="h-3.5 w-3.5" />
                                             Update password
                                         </PrimaryButton>
