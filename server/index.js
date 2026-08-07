@@ -3,24 +3,21 @@ import dotenv from "dotenv";
 import http from "http";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-// import path from "path";
-
 import { connectDb } from "./config/connectDb.js";
 import authRouter from "./routes/authRoutes.js";
 import workspaceRouter from "./routes/workSpaceRoutes.js";
 import { initializeSocket } from "./socket.js";
+import { v2 as cloudinary } from "cloudinary";
 
 dotenv.config();
+cloudinary.config({
+  cloud_name : process.env.CLOUDINARY_CLOUD_NAME,
+  api_key : process.env.CLOUDINARY_API_KEY,
+  api_secret : process.env.CLOUDINARY_API_SECRET,
+})
 
 const app = express();
 const port = process.env.PORT || 5000;
-
-// const__dirname = path.resolve();
-app.use(express.static("public"));
-
-// app.get("*", (req, res) => {
-//   res.sendFile(path.join(__dirname, "public", "index.html"));
-// });
 
 app.use(
   cors({
