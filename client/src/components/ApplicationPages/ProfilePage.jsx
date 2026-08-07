@@ -347,7 +347,11 @@ export default function ProfilePage() {
     const [name, setName] = useState("Soumya Ranjan Sahoo");
     const [bio, setBio] = useState("");
     const [gender, setGender] = useState("Male");
-    const email = "soumya.sahoo@example.com"; // left as-is, not editable
+    const email = "soumya.sahoo@example.com";
+
+    console.log(name);
+    console.log(bio);
+    console.log(gender);
 
     // Address tab state
     const [address, setAddress] = useState({
@@ -362,7 +366,7 @@ export default function ProfilePage() {
         setAddress((prev) => ({ ...prev, [field]: e.target.value }));
     };
 
-    // Account tab — password state
+    // Account tab password state
     const [passwords, setPasswords] = useState({
         current: "",
         newPassword: "",
@@ -410,21 +414,16 @@ export default function ProfilePage() {
     };
 
     const handleSave = () => {
-        // Payload shape ready for backend — e.g. api.patch("/api/users/profile", profilePayload)
-        const profilePayload = { name, bio, gender, avatarFile };
-        toast.success("Changes saved");
+        
     };
 
     const handleSaveAddress = () => {
-        // e.g. api.patch("/api/users/address", address)
-        toast.success("Address saved");
+        
     };
 
     const handleUpdatePassword = () => {
         if (!validatePasswords()) return;
-        // e.g. api.patch("/api/users/password", passwords)
-        toast.success("Password updated");
-        setPasswords({ current: "", newPassword: "", confirmPassword: "" });
+        
     };
 
     return (

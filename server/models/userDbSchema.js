@@ -18,6 +18,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: null
     },
+    gender: {
+        type: String,
+        default: null
+    },
+    bio: {
+        type: String,
+        default: null
+    },
     refreshToken: {
         type: String,
         default: null
