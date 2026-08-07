@@ -29,30 +29,54 @@ function App() {
       <SkeletonTheme baseColor='#EEEEEE' highlightColor='#D1D3D4'>
         <Toaster
           position="top-right"
+          gutter={10}
           toastOptions={{
             duration: 3000,
             style: {
+              width: "360px",
+              minHeight: "64px",
               background: "#FFFFFF",
-              color: "#0F172A",
-              border: "1px solid #E2E8F0",
-              borderRadius: "10px",
-              fontSize: "14px",
+              color: "#172B4D",
+              border: "1px solid #DFE1E6",
+              borderRadius: "6px",
+              boxShadow: "0 4px 12px rgba(9, 30, 66, 0.15)",
               padding: "12px 16px",
+              fontSize: "14px",
+              fontWeight: "500",
             },
+
             success: {
+              style: {
+                borderLeft: "4px solid #36B37E",
+              },
               iconTheme: {
-                primary: "#3B82F6",
+                primary: "#36B37E",
                 secondary: "#FFFFFF",
               },
             },
+
             error: {
+              style: {
+                borderLeft: "4px solid #DE350B",
+              },
               iconTheme: {
-                primary: "#EF4444",
+                primary: "#DE350B",
+                secondary: "#FFFFFF",
+              },
+            },
+
+            loading: {
+              style: {
+                borderLeft: "4px solid #0052CC",
+              },
+              iconTheme: {
+                primary: "#0052CC",
                 secondary: "#FFFFFF",
               },
             },
           }}
         />
+
         <Routes>
 
           {/* Public Routes */}
