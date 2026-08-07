@@ -115,6 +115,7 @@ function AvatarUploader({ name, avatarFile, setAvatarFile, avatarPreview, setAva
     const [showCropper, setShowCropper] = useState(false);
     const [rawPreview, setRawPreview] = useState(null);
     const [processing, setProcessing] = useState(false);
+    const [croppedFile, setCroppedFile] = useState(null);
 
     const handleFile = (file) => {
         if (!file) return;
@@ -195,6 +196,7 @@ function AvatarUploader({ name, avatarFile, setAvatarFile, avatarPreview, setAva
                                                 croppedAreaPixels
                                             );
 
+                                            setCroppedFile(croppedBlob);
                                             const croppedUrl = URL.createObjectURL(croppedBlob);
                                             setAvatarPreview(croppedUrl);
                                             setAvatarFile(croppedBlob);
@@ -343,19 +345,32 @@ export default function ProfilePage() {
     const [avatarPreview, setAvatarPreview] = useState(null);
 
     // General tab state
-    const [userData, setUserData] = useState(null); //After get req
     const [name, setName] = useState("");
     const [bio, setBio] = useState("");
     const [gender, setGender] = useState("Male");
+    const [email, setEmail] = useState("");
+    const [uploading, setUploading] = useState(false);
+    const [originalData, setOriginalData] = useState({
+        name: "",
+        bio: "",
+        gender: "",
+    });
 
     const handleGetUserData = async () => {
         try {
             const response = await api.get('/api/profile/get-userdata');
 
             if (response.status === 200) {
-                setUserData(response.data.user);
-                setGender(response.data.user.gender || "Male");
                 setName(response.data.user.name || "");
+                setEmail(response.data.user.email || "");
+                setBio(response.data.user.bio || "");
+                setGender(response.data.user.gender || "Male");
+
+                setOriginalData({
+                    name: response.data.user.name || "",
+                    bio: response.data.user.bio || "",
+                    gender: response.data.user.gender || "",
+                });
             }
         }
         catch (err) {
@@ -436,8 +451,90 @@ export default function ProfilePage() {
         return isValid;
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
 
+        if (!name || !name.trim()) {
+            toast.error("Name cannot be empty");
+            return;
+        }
+
+        if (bio && !bio.trim()) {
+            toast.error("Bio cannot contain only spaces");
+            return;
+        }
+
+        if (!gender || !gender.trim()) {
+            toast.error("Please select a gender");
+            return;
+        }
+
+        if (
+            name.trim() === originalData.name?.trim() &&
+            bio.trim() === (originalData.bio || "").trim() &&
+            gender === originalData.gender &&
+            !croppedFile
+        ) {
+            toast.error("No changes made");
+            return;
+        }
+
+        try {
+            setUploading(true);
+
+            const formData = new FormData();
+
+            if (name.trim() !== (originalData.name || "").trim()) {
+                formData.append("name", name.trim());
+            }
+
+            if (bio.trim() !== (originalData.bio || "").trim()) {
+                formData.append("bio", bio.trim());
+            }
+
+            if (gender !== originalData.gender) {
+                formData.append("gender", gender);
+            }
+
+            // Compress and add image if changed
+            if (croppedFile) {
+                const options = {
+                    maxSizeMB: 1,
+                    maxWidthOrHeight: 500,
+                    useWebWorker: true,
+                    fileType: "image/jpeg",
+                };
+
+                const compressedFile = await imageCompression(
+                    croppedFile,
+                    options
+                );
+
+                formData.append(
+                    "profilePicture",
+                    compressedFile,
+                    "profile-picture.jpg"
+                );
+            }
+
+            await api.put("/api/users/profile",
+                formData,
+                {
+                    withCredentials: true,
+                }
+            );
+
+            toast.success("Profile updated successfully");
+
+        } catch (error) {
+            console.error("Profile update failed:", error);
+
+            toast.error(
+                error.response?.data?.message ||
+                "Failed to update profile"
+            );
+        } finally {
+            setUploading(false);
+        }
     };
 
     const handleSaveAddress = () => {
@@ -539,7 +636,7 @@ export default function ProfilePage() {
                                         <div>
                                             <FieldLabel>Email address</FieldLabel>
                                             <div className="relative">
-                                                <TextInput value={userData?.email || ""} className="pl-9" disabled readOnly />
+                                                <TextInput value={email} className="pl-9" disabled readOnly />
                                                 <Mail className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                                             </div>
                                         </div>
@@ -550,7 +647,7 @@ export default function ProfilePage() {
                                         <TextArea
                                             rows={4}
                                             maxLength={200}
-                                            value={userData?.bio || ""}
+                                            value={bio}
                                             onChange={(e) => setBio(e.target.value)}
                                             placeholder="Tell your team a bit about yourself role, focus areas, or anything worth knowing."
                                         />
@@ -564,13 +661,7 @@ export default function ProfilePage() {
 
                                 <div className="flex justify-end gap-2">
                                     <GhostButton
-                                        onClick={() => {
-                                            setName("Soumya Ranjan Sahoo");
-                                            setBio("");
-                                            setGender("Male");
-                                            setAvatarPreview(null);
-                                            setAvatarFile(null);
-                                        }}
+                                        onClick={() => handleGetUserData()}
                                     >
                                         Discard
                                     </GhostButton>
