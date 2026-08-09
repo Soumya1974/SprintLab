@@ -110,7 +110,7 @@ function GhostButton({ children, ...props }) {
     );
 }
 
-function AvatarUploader({ name, avatarFile, setAvatarFile, avatarPreview, setAvatarPreview, onCropComplete }) {
+function AvatarUploader({ name, avatarFile, setAvatarFile, avatarPreview, setAvatarPreview, onCropComplete, avatar }) {
     const inputRef = useRef(null);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
     const [showCropper, setShowCropper] = useState(false);
@@ -162,7 +162,13 @@ function AvatarUploader({ name, avatarFile, setAvatarFile, avatarPreview, setAva
                                 className="hidden"
                                 onChange={(e) => handleFile(e.target.files?.[0])}
                             />
-                            <span>{initials || "U"}</span>
+                            {
+                                avatar ? (
+                                    <img src={avatar} alt="Profile preview" className="h-full w-full object-cover" />
+                                ) : (
+                                    <span>{initials}</span>
+                                )
+                            }
                         </>
                     ) : (
                         <img
@@ -346,6 +352,7 @@ export default function ProfilePage() {
 
     // General tab state
     const [name, setName] = useState("");
+    const [avatar, setAvatar] = useState("");
     const [bio, setBio] = useState("");
     const [gender, setGender] = useState("Male");
     const [email, setEmail] = useState("");
@@ -357,13 +364,14 @@ export default function ProfilePage() {
 
     const handleGetUserData = async () => {
         try {
-            const response = await api.get('/api/profile/get-userdata');
+            const response = await api.get('/api/users/profile/get-userdata');
 
             if (response.status === 200) {
                 setName(response.data.user.name || "");
                 setEmail(response.data.user.email || "");
                 setBio(response.data.user.bio || "");
                 setGender(response.data.user.gender || "Male");
+                setAvatar(response.data.user.avatar || "");
 
                 setOriginalData({
                     name: response.data.user.name || "",
@@ -616,6 +624,7 @@ export default function ProfilePage() {
                                     />
                                     <AvatarUploader
                                         name={name}
+                                        avatar={avatar}
                                         avatarFile={avatarFile}
                                         setAvatarFile={setAvatarFile}
                                         avatarPreview={avatarPreview}

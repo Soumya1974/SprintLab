@@ -21,15 +21,3 @@ export const handleGetUserData = async (req, res) => {
         });
     }
 }
-
-export const handleSetUserData = async (req, res) => {
-    try {
-        
-    }
-    catch (err) {
-        console.error(err);
-        return res.status(500).json({
-            message: err.message
-        });
-    }
-}
