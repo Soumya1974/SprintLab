@@ -20,6 +20,7 @@ import api from "../api/axios";
 import useAuthStore from "../store/authStore";
 import useWorkspaceStore from "../store/workspaceStore";
 import { socket } from "../socket";
+import { UserProfileAvatar } from "../components/projectComponents/UserProfileModal";
 
 const CARD = "border border-[#E5E7EB] bg-white";
 
@@ -457,9 +458,15 @@ export default function Dashboard() {
                           key={item._id}
                           className="flex items-start gap-2.5 border border-gray-50 bg-slate-50/60 px-3 py-2"
                         >
-                          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-50 text-[10px] font-semibold text-blue-700">
-                            {initialOf(item.userId?.name)}
-                          </div>
+                          <UserProfileAvatar user={item.userId}>
+                            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-600 text-[10px] font-semibold text-white">
+                              {item.userId?.avatar ? (
+                                <img src={item.userId.avatar} alt={item.userId.name} className="h-full w-full rounded-full object-cover" />
+                              ) : (
+                                <span>{initialOf(item.userId?.name)}</span>
+                              )}
+                            </div>
+                          </UserProfileAvatar>
                           <div className="min-w-0 flex-1">
                             <p className="truncate text-xs text-slate-700">
                               <span className="font-medium text-slate-900">

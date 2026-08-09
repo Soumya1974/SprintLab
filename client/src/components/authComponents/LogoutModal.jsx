@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
 import api from "../../api/axios";
 import useAuthStore from "../../store/authStore";
+import useWorkspaceStore from "../../store/workspaceStore";
 import toast, { Toaster } from 'react-hot-toast';
 import { useState } from "react";
 
@@ -13,6 +14,9 @@ export default function LogoutModal({ onCancelClick }) {
         state.clearAccessToken
     )
     const clearForgotPasswordProgress = useAuthStore((state) => state.clearForgotPasswordProgress);
+    const clearUser = useWorkspaceStore((state) => state.clearUser);
+    const clearWorkspaceData = useWorkspaceStore((state) => state.clearWorkspaceData);
+    const clearProjectDetails = useWorkspaceStore((state) => state.clearProjectDetails);
 
     const handleLogoutClick = async () => {
         setSubmitting(true);
@@ -23,6 +27,9 @@ export default function LogoutModal({ onCancelClick }) {
 
             clearAccessToken();
             clearForgotPasswordProgress();
+            clearUser();
+            clearWorkspaceData();
+            clearProjectDetails();
             
         }
         catch (err) {

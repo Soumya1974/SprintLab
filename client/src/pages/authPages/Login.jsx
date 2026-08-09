@@ -6,6 +6,7 @@ import useAuthStore from "../../store/authStore";
 import toast from "react-hot-toast";
 import axios from "axios";
 import api from "../../api/axios";
+import useWorkspaceStore from "../../store/workspaceStore";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function Login({ onNavigate }) {
@@ -15,6 +16,7 @@ export default function Login({ onNavigate }) {
     const [submitting, setSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState("");
 
+    const setUser = useWorkspaceStore((state) => state.setUser);
     const setAccessToken = useAuthStore((state) =>
         state.setAccessToken
     );
@@ -24,7 +26,7 @@ export default function Login({ onNavigate }) {
     const inviteToken = useAuthStore((state) =>
         state.inviteToken
     );
-    const clearInviteToken = useAuthStore((state) => 
+    const clearInviteToken = useAuthStore((state) =>
         state.clearInviteToken
     );
 
@@ -83,7 +85,7 @@ export default function Login({ onNavigate }) {
                         { withCredentials: true }
                     );
 
-                    if(inviteResponse.status === 200){
+                    if (inviteResponse.status === 200) {
                         toast.success(inviteResponse.data.message);
                     }
 
@@ -119,6 +121,26 @@ export default function Login({ onNavigate }) {
         }
         finally {
             setSubmitting(false);
+        }
+
+        try {
+            const response = await api.get('/api/users/profile/get-userdata');
+
+            if (response.status === 200) {
+                setUser(response.data.user);
+            }
+        }
+        catch (err) {
+            switch (err.response?.status) {
+                case 400:
+                    toast.error(err.response.data.message);
+                    break;
+                case 500:
+                    toast.error("Internal Server Error");
+                    break;
+                default:
+                    toast.error("Something went wrong");
+            }
         }
     }
 

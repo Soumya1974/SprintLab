@@ -7,6 +7,8 @@ import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 
+import useWorkspaceStore from "../../store/workspaceStore";
+
 const OTP_LENGTH = 6;
 
 export default function VerifyOtp() {
@@ -15,6 +17,7 @@ export default function VerifyOtp() {
     const [submitting, setSubmitting] = useState(false);
     const inputRefs = useRef([]);
 
+    const setUser = useWorkspaceStore((state) => state.setUser);
     const email = useAuthStore((state) => state.email);
     const clearEmail = useAuthStore((state) => state.clearEmail);
     const clearSignupProgress = useAuthStore((state) => state.clearSignupProgress);
@@ -121,6 +124,26 @@ export default function VerifyOtp() {
         finally {
             
             setSubmitting(false);
+        }
+
+        try {
+            const response = await api.get('/api/users/profile/get-userdata');
+
+            if (response.status === 200) {
+                setUser(response.data.user);
+            }
+        }
+        catch (err) {
+            switch (err.response?.status) {
+                case 400:
+                    toast.error(err.response.data.message);
+                    break;
+                case 500:
+                    toast.error("Internal Server Error");
+                    break;
+                default:
+                    toast.error("Something went wrong");
+            }
         }
     }
 

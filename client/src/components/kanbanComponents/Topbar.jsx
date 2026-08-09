@@ -3,6 +3,15 @@ import { ChevronDown, Bell, Menu } from "lucide-react";
 import useWorkspaceStore from "../../store/workspaceStore";
 import { Link } from "react-router-dom";
 
+function getInitials(name = "") {
+  return name
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((p) => p[0]?.toUpperCase())
+    .join("");
+}
+
 export default function Topbar({ onMenuClick }) {
   const [wsOpen, setWsOpen] = useState(false);
   const wsRef = useRef(null);
@@ -20,6 +29,9 @@ export default function Topbar({ onMenuClick }) {
   }, []);
 
   const selectedWorkspace = allWorkspaces.find((workspace) => workspace._id === workspaceData) || projectDetails;
+
+  const user = useWorkspaceStore((state) => state.user);
+  const defaultAvatar = "https://imgs.search.brave.com/7_-25qcHnU9PLXYYiiK-IwkQx93yFpp__txSD1are3s/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzAwLzY0LzY3LzYz/LzM2MF9GXzY0Njc2/MzgzX0xkYm1oaU5N/NllwemIzRk00UFB1/RlA5ckhlN3JpOEp1/LmpwZw";
 
   return (
     <header className="h-16 border-b border-slate-200 bg-white flex items-center justify-between px-4 sm:px-6 shrink-0">
@@ -92,8 +104,8 @@ export default function Topbar({ onMenuClick }) {
             to="/userprofile"
           >
             <img
-              src="https://imgs.search.brave.com/ZoU5fx3pmmXzWQLQn4uHDt7fxhzEKvZKvM7Bmhrj11U/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/aWNvbnM4LmNvbS9l/eHRlcm5hbC10YWwt/cmV2aXZvLXRyaXRv/bmUtdGFsLXJldml2/by8xMjAwL2V4dGVy/bmFsLXF1ZXN0aW9u/LW1hcmstZm9yLXVz/ZXItdG8tc29sdmUt/cHJvYmxlbXMtY2xv/c2V1cG1hbi10cml0/b25lLXRhbC1yZXZp/dm8uanBn"
-              className="h-9 w-9 rounded-full hover:scale-102 hover:cursor-pointer transition-all duration-150"
+              src={user?.avatar || getInitials(user?.name) || defaultAvatar}
+              className="h-9 w-9 rounded-full object-cover hover:scale-102 hover:cursor-pointer transition-all duration-150"
               alt="Account"
             />
           </Link>

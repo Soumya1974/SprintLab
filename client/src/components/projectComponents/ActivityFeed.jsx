@@ -13,6 +13,7 @@ import {
   Activity,
 } from "lucide-react";
 import useAuthStore from "../../store/authStore";
+import { UserProfileAvatar } from "./UserProfileModal";
 
 const AVATAR_COLORS = [
   "bg-blue-400",
@@ -250,31 +251,33 @@ export default function ActivityFeed({ onToggle, maximized, onlineUsers }) {
               >
                 
 
-                <div className="relative z-10 shrink-0">
-                  {user.avatar ? (
-                    <img
-                      src={user.avatar}
-                      alt={user.name || "User"}
-                      className="h-8 w-8 rounded-full object-cover ring-4 ring-white"
-                    />
-                  ) : (
-                    <div
-                      className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold text-white ring-4 ring-white ${colorForId(
-                        user._id || user.name
-                      )}`}
-                    >
-                      {initial}
-                    </div>
-                  )}
+                <UserProfileAvatar user={user}>
+                  <div className="relative z-10 shrink-0">
+                    {user.avatar ? (
+                      <img
+                        src={user.avatar}
+                        alt={user.name || "User"}
+                        className="h-8 w-8 rounded-full object-cover border border-white"
+                      />
+                    ) : (
+                      <div
+                        className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold text-white border border-white ${colorForId(
+                          user._id || user.name
+                        )}`}
+                      >
+                        {initial}
+                      </div>
+                    )}
 
-                  {/* Activity icon */}
-                  <div className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full border border-slate-200 bg-white shadow-sm">
-                    <ActivityIcon
-                      className="h-2.5 w-2.5 text-slate-500"
-                      strokeWidth={2.25}
-                    />
+                    {/* Activity icon */}
+                    <div className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center border border-slate-200 bg-white shadow-sm">
+                      <ActivityIcon
+                        className="h-2.5 w-2.5 text-slate-500"
+                        strokeWidth={2.25}
+                      />
+                    </div>
                   </div>
-                </div>
+                </UserProfileAvatar>
 
                 <div className="flex-1 min-w-0 pt-1">
                   <p className="text-sm text-slate-600 leading-snug">

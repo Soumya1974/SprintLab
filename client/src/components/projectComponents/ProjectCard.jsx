@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Calendar, ArrowUpRight, Users, User, ChevronDown, ChevronUp } from "lucide-react";
 import useWorkspaceStore from "../../store/workspaceStore";
+import { UserProfileAvatar } from "./UserProfileModal";
 
 const STATUS_STYLES = {
   Pending: "bg-slate-100 text-slate-700 border-slate-200",
@@ -81,27 +82,28 @@ function StackedAvatars({ members = [] }) {
         const name = user?.name || "Member";
         const avatar = user?.avatar;
         return (
-          <div
-            key={user._id || user.email || i}
-            title={name}
-            className="h-6 w-6 shrink-0 overflow-hidden rounded-full ring-2 ring-white"
-          >
-            {avatar ? (
-              <img src={avatar} alt={name} className="h-full w-full object-cover" />
-            ) : (
-              <div
-                className={`flex h-full w-full items-center justify-center text-[10px] font-semibold text-white ${
-                  AVATAR_FALLBACK_COLORS[i % AVATAR_FALLBACK_COLORS.length]
-                }`}
-              >
-                {getInitials(name)}
-              </div>
-            )}
-          </div>
+          <UserProfileAvatar key={user._id || user.email || i} user={user}>
+            <div
+              title={name}
+              className="h-6 w-6 shrink-0 overflow-hidden rounded-full border border-white"
+            >
+              {avatar ? (
+                <img src={avatar} alt={name} className="h-full w-full rounded-full object-cover" />
+              ) : (
+                <div
+                  className={`flex h-full w-full items-center justify-center rounded-full text-[10px] font-semibold text-white ${
+                    AVATAR_FALLBACK_COLORS[i % AVATAR_FALLBACK_COLORS.length]
+                  }`}
+                >
+                  {getInitials(name)}
+                </div>
+              )}
+            </div>
+          </UserProfileAvatar>
         );
       })}
       {overflow > 0 && (
-        <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-[10px] font-semibold text-slate-600 ring-2 ring-white">
+        <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-slate-100 text-[10px] font-semibold text-slate-600 border border-white">
           +{overflow}
         </div>
       )}
@@ -121,26 +123,27 @@ function ExpandedMemberList({ members = [] }) {
         const name = user?.name || "Member";
         const avatar = user?.avatar;
         return (
-          <div
-            key={user._id || user.email || i}
-            className="inline-flex max-w-32 items-center gap-1.5 border border-[#E5E7EB] bg-white px-2 py-1 text-xs font-medium text-slate-700"
-            title={name}
-          >
-            <div className="h-4 w-4 shrink-0 overflow-hidden rounded-full">
-              {avatar ? (
-                <img src={avatar} alt={name} className="h-full w-full object-cover" />
-              ) : (
-                <div
-                  className={`flex h-full w-full items-center justify-center text-[8px] font-semibold text-white ${
-                    AVATAR_FALLBACK_COLORS[i % AVATAR_FALLBACK_COLORS.length]
-                  }`}
-                >
-                  {getInitials(name)}
-                </div>
-              )}
+          <UserProfileAvatar key={user._id || user.email || i} user={user}>
+            <div
+              className="inline-flex max-w-32 items-center gap-1.5 border border-[#E5E7EB] bg-white px-2 py-1 text-xs font-medium text-slate-700"
+              title={name}
+            >
+              <div className="h-4 w-4 shrink-0 overflow-hidden rounded-full">
+                {avatar ? (
+                  <img src={avatar} alt={name} className="h-full w-full rounded-full object-cover" />
+                ) : (
+                  <div
+                    className={`flex h-full w-full items-center justify-center rounded-full text-[8px] font-semibold text-white ${
+                      AVATAR_FALLBACK_COLORS[i % AVATAR_FALLBACK_COLORS.length]
+                    }`}
+                  >
+                    {getInitials(name)}
+                  </div>
+                )}
+              </div>
+              <span className="truncate">{name}</span>
             </div>
-            <span className="truncate">{name}</span>
-          </div>
+          </UserProfileAvatar>
         );
       })}
     </div>
@@ -190,15 +193,17 @@ export default function ProjectCard({ projectData }) {
         <div className="flex min-w-0 items-center gap-1.5 text-xs text-slate-500">
           <User className="h-3.5 w-3.5 shrink-0 text-slate-400" />
           <span className="shrink-0 font-medium text-slate-600">Owner</span>
-          <div className="h-4 w-4 shrink-0 overflow-hidden rounded-full">
-            {ownerObj?.avatar ? (
-              <img src={ownerObj.avatar} alt={ownerObj.name} className="h-full w-full object-cover" />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center bg-blue-500 text-[8px] font-semibold text-white">
-                {getInitials(ownerObj?.name)}
-              </div>
-            )}
-          </div>
+          <UserProfileAvatar user={ownerObj}>
+            <div className="h-4 w-4 shrink-0 overflow-hidden rounded-full">
+              {ownerObj?.avatar ? (
+                <img src={ownerObj.avatar} alt={ownerObj.name} className="h-full w-full rounded-full object-cover" />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center rounded-full bg-blue-500 text-[8px] font-semibold text-white">
+                  {getInitials(ownerObj?.name)}
+                </div>
+              )}
+            </div>
+          </UserProfileAvatar>
           <span className="truncate font-medium text-slate-700">{ownerObj?.name || "Unassigned"}</span>
         </div>
 

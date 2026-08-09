@@ -22,6 +22,7 @@ import ImageCropper from "./ImageCropper";
 import { getCroppedImg } from "../../utils/cropImage";
 import api from "../../api/axios";
 import imageCompression from "browser-image-compression";
+import useWorkspaceStore from "../../store/workspaceStore";
 
 const CARD = "border border-[#E5E7EB] bg-white";
 
@@ -110,7 +111,7 @@ function GhostButton({ children, ...props }) {
     );
 }
 
-function AvatarUploader({ name, avatarFile, setAvatarFile, avatarPreview, setAvatarPreview, onCropComplete, avatar }) {
+function AvatarUploader({ name, avatarFile, setAvatarFile, avatarPreview, setAvatarPreview, onCropComplete, user }) {
     const inputRef = useRef(null);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
     const [showCropper, setShowCropper] = useState(false);
@@ -140,6 +141,7 @@ function AvatarUploader({ name, avatarFile, setAvatarFile, avatarPreview, setAva
     const handleCropComplete = (croppedArea, croppedAreaPixels) => {
         setCroppedAreaPixels(croppedAreaPixels);
     };
+    // console.log(user);
 
     const initials = name
         .split(" ")
@@ -163,8 +165,8 @@ function AvatarUploader({ name, avatarFile, setAvatarFile, avatarPreview, setAva
                                 onChange={(e) => handleFile(e.target.files?.[0])}
                             />
                             {
-                                avatar ? (
-                                    <img src={avatar} alt="Profile preview" className="h-full w-full object-cover" />
+                                user.avatar ? (
+                                    <img src={user.avatar} alt="Profile preview" className="h-full w-full object-cover" />
                                 ) : (
                                     <span>{initials}</span>
                                 )
@@ -362,41 +364,40 @@ export default function ProfilePage() {
         gender: "",
     });
 
-    const handleGetUserData = async () => {
-        try {
-            const response = await api.get('/api/users/profile/get-userdata');
-
-            if (response.status === 200) {
-                setName(response.data.user.name || "");
-                setEmail(response.data.user.email || "");
-                setBio(response.data.user.bio || "");
-                setGender(response.data.user.gender || "Male");
-                setAvatar(response.data.user.avatar || "");
-
-                setOriginalData({
-                    name: response.data.user.name || "",
-                    bio: response.data.user.bio || "",
-                    gender: response.data.user.gender || "",
-                });
-            }
-        }
-        catch (err) {
-            switch (err.response?.status) {
-                case 400:
-                    toast.error(err.response.data.message);
-                    break;
-                case 500:
-                    toast.error("Internal Server Error");
-                    break;
-                default:
-                    toast.error("Something went wrong");
-            }
-        }
-    }
+    const user = useWorkspaceStore((state) => state.user);
+    const setUser = useWorkspaceStore((state) => state.setUser);
 
     useEffect(() => {
-        handleGetUserData();
-    }, [])
+        if (user) {
+            setName(user.name || "");
+            setEmail(user.email || "");
+            setBio(user.bio || "");
+            setGender(user.gender || "Male");
+            setAvatar(user.avatar || "");
+
+            setOriginalData({
+                name: user.name || "",
+                bio: user.bio || "",
+                gender: user.gender || "Male",
+            });
+        }
+    }, [user]);
+
+    const handleDiscard = () => {
+        if (user) {
+            setName(user.name || "");
+            setEmail(user.email || "");
+            setBio(user.bio || "");
+            setGender(user.gender || "Male");
+            setAvatar(user.avatar || "");
+
+            setOriginalData({
+                name: user.name || "",
+                bio: user.bio || "",
+                gender: user.gender || "Male",
+            });
+        }
+    };
 
     // Address tab state
     const [address, setAddress] = useState({
@@ -525,12 +526,16 @@ export default function ProfilePage() {
                 );
             }
 
-            await api.put("/api/users/profile",
+            const response = await api.put("/api/users/profile",
                 formData,
                 {
                     withCredentials: true,
                 }
             );
+
+            if (response.data?.user) {
+                setUser(response.data.user);
+            }
 
             toast.success("Profile updated successfully");
 
@@ -624,7 +629,7 @@ export default function ProfilePage() {
                                     />
                                     <AvatarUploader
                                         name={name}
-                                        avatar={avatar}
+                                        user={user}
                                         avatarFile={avatarFile}
                                         setAvatarFile={setAvatarFile}
                                         avatarPreview={avatarPreview}
@@ -672,7 +677,7 @@ export default function ProfilePage() {
 
                                 <div className="flex justify-end gap-2">
                                     <GhostButton
-                                        onClick={() => handleGetUserData()}
+                                        onClick={handleDiscard}
                                     >
                                         Discard
                                     </GhostButton>

@@ -3,6 +3,7 @@ import useWorkspaceStore from "../../store/workspaceStore";
 import InviteModal from "../../Modals/InviteModal";
 import { socket } from "../../socket";
 import { useEffect, useRef, useState } from "react";
+import { UserProfileAvatar } from "./UserProfileModal";
 
 export default function ProjectHeader({ onlineUsers = [] }) {
 
@@ -78,26 +79,27 @@ export default function ProjectHeader({ onlineUsers = [] }) {
                 const initial = member.name ? member.name.charAt(0).toUpperCase() : "?";
 
                 return (
-                  <div
-                    key={member._id}
-                    title={`${member.name} (${isOnline ? "Online" : "Offline"})`}
-                    className="relative inline-block h-8 w-8 rounded-full border-2 border-white bg-slate-200 text-slate-700 text-xs font-medium shrink-0"
-                  >
-                    {member.avatar ? (
-                      <img
-                        src={member.avatar}
-                        alt={member.name}
-                        className="h-full w-full rounded-full object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center rounded-full bg-slate-200 text-slate-700 font-semibold">
-                        {initial}
-                      </div>
-                    )}
-                    {isOnline && (
-                      <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />
-                    )}
-                  </div>
+                  <UserProfileAvatar key={member._id} user={member}>
+                    <div
+                      title={`${member.name} (${isOnline ? "Online" : "Offline"})`}
+                      className="relative inline-block h-8 w-8 rounded-full border border-white bg-slate-200 text-slate-700 text-xs font-medium shrink-0"
+                    >
+                      {member.avatar ? (
+                        <img
+                          src={member.avatar}
+                          alt={member.name}
+                          className="h-full w-full rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center rounded-full bg-slate-200 text-slate-700 font-semibold">
+                          {initial}
+                        </div>
+                      )}
+                      {isOnline && (
+                        <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />
+                      )}
+                    </div>
+                  </UserProfileAvatar>
                 );
               })}
             </div>
