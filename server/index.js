@@ -26,7 +26,7 @@ app.use(express.json());
 
 app.use("/api", authRouter);
 app.use("/api", workspaceRouter);
-app.use("/api", userRouter);
+app.use("/api/users", userRouter);
 
 const server = http.createServer(app);
 

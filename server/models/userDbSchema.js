@@ -3,12 +3,14 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        trim: true,
     },
     email: {
         type: String,
         required: true,
         unique: true,
+        trim: true,
     },
     password: {
         type: String,
@@ -16,15 +18,21 @@ const userSchema = new mongoose.Schema({
     },
     avatar: {
         type: String,
-        default: null
+        default: "",
+    },
+    avatarPublicId: {
+        type: String,
+        default: "",
     },
     gender: {
         type: String,
-        default: null
+        enum: ["Male", "Female", "Prefer not to say"],
+        default: "Male",
     },
     bio: {
         type: String,
-        default: null
+        default: "",
+        trim: true,
     },
     refreshToken: {
         type: String,
@@ -38,7 +46,7 @@ const userSchema = new mongoose.Schema({
     otpExpiry: {
         type: Date
     },
-    
+
     // Forgot password
     resetPasswordOtp: {
         type: String

@@ -21,6 +21,7 @@ import toast from "react-hot-toast";
 import ImageCropper from "./ImageCropper";
 import { getCroppedImg } from "../../utils/cropImage";
 import api from "../../api/axios";
+import imageCompression from "browser-image-compression";
 
 const CARD = "border border-[#E5E7EB] bg-white";
 
@@ -109,13 +110,12 @@ function GhostButton({ children, ...props }) {
     );
 }
 
-function AvatarUploader({ name, avatarFile, setAvatarFile, avatarPreview, setAvatarPreview }) {
+function AvatarUploader({ name, avatarFile, setAvatarFile, avatarPreview, setAvatarPreview, onCropComplete }) {
     const inputRef = useRef(null);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
     const [showCropper, setShowCropper] = useState(false);
     const [rawPreview, setRawPreview] = useState(null);
     const [processing, setProcessing] = useState(false);
-    const [croppedFile, setCroppedFile] = useState(null);
 
     const handleFile = (file) => {
         if (!file) return;
@@ -196,7 +196,7 @@ function AvatarUploader({ name, avatarFile, setAvatarFile, avatarPreview, setAva
                                                 croppedAreaPixels
                                             );
 
-                                            setCroppedFile(croppedBlob);
+                                            onCropComplete(croppedBlob);
                                             const croppedUrl = URL.createObjectURL(croppedBlob);
                                             setAvatarPreview(croppedUrl);
                                             setAvatarFile(croppedBlob);
@@ -349,7 +349,6 @@ export default function ProfilePage() {
     const [bio, setBio] = useState("");
     const [gender, setGender] = useState("Male");
     const [email, setEmail] = useState("");
-    const [uploading, setUploading] = useState(false);
     const [originalData, setOriginalData] = useState({
         name: "",
         bio: "",
@@ -415,6 +414,8 @@ export default function ProfilePage() {
         newPassword: "",
         confirmPassword: "",
     });
+    const [croppedFile, setCroppedFile] = useState(null);
+    const [submitting, setSubmitting] = useState(false);
 
     const handlePasswordChange = (field) => (e) => {
         setPasswords((prev) => ({ ...prev, [field]: e.target.value }));
@@ -453,6 +454,8 @@ export default function ProfilePage() {
 
     const handleSave = async () => {
 
+        setSubmitting(true);
+
         if (!name || !name.trim()) {
             toast.error("Name cannot be empty");
             return;
@@ -479,8 +482,6 @@ export default function ProfilePage() {
         }
 
         try {
-            setUploading(true);
-
             const formData = new FormData();
 
             if (name.trim() !== (originalData.name || "").trim()) {
@@ -533,7 +534,7 @@ export default function ProfilePage() {
                 "Failed to update profile"
             );
         } finally {
-            setUploading(false);
+            setSubmitting(false);
         }
     };
 
@@ -619,6 +620,7 @@ export default function ProfilePage() {
                                         setAvatarFile={setAvatarFile}
                                         avatarPreview={avatarPreview}
                                         setAvatarPreview={setAvatarPreview}
+                                        onCropComplete={(file) => setCroppedFile(file)}
                                     />
                                 </div>
 
@@ -665,9 +667,18 @@ export default function ProfilePage() {
                                     >
                                         Discard
                                     </GhostButton>
-                                    <PrimaryButton onClick={handleSave}>
-                                        <Check className="h-3.5 w-3.5" />
-                                        Save changes
+                                    <PrimaryButton onClick={handleSave} disabled={submitting}>
+                                        {submitting ? (
+                                            <>
+                                                <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-black/30 border-t-black" />
+                                                Just a sec...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Check className="h-3.5 w-3.5" />
+                                                Save changes
+                                            </>
+                                        )}
                                     </PrimaryButton>
                                 </div>
                             </>
