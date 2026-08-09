@@ -247,7 +247,7 @@ export default function Signup() {
         <button
           type="submit"
           disabled={submitting}
-          className={`w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed active:scale-[0.98] text-white text-sm font-medium hover:cursor-pointer py-2.5 rounded-lg transition-all duration-150 ${agreedTouched && !agreed ? "mt-0" : "mt-5"
+          className={`w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed active:scale-[0.98] text-white text-sm font-medium hover:cursor-pointer py-2.5 transition-all duration-150 ${agreedTouched && !agreed ? "mt-0" : "mt-5"
             }`}
         >
           {submitting ? (

@@ -452,14 +452,14 @@ export default function CreateTaskModal({ handleGetTaskCards }) {
             <button
               type="button"
               onClick={clearTaskForm}
-              className="flex-1 text-sm font-medium text-slate-600 hover:bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-lg hover:cursor-pointer transition-colors duration-150"
+              className="flex-1 text-sm font-medium text-slate-600 hover:bg-slate-50 border border-slate-200 px-4 py-2.5 hover:cursor-pointer transition-colors duration-150"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={!isValid}
-              className={`flex flex-1 items-center justify-center gap-2 text-sm font-medium px-4 py-2.5 rounded-lg transition-all duration-150 ${isValid
+              className={`flex flex-1 items-center justify-center gap-2 text-sm font-medium px-4 py-2.5 transition-all duration-150 ${isValid
                 ? "text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98]"
                 : "text-white bg-blue-300 cursor-not-allowed"
                 }`}

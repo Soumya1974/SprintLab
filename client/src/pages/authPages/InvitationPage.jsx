@@ -157,7 +157,7 @@ export default function InvitationPage() {
                             <div className="flex items-center gap-3 mb-6">
                                 <button
                                     onClick={handleReject}
-                                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-600 border border-slate-300 hover:bg-slate-50 transition-colors"
+                                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-600 border border-slate-300 hover:bg-slate-50 transition-colors"
                                 >
                                     <X size={16} />
                                     Reject
@@ -166,7 +166,7 @@ export default function InvitationPage() {
                                 <button
                                     onClick={handleAccept}
                                     disabled={submitting}
-                                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-white transition-colors ${submitting
+                                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white transition-colors ${submitting
                                         ? "bg-indigo-400 cursor-not-allowed"
                                         : "bg-indigo-600 hover:bg-indigo-700"
                                         }`}

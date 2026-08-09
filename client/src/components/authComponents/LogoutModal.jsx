@@ -60,18 +60,18 @@ export default function LogoutModal({ onCancelClick }) {
 
                 <div className="flex items-center gap-2.5">
                     <button
-                        className="flex-1 text-sm font-medium hover:cursor-pointer text-slate-600 hover:bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-lg transition-colors duration-150"
+                        className="flex-1 text-sm font-medium hover:cursor-pointer text-slate-600 hover:bg-slate-50 border border-slate-200 px-4 py-2.5 transition-colors duration-150"
                         onClick={onCancelClick}
                     >
                         Cancel
                     </button>
                     <button
-                        className="flex flex-1 items-center justify-center gap-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 active:scale-[0.98] hover:cursor-pointer px-4 py-2.5 rounded-lg transition-all duration-150"
+                        className="flex flex-1 items-center justify-center gap-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 active:scale-[0.98] hover:cursor-pointer px-4 py-2.5 transition-all duration-150"
                         onClick={handleLogoutClick}
                     >
                         {submitting ? (
                             <>
-                                <span className="h-4 w-4 rounded-full border-2 border-white/40 border-t-white animate-spin" />
+                                <span className="h-4 w-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
                                 Logging out...
                             </>
                         ) : (

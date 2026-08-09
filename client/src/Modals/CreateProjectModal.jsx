@@ -306,14 +306,14 @@ export default function CreateProjectModal({ onClose, handleGetData }) {
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 text-sm font-medium text-slate-600 hover:bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-lg transition-colors duration-150 hover:cursor-pointer"
+                            className="flex-1 text-sm font-medium text-slate-600 hover:bg-slate-50 border border-slate-200 px-4 py-2.5 transition-colors duration-150 hover:cursor-pointer"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={submitting}
-                            className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
+                            className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium transition-all duration-200
                             ${submitting
                                     ? "bg-blue-500 cursor-not-allowed opacity-80"
                                     : "bg-blue-600 hover:bg-blue-700 active:scale-[0.98] cursor-pointer"

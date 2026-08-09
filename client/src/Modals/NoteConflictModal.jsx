@@ -26,7 +26,7 @@ export default function NoteConflictModal({ onOk }) {
 
                 <button
                     onClick={onOk}
-                    className="w-full text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] px-4 py-2.5 rounded-lg transition-all duration-150"
+                    className="w-full text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] px-4 py-2.5 transition-all duration-150"
                 >
                     Ok, got it
                 </button>
