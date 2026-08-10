@@ -418,6 +418,7 @@ export default function ProfilePage() {
         newPassword: "",
         confirmPassword: "",
     });
+
     const [passwordErrors, setPasswordErrors] = useState({
         current: "",
         newPassword: "",
@@ -425,6 +426,7 @@ export default function ProfilePage() {
     });
     const [croppedFile, setCroppedFile] = useState(null);
     const [submitting, setSubmitting] = useState(false);
+    const [passwordSubmitting, setPasswordSubmitting] = useState(false);
 
     const handlePasswordChange = (field) => (e) => {
         setPasswords((prev) => ({ ...prev, [field]: e.target.value }));
@@ -555,8 +557,32 @@ export default function ProfilePage() {
 
     };
 
-    const handleUpdatePassword = () => {
+    const handleUpdatePassword = async () => {
         if (!validatePasswords()) return;
+
+        try {
+            setPasswordSubmitting(true);
+            const response = await api.patch('/api/users/profile/account/change-password', {
+                passwords,
+            }, {
+                withCredentials: true,
+            });
+
+            if (response.status === 200) {
+                toast.success(response.data.message);
+            }
+        }
+        catch (err) {
+            console.error("Changing password failed:", error);
+
+            toast.error(
+                error.response?.data?.message ||
+                "Failed to update password"
+            );
+        }
+        finally {
+            setPasswordSubmitting(false);
+        }
 
     };
 
@@ -814,9 +840,21 @@ export default function ProfilePage() {
                                         </p>
                                     </div>
                                     <div className="mt-4 flex justify-end">
-                                        <PrimaryButton onClick={handleUpdatePassword}>
-                                            <Lock className="h-3.5 w-3.5" />
-                                            Update password
+                                        <PrimaryButton
+                                            onClick={handleUpdatePassword}
+                                            disabled={passwordSubmitting}
+                                        >
+                                            {passwordSubmitting ? (
+                                                <>
+                                                    <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-black/30 border-t-black" />
+                                                    Just a sec...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Lock className="h-3.5 w-3.5" />
+                                                    Update password
+                                                </>
+                                            )}
                                         </PrimaryButton>
                                     </div>
                                 </div>

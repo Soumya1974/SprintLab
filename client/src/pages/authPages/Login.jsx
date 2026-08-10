@@ -55,7 +55,6 @@ export default function Login({ onNavigate }) {
         setTouched({ email: true, password: true });
         if (!isValid) return;
 
-        setSubmitting(true);
         setSubmitError("");
 
         const { email, password } = form;
@@ -65,6 +64,7 @@ export default function Login({ onNavigate }) {
         }
 
         try {
+            setSubmitting(true);
             const response = await axios.post('/api/login', {
                 email,
                 password
@@ -77,6 +77,17 @@ export default function Login({ onNavigate }) {
 
             if (response.status === 200) {
                 setAccessToken(response.data.accessToken);
+
+                const userResponse = await api.get(
+                    "/api/users/profile/get-userdata",
+                    {
+                        withCredentials: true,
+                    }
+                );
+
+                if (userResponse.status === 200) {
+                    setUser(userResponse.data.user);
+                }
 
                 if (inviteToken) {
                     const inviteResponse = await api.post(
@@ -121,26 +132,6 @@ export default function Login({ onNavigate }) {
         }
         finally {
             setSubmitting(false);
-        }
-
-        try {
-            const response = await api.get('/api/users/profile/get-userdata');
-
-            if (response.status === 200) {
-                setUser(response.data.user);
-            }
-        }
-        catch (err) {
-            switch (err.response?.status) {
-                case 400:
-                    toast.error(err.response.data.message);
-                    break;
-                case 500:
-                    toast.error("Internal Server Error");
-                    break;
-                default:
-                    toast.error("Something went wrong");
-            }
         }
     }
 

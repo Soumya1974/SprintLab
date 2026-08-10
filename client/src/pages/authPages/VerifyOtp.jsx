@@ -78,8 +78,19 @@ export default function VerifyOtp() {
             }
             )
 
-            if(response.status === 200) {
+            if (response.status === 200) {
                 setAccessToken(response.data.accessToken);
+
+                const userResponse = await api.get(
+                    "/api/users/profile/get-userdata",
+                    {
+                        withCredentials: true,
+                    }
+                );
+
+                if (userResponse.status === 200) {
+                    setUser(userResponse.data.user);
+                }
 
                 if (inviteToken) {
                     const inviteResponse = await api.post(
@@ -88,7 +99,7 @@ export default function VerifyOtp() {
                         { withCredentials: true }
                     );
 
-                    if(inviteResponse.status === 200){
+                    if (inviteResponse.status === 200) {
                         toast.success(inviteResponse.data.message);
                     }
 
@@ -99,7 +110,7 @@ export default function VerifyOtp() {
 
             clearEmail();
             clearSignupProgress();
-        
+
         }
         catch (err) {
 
@@ -122,28 +133,8 @@ export default function VerifyOtp() {
             }
         }
         finally {
-            
+
             setSubmitting(false);
-        }
-
-        try {
-            const response = await api.get('/api/users/profile/get-userdata');
-
-            if (response.status === 200) {
-                setUser(response.data.user);
-            }
-        }
-        catch (err) {
-            switch (err.response?.status) {
-                case 400:
-                    toast.error(err.response.data.message);
-                    break;
-                case 500:
-                    toast.error("Internal Server Error");
-                    break;
-                default:
-                    toast.error("Something went wrong");
-            }
         }
     }
 
