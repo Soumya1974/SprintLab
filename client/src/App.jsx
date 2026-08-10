@@ -34,43 +34,44 @@ function App() {
             duration: 3000,
             style: {
               width: "360px",
-              minHeight: "64px",
+              minHeight: "56px",
               background: "#FFFFFF",
-              color: "#172B4D",
-              border: "1px solid #DFE1E6",
-              borderRadius: "6px",
-              boxShadow: "0 4px 12px rgba(9, 30, 66, 0.15)",
+              color: "#0F172A",
+              border: "1px solid #E5E7EB",
+              borderRadius: "0px",
+              boxShadow: "none",
               padding: "12px 16px",
-              fontSize: "14px",
+              fontSize: "13px",
               fontWeight: "500",
+              lineHeight: "1.4",
             },
 
             success: {
               style: {
-                borderLeft: "4px solid #36B37E",
+                border: "1px solid #E5E7EB",
               },
               iconTheme: {
-                primary: "#36B37E",
+                primary: "#2563EB",
                 secondary: "#FFFFFF",
               },
             },
 
             error: {
               style: {
-                borderLeft: "4px solid #DE350B",
+                border: "1px solid #E5E7EB",
               },
               iconTheme: {
-                primary: "#DE350B",
+                primary: "#DC2626",
                 secondary: "#FFFFFF",
               },
             },
 
             loading: {
               style: {
-                borderLeft: "4px solid #0052CC",
+                border: "1px solid #E5E7EB",
               },
               iconTheme: {
-                primary: "#0052CC",
+                primary: "#2563EB",
                 secondary: "#FFFFFF",
               },
             },

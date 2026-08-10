@@ -23,7 +23,7 @@ export default function CtaBanner() {
                         5 people.
                     </p>
                     <button
-                        className="relative inline-flex items-center gap-2 bg-white hover:bg-blue-50 active:scale-[0.98] text-blue-600 text-sm font-medium px-5 py-3 rounded-lg transition-all duration-150 shadow-sm"
+                        className="relative inline-flex items-center gap-2 bg-white hover:bg-blue-50 active:scale-[0.98] text-blue-600 text-sm font-medium px-5 py-3 transition-all duration-150 shadow-sm"
                     >
                         <Link
                             to="/signup"

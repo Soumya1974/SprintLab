@@ -29,6 +29,7 @@ export function UserProfileAvatar({ user, size = "md", className = "", children 
   const [fetchedUser, setFetchedUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showLightbox, setShowLightbox] = useState(false);
 
   const containerRef = useRef(null);
   const loggedInUser = useWorkspaceStore((state) => state.user);
@@ -205,13 +206,53 @@ export function UserProfileAvatar({ user, size = "md", className = "", children 
                 ) : (
                   <>
                     <div className="flex flex-col items-center gap-4 border-b border-slate-100 pb-4 text-center sm:flex-row sm:items-start sm:text-left">
-                      <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden border border-slate-200 bg-blue-600 text-xl font-bold text-white">
-                        {displayAvatar ? (
-                          <img src={displayAvatar} alt={displayName} className="h-full w-full object-cover" />
-                        ) : (
-                          <span>{getInitials(displayName)}</span>
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => displayAvatar && setShowLightbox(true)}
+                          disabled={!displayAvatar}
+                          className={`group relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden border border-slate-200 bg-blue-600 text-xl font-bold text-white ${displayAvatar ? "cursor-pointer" : "cursor-default"
+                            }`}
+                        >
+                          {displayAvatar ? (
+                            <>
+                              <img src={displayAvatar} alt={displayName} className="h-full w-full object-cover" />
+                              <div className="absolute inset-0 flex items-center justify-center bg-slate-900/0 opacity-0 transition-all duration-150 group-hover:bg-slate-900/50 group-hover:opacity-100">
+                                <span className="px-1 text-center text-[9px] font-medium leading-tight text-white">
+                                  View full image
+                                </span>
+                              </div>
+                            </>
+                          ) : (
+                            <span>{getInitials(displayName)}</span>
+                          )}
+                        </button>
+
+                        {showLightbox && displayAvatar && (
+                          <div
+                            className="z-50 flex items-center justify-center absolute inset-0 bg-slate-900/40 p-4"
+                            onClick={() => setShowLightbox(false)}
+                          >
+                            <div
+                              className="relative max-h-[85vh] max-w-[90vw] sm:max-h-[80vh] sm:max-w-[70vw] md:max-w-125"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <button
+                                onClick={() => setShowLightbox(false)}
+                                className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center border border-white/30 text-white backdrop-blur-sm transition-colors hover:bg-slate-900/40 sm:right-3 sm:top-3"
+                              >
+                                <X className="h-4 w-4 sm:h-5 sm:w-5" />
+                              </button>
+
+                              <img
+                                src={displayAvatar}
+                                alt={displayName}
+                                className="max-h-[85vh] max-w-[90vw] object-contain sm:max-h-[80vh] sm:max-w-[70vw] md:max-w-125"
+                              />
+                            </div>
+                          </div>
                         )}
-                      </div>
+                      </>
 
                       <div className="min-w-0 flex-1">
                         <h2 className="text-lg font-bold leading-snug text-slate-900">{displayName}</h2>

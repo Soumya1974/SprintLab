@@ -463,8 +463,6 @@ export default function ProfilePage() {
 
     const handleSave = async () => {
 
-        setSubmitting(true);
-
         if (!name || !name.trim()) {
             toast.error("Name cannot be empty");
             return;
@@ -492,6 +490,8 @@ export default function ProfilePage() {
 
         try {
             const formData = new FormData();
+
+            setSubmitting(true);
 
             if (name.trim() !== (originalData.name || "").trim()) {
                 formData.append("name", name.trim());

@@ -21,6 +21,7 @@ import useAuthStore from "../store/authStore";
 import useWorkspaceStore from "../store/workspaceStore";
 import { socket } from "../socket";
 import { UserProfileAvatar } from "../components/projectComponents/UserProfileModal";
+import DashboardSkeleton from "./DashboardSkeleton";
 
 const CARD = "border border-[#E5E7EB] bg-white";
 
@@ -356,10 +357,7 @@ export default function Dashboard() {
         )}
 
         {loading ? (
-          <div className={`${CARD} p-6 text-sm text-slate-500 flex items-center gap-2`}>
-            <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
-            <span>Loading workspace analytics…</span>
-          </div>
+          <DashboardSkeleton />
         ) : !workspaceData ? (
           <div className={`${CARD} p-6 text-sm text-slate-500`}>
             Select a workspace from the topbar to view its analytics dashboard.

@@ -91,9 +91,8 @@ function StackedAvatars({ members = [] }) {
                 <img src={avatar} alt={name} className="h-full w-full rounded-full object-cover" />
               ) : (
                 <div
-                  className={`flex h-full w-full items-center justify-center rounded-full text-[10px] font-semibold text-white ${
-                    AVATAR_FALLBACK_COLORS[i % AVATAR_FALLBACK_COLORS.length]
-                  }`}
+                  className={`flex h-full w-full items-center justify-center rounded-full text-[10px] font-semibold text-white ${AVATAR_FALLBACK_COLORS[i % AVATAR_FALLBACK_COLORS.length]
+                    }`}
                 >
                   {getInitials(name)}
                 </div>
@@ -133,9 +132,8 @@ function ExpandedMemberList({ members = [] }) {
                   <img src={avatar} alt={name} className="h-full w-full rounded-full object-cover" />
                 ) : (
                   <div
-                    className={`flex h-full w-full items-center justify-center rounded-full text-[8px] font-semibold text-white ${
-                      AVATAR_FALLBACK_COLORS[i % AVATAR_FALLBACK_COLORS.length]
-                    }`}
+                    className={`flex h-full w-full items-center justify-center rounded-full text-[8px] font-semibold text-white ${AVATAR_FALLBACK_COLORS[i % AVATAR_FALLBACK_COLORS.length]
+                      }`}
                   >
                     {getInitials(name)}
                   </div>
@@ -170,9 +168,8 @@ export default function ProjectCard({ projectData }) {
 
         <div className="flex shrink-0 items-center gap-2">
           <span
-            className={`border px-2 py-0.5 text-[11px] font-medium whitespace-nowrap ${
-              STATUS_STYLES[status] || "border-slate-200 bg-slate-100 text-slate-700"
-            }`}
+            className={`border px-2 py-0.5 text-[11px] font-medium whitespace-nowrap ${STATUS_STYLES[status] || "border-slate-200 bg-slate-100 text-slate-700"
+              }`}
           >
             {status}
           </span>
@@ -220,12 +217,12 @@ export default function ProjectCard({ projectData }) {
       </div>
 
       {isExpanded ? (
-        <div className="mb-3">
-          <ExpandedMemberList members={members} />
-        </div>
-      ) : (
         <div className="mb-3 cursor-pointer" onClick={() => setIsExpanded(true)}>
           <StackedAvatars members={members} />
+        </div>
+      ) : (
+        <div className="mb-3">
+          <ExpandedMemberList members={members} />
         </div>
       )}
 

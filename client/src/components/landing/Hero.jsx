@@ -23,7 +23,7 @@ export default function Hero() {
 
                     <div className="flex flex-col sm:flex-row gap-3">
                         <button
-                            className="group inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white text-sm font-medium px-5 py-3 rounded-lg transition-all duration-150 shadow-sm shadow-blue-200"
+                            className="group inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white text-sm font-medium px-5 py-3 transition-all duration-150 shadow-sm shadow-blue-200"
                         >
                             <Link
                                 to="/signup"
@@ -33,7 +33,7 @@ export default function Hero() {
                             <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
                         </button>
                         <button
-                            className="inline-flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 text-sm font-medium px-5 py-3 rounded-lg border border-slate-200 transition-colors duration-150"
+                            className="inline-flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 text-sm font-medium px-5 py-3 border border-slate-200 transition-colors duration-150"
                         >
                             <Link
                                 to="/login"

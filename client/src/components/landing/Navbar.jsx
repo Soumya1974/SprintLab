@@ -62,7 +62,7 @@ export default function Navbar() {
                 {/* desktop actions */}
                 <div className="hidden md:flex items-center gap-2">
                     <button
-                        className="text-sm font-medium text-slate-600 hover:text-slate-900 px-3.5 py-2 rounded-lg transition-colors duration-150"
+                        className="text-sm font-medium text-slate-600 hover:text-slate-900 px-3.5 py-2 transition-colors duration-150"
                     >
                         <Link
                             to="/login"
@@ -71,7 +71,7 @@ export default function Navbar() {
                         </Link>
                     </button>
                     <button
-                        className="text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 px-3.5 py-2 rounded-lg border border-slate-200 transition-colors duration-150"
+                        className="text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 px-3.5 py-2 border border-slate-200 transition-colors duration-150"
                     >
                         <Link
                             to="/signup"
@@ -80,7 +80,7 @@ export default function Navbar() {
                         </Link>
                     </button>
                     <button
-                        className="text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.97] px-4 py-2 rounded-lg transition-all duration-150 shadow-sm"
+                        className="text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.97] px-4 py-2 transition-all duration-150 shadow-sm"
                     >
                         <Link
                             to="/signup"

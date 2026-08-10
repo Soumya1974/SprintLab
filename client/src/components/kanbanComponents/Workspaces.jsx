@@ -303,8 +303,8 @@ export default function Workspaces() {
                 </>
               ) : (
                 <div className="mx-5 flex flex-col items-center justify-center text-center bg-slate-50/60 border border-slate-200 py-16 px-6 animate-fade-in-up">
-                  <div className="h-12 w-12  bg-amber-50 border border-amber-200 flex items-center justify-center mb-4">
-                    <Filter className="h-5 w-5 text-amber-600" />
+                  <div className="h-12 w-12  bg-blue-50 border border-blue-200 flex items-center justify-center mb-4">
+                    <Filter className="h-5 w-5 text-blue-600" />
                   </div>
 
                   <p className="text-base font-semibold text-slate-800 mb-1">
@@ -316,7 +316,7 @@ export default function Workspaces() {
                   </p>
 
                   <button
-                    className="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold px-4 py-2 transition-all cursor-pointer shadow-xs"
+                    className="inline-flex items-center gap-1.5 bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold px-4 py-2 transition-all cursor-pointer shadow-xs"
                     onClick={resetFilters}
                   >
                     Clear Filters
