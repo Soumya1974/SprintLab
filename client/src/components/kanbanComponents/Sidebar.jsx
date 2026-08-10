@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import api from "../../api/axios";
 import useWorkspaceStore from "../../store/workspaceStore";
+import { Link } from "react-router-dom";
 
 function getWorkspaceInitial(title = "") {
   return title.trim().charAt(0).toUpperCase() || "W";
@@ -364,7 +365,13 @@ export default function Sidebar({
 
         {/* Bottom Actions Footer */}
         <div className="p-2 border-t border-[#DFE1E6] shrink-0 bg-[#F4F5F7] space-y-0.5">
-          {renderNavButton("settings", "Project Settings", Settings)}
+          <>
+            <Link
+              to="/projectsettings"
+            >
+              {renderNavButton("settings", "Project Settings", Settings)}
+            </Link>
+          </>
 
           {/* Logout Button */}
           <button

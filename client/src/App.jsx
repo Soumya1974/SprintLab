@@ -18,6 +18,7 @@ import { SkeletonTheme } from 'react-loading-skeleton'
 import InvitationPage from './pages/authPages/InvitationPage'
 import ProfilePage from './components/ApplicationPages/ProfilePage'
 import AppToaster from './components/AppToaster'
+import ProjectSettings from './components/ApplicationPages/ProjectSettings'
 
 function App() {
 
@@ -56,6 +57,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/userprofile" element={<ProfilePage />} />
+            <Route path="/projectsettings" element={<ProjectSettings/>} />
           </Route>
 
           <Route path='*' element={<NotFound />} />

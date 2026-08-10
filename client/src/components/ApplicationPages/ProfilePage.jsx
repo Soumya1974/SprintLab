@@ -859,7 +859,7 @@ export default function ProfilePage() {
                                     </div>
                                 </div>
 
-                                <div className={`${CARD} border-rose-200 p-6`}>
+                                <div className={`${CARD} border-red-200 p-6`}>
                                     <div className="flex items-start justify-between gap-4">
                                         <div>
                                             <h2 className="mt-1 text-lg font-semibold tracking-tight text-slate-900">
@@ -872,9 +872,8 @@ export default function ProfilePage() {
                                         </div>
                                         <button
                                             onClick={() => setShowDeleteModal(true)}
-                                            className="inline-flex shrink-0 items-center gap-1.5 border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-medium text-rose-600 transition-colors hover:bg-rose-100"
+                                            className="border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-100"
                                         >
-                                            <Trash2 className="h-3.5 w-3.5" />
                                             Delete account
                                         </button>
                                     </div>
