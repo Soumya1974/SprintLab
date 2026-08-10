@@ -36,7 +36,7 @@ export const handleChangeCurrentPassword = async (req, res) => {
         await userData.save();
 
         return res.status(200).json({
-            message: "Password changed successfully",
+            message: "Password updated successfully",
         })
     }
     catch (err) {

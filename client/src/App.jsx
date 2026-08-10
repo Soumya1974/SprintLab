@@ -17,6 +17,7 @@ import NotFound from './pages/landingPages/NotFound'
 import { SkeletonTheme } from 'react-loading-skeleton'
 import InvitationPage from './pages/authPages/InvitationPage'
 import ProfilePage from './components/ApplicationPages/ProfilePage'
+import AppToaster from './components/AppToaster'
 
 function App() {
 
@@ -27,57 +28,7 @@ function App() {
   return (
     <div>
       <SkeletonTheme baseColor='#EEEEEE' highlightColor='#D1D3D4'>
-        <Toaster
-          position="top-right"
-          gutter={10}
-          toastOptions={{
-            duration: 3000,
-            style: {
-              width: "360px",
-              minHeight: "56px",
-              background: "#FFFFFF",
-              color: "#0F172A",
-              border: "1px solid #E5E7EB",
-              borderRadius: "0px",
-              boxShadow: "none",
-              padding: "12px 16px",
-              fontSize: "13px",
-              fontWeight: "500",
-              lineHeight: "1.4",
-            },
-
-            success: {
-              style: {
-                border: "1px solid #E5E7EB",
-              },
-              iconTheme: {
-                primary: "#2563EB",
-                secondary: "#FFFFFF",
-              },
-            },
-
-            error: {
-              style: {
-                border: "1px solid #E5E7EB",
-              },
-              iconTheme: {
-                primary: "#DC2626",
-                secondary: "#FFFFFF",
-              },
-            },
-
-            loading: {
-              style: {
-                border: "1px solid #E5E7EB",
-              },
-              iconTheme: {
-                primary: "#2563EB",
-                secondary: "#FFFFFF",
-              },
-            },
-          }}
-        />
-
+        <AppToaster/>
         <Routes>
 
           {/* Public Routes */}

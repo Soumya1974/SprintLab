@@ -188,10 +188,10 @@ export default function Sidebar({
           <button
             onClick={() => setCollapsed(!collapsed)}
             aria-label="Toggle sidebar"
-            className="hidden lg:flex absolute -right-3 top-4 h-6 w-6 items-center justify-center rounded-full bg-white border border-[#DFE1E6] text-[#5E6C84] hover:bg-[#DEEBFF] hover:text-[#0747A6] shadow-sm transition-colors"
+            className="hidden lg:flex absolute -right-3 top-4 h-6 w-6 items-center justify-center bg-white border border-[#DFE1E6] text-[#5E6C84] hover:bg-[#DEEBFF] hover:text-[#0747A6] shadow-sm transition-colors"
           >
             <ChevronLeft
-              className={`h-3.5 w-3.5 transition-transform duration-200 ${collapsed ? "rotate-180" : ""
+              className={`h-3.5 w-3.5 transition-transform duration-500 ${collapsed ? "rotate-180" : ""
                 }`}
             />
           </button>

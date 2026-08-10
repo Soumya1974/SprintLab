@@ -141,8 +141,8 @@ function SaveStatusPill({ status }) {
   }[status];
 
   return (
-    <span className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-500">
-      {config.icon || <span className={`h-1.5 w-1.5 rounded-full ${config.dot}`} />}
+    <span className="flex items-center gap-1.5 border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-500">
+      {config.icon || <span className={`h-1.5 w-1.5 ${config.dot}`} />}
       {config.label}
     </span>
   );
@@ -332,7 +332,7 @@ const ProjectNotes = ({ onToggle, maximized }) => {
                 setOpenDropdown(openDropdown === "heading" ? null : "heading")
               }
               title="Text style"
-              className="flex h-8 items-center gap-1 rounded px-2 text-sm text-slate-600 transition-colors duration-150 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              className="flex h-8 items-center gap-1 px-2 text-sm text-slate-600 transition-colors duration-150 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
               <activeHeading.icon className="h-4 w-4" />
               <span className="hidden sm:inline">{activeHeading.label}</span>
@@ -340,7 +340,7 @@ const ProjectNotes = ({ onToggle, maximized }) => {
             </button>
 
             {openDropdown === "heading" && (
-              <div className="absolute left-0 top-9 z-20 w-40 rounded-md border border-slate-200 bg-white py-1 shadow-lg">
+              <div className="absolute left-0 top-9 z-20 w-40 border border-slate-200 bg-white py-1 shadow-lg">
                 {HEADING_OPTIONS.map((opt) => (
                   <button
                     key={opt.label}
@@ -411,7 +411,7 @@ const ProjectNotes = ({ onToggle, maximized }) => {
             </ToolbarButton>
 
             {openDropdown === "color" && (
-              <div className="absolute left-0 top-9 z-20 flex w-40 flex-wrap gap-1.5 rounded-md border border-slate-200 bg-white p-2 shadow-lg">
+              <div className="absolute left-0 top-9 z-20 flex w-40 flex-wrap gap-1.5 border border-slate-200 bg-white p-2 shadow-lg">
                 {TEXT_COLORS.map((c) => (
                   <button
                     key={c.label}
@@ -426,7 +426,7 @@ const ProjectNotes = ({ onToggle, maximized }) => {
                       setOpenDropdown(null);
                     }}
                     title={c.label}
-                    className="h-6 w-6 rounded-full border border-slate-200 transition-transform duration-100 hover:scale-110"
+                    className="h-6 w-6 border border-slate-200 transition-transform duration-100 hover:scale-110"
                     style={{ backgroundColor: c.value || "#ffffff" }}
                   />
                 ))}
@@ -447,7 +447,7 @@ const ProjectNotes = ({ onToggle, maximized }) => {
             </ToolbarButton>
 
             {openDropdown === "highlight" && (
-              <div className="absolute left-0 top-9 z-20 flex w-36 flex-wrap gap-1.5 rounded-md border border-slate-200 bg-white p-2 shadow-lg">
+              <div className="absolute left-0 top-9 z-20 flex w-36 flex-wrap gap-1.5 border border-slate-200 bg-white p-2 shadow-lg">
                 {HIGHLIGHT_COLORS.map((c) => (
                   <button
                     key={c.label}
@@ -462,7 +462,7 @@ const ProjectNotes = ({ onToggle, maximized }) => {
                       setOpenDropdown(null);
                     }}
                     title={c.label}
-                    className="h-6 w-6 rounded-full border border-slate-200 transition-transform duration-100 hover:scale-110"
+                    className="h-6 w-6 border border-slate-200 transition-transform duration-100 hover:scale-110"
                     style={{ backgroundColor: c.value || "#ffffff" }}
                   />
                 ))}
@@ -538,7 +538,7 @@ const ProjectNotes = ({ onToggle, maximized }) => {
             </ToolbarButton>
 
             {openDropdown === "link" && (
-              <div className="absolute left-0 top-9 z-20 w-64 rounded-md border border-slate-200 bg-white p-2 shadow-lg">
+              <div className="absolute left-0 top-9 z-20 w-64 border border-slate-200 bg-white p-2 shadow-lg">
                 <div className="flex items-center gap-1.5">
                   <input
                     autoFocus
@@ -553,13 +553,13 @@ const ProjectNotes = ({ onToggle, maximized }) => {
                       if (e.key === "Escape") setOpenDropdown(null);
                     }}
                     placeholder="Paste a link…"
-                    className="w-full rounded border border-slate-200 px-2 py-1 text-sm text-slate-700 focus:border-blue-500 focus:outline-none"
+                    className="w-full border border-slate-200 px-2 py-1 text-sm text-slate-700 focus:border-blue-500 focus:outline-none"
                   />
                   <button
                     type="button"
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={setLink}
-                    className="rounded bg-blue-600 px-2.5 py-1 text-sm font-medium text-white hover:bg-blue-700"
+                    className="bg-blue-600 px-2.5 py-1 text-sm font-medium text-white hover:bg-blue-700"
                   >
                     {linkUrl ? "Set" : "Remove"}
                   </button>
@@ -611,7 +611,7 @@ const ProjectNotes = ({ onToggle, maximized }) => {
           <button
             onClick={handlePostNotes}
             disabled={!isDirty || isSaving}
-            className="flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            className="flex items-center gap-1.5 border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors duration-150 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
           >
             <Save className="h-4 w-4" />
             <span className="hidden sm:inline">Save</span>
@@ -619,7 +619,7 @@ const ProjectNotes = ({ onToggle, maximized }) => {
 
           <button
             onClick={onToggle}
-            className="group flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 transition-colors duration-150 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            className="group flex h-8 w-8 items-center justify-center border border-slate-200 text-slate-500 transition-colors duration-150 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
           >
             {maximized ? (
               <Minimize2 className="h-4 w-4" />
