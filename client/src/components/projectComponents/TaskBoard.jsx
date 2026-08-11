@@ -375,7 +375,7 @@ export default function TaskBoard({ onToggle, maximized }) {
 
   const taskCount = filteredTasks.length;
   const boardMinHeight = maximized
-    ? `${Math.max(70, Math.min(100, 70 + Math.max(0, taskCount - 8) * 4))}vh`
+    ? `100vh`
     : undefined;
 
   const tasksByStage = (stageId) => filteredTasks.filter((t) => t.status === stageId);
@@ -509,8 +509,8 @@ export default function TaskBoard({ onToggle, maximized }) {
 
   return (
     <div
-      className={`flex h-full w-full min-h-0 flex-col overflow-hidden border border-slate-200 bg-white p-4 ${maximized ? "min-h-[70vh]" : ""}`}
-      style={maximized ? { minHeight: boardMinHeight } : undefined}
+      className={`flex w-full h-188 flex-col p-4 ${maximized ? "bg-transparent" : "bg-white border border-slate-200"
+        }`}
     >
       <div className="flex shrink-0 items-center justify-between flex-wrap gap-3 mb-3">
         <h2 className="text-base font-semibold text-slate-800">Tasks Overview</h2>
@@ -616,11 +616,11 @@ export default function TaskBoard({ onToggle, maximized }) {
       </div>
 
       {loadingTasks ? (
-        <div className="flex flex-1 items-center justify-center">
+        <div className="flex flex-1 min-h-0 items-center justify-center">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-300 border-t-blue-600" />
         </div>
       ) : tasks.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-10 text-center">
+        <div className="flex flex-1 min-h-0 flex-col items-center justify-center py-10 text-center">
           <div className="flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 border border-slate-200">
             <ClipboardList className="w-8 h-8 text-slate-400" />
           </div>
@@ -630,12 +630,21 @@ export default function TaskBoard({ onToggle, maximized }) {
           </p>
         </div>
       ) : viewMode === "list" ? (
-        <ListView tasks={filteredTasks} onMove={handleMoveButton} />
+        <div className="scrollbar-hide flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
+          <ListView tasks={filteredTasks} onMove={handleMoveButton} />
+        </div>
       ) : viewMode === "excel" ? (
-        <ExcelView tasks={filteredTasks} onMove={handleMoveButton} />
+        <div className="scrollbar-hide flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
+          <ExcelView tasks={filteredTasks} onMove={handleMoveButton} />
+        </div>
       ) : (
         <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-          <div className="flex flex-1 min-h-0 flex-col gap-6 overflow-y-auto sm:flex-row">
+          <div
+            className={`scrollbar-hide flex flex-1 min-h-0 flex-col gap-6 sm:flex-row ${maximized
+              ? "overflow-visible"
+              : "overflow-y-auto overflow-x-hidden"
+              }`}
+          >
             {STAGES.map((stage) => (
               <Column
                 key={stage.id}

@@ -239,7 +239,7 @@ export function UserProfileAvatar({ user, size = "md", className = "", children 
                             >
                               <button
                                 onClick={() => setShowLightbox(false)}
-                                className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center border border-white/30 text-white backdrop-blur-sm transition-colors hover:bg-slate-900/40 sm:right-3 sm:top-3"
+                                className="absolute -right-3 -top-3 flex h-8 w-8 items-center justify-center border border-[#E5E7EB] bg-white text-slate-500 transition-colors hover:border-blue-600 hover:text-blue-600 sm:-right-4 sm:-top-4 sm:h-9 sm:w-9"
                               >
                                 <X className="h-4 w-4 sm:h-5 sm:w-5" />
                               </button>
