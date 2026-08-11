@@ -4,7 +4,6 @@ import FormField from "../../components/authComponents/FormField";
 import { validateEmail, validateLoginPassword } from "../../utils/validators";
 import useAuthStore from "../../store/authStore";
 import toast from "react-hot-toast";
-import axios from "axios";
 import api from "../../api/axios";
 import useWorkspaceStore from "../../store/workspaceStore";
 import { Link, useNavigate } from "react-router-dom";
@@ -65,7 +64,7 @@ export default function Login({ onNavigate }) {
 
         try {
             setSubmitting(true);
-            const response = await axios.post('/api/login', {
+            const response = await api.post('/api/login', {
                 email,
                 password
             },

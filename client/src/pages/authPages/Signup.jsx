@@ -9,9 +9,9 @@ import {
   validateConfirmPassword,
   getPasswordStrength,
 } from "../../utils/validators";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "../../store/authStore";
+import api from "../../api/axios";
 
 export default function Signup() {
 
@@ -74,7 +74,7 @@ export default function Signup() {
     }
 
     try {
-      const response = await axios.post('/api/signup', {
+      const response = await api.post('/api/signup', {
         name,
         email,
         password

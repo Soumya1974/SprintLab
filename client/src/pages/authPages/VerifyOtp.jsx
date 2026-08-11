@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import { ShieldCheck, ArrowLeft } from "lucide-react";
 import AuthLayout from "../../components/authComponents/AuthLayout";
 import useAuthStore from "../../store/authStore";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../api/axios";
@@ -70,7 +69,7 @@ export default function VerifyOtp() {
         setSubmitting(true);
 
         try {
-            const response = await axios.post('/api/signup/verify-otp', {
+            const response = await api.post('/api/signup/verify-otp', {
                 email,
                 otp: code,
             }, {
@@ -143,7 +142,7 @@ export default function VerifyOtp() {
         setResendIn(60);
 
         try {
-            const response = await axios.post(
+            const response = await api.post(
                 "/api/signup/resend-otp",
                 { email },
                 {

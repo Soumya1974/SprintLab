@@ -4,9 +4,9 @@ import AuthLayout from "../../components/authComponents/AuthLayout";
 import FormField from "../../components/authComponents/FormField";
 import { validateEmail } from "../../utils/validators";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import toast from "react-hot-toast";
 import useAuthStore from "../../store/authStore";
+import api from "../../api/axios";
 
 const OTP_LENGTH = 6;
 
@@ -88,7 +88,7 @@ export default function ForgotPassword() {
     if (!isOtpComplete) return;
 
     try {
-      const response = await axios.post('/api/forgot-password/verify-otp', {
+      const response = await api.post('/api/forgot-password/verify-otp', {
         email,
         otp: code
       }, {
@@ -131,7 +131,7 @@ export default function ForgotPassword() {
     inputRefs.current[0]?.focus();
 
     try{
-      const response = await axios.post("/api/forgot-password/resend-otp", {
+      const response = await api.post("/api/forgot-password/resend-otp", {
         email
       }, {
         withCredentials: true
@@ -151,7 +151,7 @@ export default function ForgotPassword() {
     setSubmitting(true);
 
     try {
-      const response = await axios.post("/api/forgot-password", {
+      const response = await api.post("/api/forgot-password", {
         email: getEmail
       }, {
         withCredentials: true

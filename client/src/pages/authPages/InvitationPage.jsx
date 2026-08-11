@@ -1,4 +1,3 @@
-import axios from "axios";
 import { Check, X, Wrench } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -23,7 +22,7 @@ export default function InvitationPage() {
 
     const handleGetInvitationData = async () => {
         try {
-            const response = await axios.get(
+            const response = await api.get(
                 `/api/invitations/${token}`
             );
 

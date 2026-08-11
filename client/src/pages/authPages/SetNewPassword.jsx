@@ -3,9 +3,9 @@ import { Eye, EyeOff, KeyRound, ArrowLeft, AlertCircle, CheckCircle2 } from "luc
 import AuthLayout from "../../components/authComponents/AuthLayout";
 import { Link, useNavigate } from "react-router-dom";
 import { validatePassword, validateConfirmPassword, getPasswordStrength } from "../../utils/validators";
-import axios from "axios";
 import toast from "react-hot-toast";
 import useAuthStore from "../../store/authStore";
+import api from "../../api/axios";
 
 export default function SetNewPassword() {
 
@@ -36,7 +36,7 @@ export default function SetNewPassword() {
         if (!isValid) return;
 
         try{
-            const response = await axios.post("/api/forgot-password/set-password", {
+            const response = await api.post("/api/forgot-password/set-password", {
                 email,
                 newPassword: password
             }, {
