@@ -371,7 +371,7 @@ export default function ProfilePage() {
         const fetchUser = async () => {
             try {
                 const response = await api.get(
-                    "/api/profile/get-userdata",
+                    "/api/users/profile/get-userdata",
                     {
                         withCredentials: true,
                     }
