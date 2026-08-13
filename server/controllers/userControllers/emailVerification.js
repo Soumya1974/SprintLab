@@ -4,6 +4,10 @@ import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
 import { otpEmailTemplate } from "../../templates/otpEmailTemplate.js"
+import dotenv from "dotenv";
+
+dotenv.config();
+
 
 // Nodemailer setup
 const transporter = nodemailer.createTransport({

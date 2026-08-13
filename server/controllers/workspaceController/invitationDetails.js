@@ -8,6 +8,22 @@ import bcrypt from 'bcrypt';
 import { logActivity } from "../../utils/logActivity.js";
 import { io } from "../../socket.js";
 import { Activity } from "../../models/activityDbSchema.js";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+
+// Nodemailer setup
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: process.env.EMAIL_ID,
+        pass: process.env.PASS_CODE,
+    }
+});
+
+// Generate 6 digit otp
+const generateOtp = () => crypto.randomInt(100000, 999999).toString();
 
 //Nodemailer setup
 const transporter = nodemailer.createTransport({
