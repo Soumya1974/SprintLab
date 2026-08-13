@@ -38,9 +38,14 @@ function removeSocket(workspaceId, userId, socketId) {
 
 export const initializeSocket = (server) => {
 
+  const allowedOrigins = [
+  "http://localhost:5173",
+  process.env.FRONTEND_URL,
+];
+
   io = new Server(server, {
     cors: {
-      origin: process.env.FRONTEND_URL,
+      origin: allowedOrigins,
       credentials: true,
     },
   });

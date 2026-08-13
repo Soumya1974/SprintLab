@@ -16,7 +16,7 @@ const port = process.env.PORT || 5000;
 
 const allowedOrigins = [
     "http://localhost:5173",
-    "https://sprint-lab-gamma.vercel.app"
+    process.env.FRONTEND_URL
 ];
 
 app.use(
