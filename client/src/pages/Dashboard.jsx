@@ -428,7 +428,7 @@ export default function Dashboard() {
   ]);
   
   const metrics = dashboardData?.metrics || {};
-  const workspace = dashboardData?.workspace || projectDetails;
+  const workspace = dashboardData?.workspace;
   const activities = dashboardData?.activities || [];
   const memberTaskCounts = dashboardData?.memberTaskCounts || [];
   const upcomingDeadlines = dashboardData?.upcomingDeadlines || [];

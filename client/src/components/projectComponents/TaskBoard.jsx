@@ -381,46 +381,82 @@ export default function TaskBoard({ onToggle, maximized }) {
   const tasksByStage = (stageId) => filteredTasks.filter((t) => t.status === stageId);
 
   async function updateTaskStatus(taskId, newStatus) {
-    const previousTasks = tasks;
+  const previousTasks = tasks;
 
-    setTasks((prev) =>
-      prev.map((task) =>
-        task._id === taskId ? { ...task, status: newStatus } : task
-      )
+  // Optimistic update
+  setTasks((prev) =>
+    prev.map((task) =>
+      task._id === taskId
+        ? { ...task, status: newStatus }
+        : task
+    )
+  );
+
+  try {
+    const response = await api.patch(
+      `/api/tasks/${taskId}/${workspaceData}/status`,
+      {
+        status: newStatus,
+      },
+      {
+        withCredentials: true,
+      }
     );
 
-    try {
-      const response = await api.patch(
-        `/api/tasks/${taskId}/${workspaceData}/status`,
-        { status: newStatus },
-        { withCredentials: true }
-      );
-      toast.success(response.data.message);
+    toast.success(response.data.message);
 
-      if (response.data?.projectStatus) {
-        const currentDetails = useWorkspaceStore.getState().projectDetails;
-        if (currentDetails) {
-          useWorkspaceStore.getState().setProjectDetails({
-            ...currentDetails,
-            status: response.data.projectStatus,
-          });
-        }
-        useWorkspaceStore.getState().refreshWorkspaces();
-      }
-    } catch (err) {
-      setTasks(previousTasks);
-      switch (err.response?.status) {
-        case 400:
-          toast.error(err.response.data.message);
-          break;
-        case 500:
-          toast.error("Internal Server Error");
-          break;
-        default:
-          toast.error("Something went wrong");
-      }
+    // Workspace status may have changed after task status update.
+    // Refresh the workspace list so the updated status is available.
+    if (response.data?.projectStatus) {
+      useWorkspaceStore
+        .getState()
+        .refreshWorkspaces();
+    }
+
+  } catch (err) {
+
+    // Roll back optimistic update
+    setTasks(previousTasks);
+
+    switch (err.response?.status) {
+
+      case 400:
+        toast.error(
+          err.response?.data?.message ||
+          "Invalid request"
+        );
+        break;
+
+      case 401:
+        toast.error("Unauthorized");
+        break;
+
+      case 403:
+        toast.error(
+          err.response?.data?.message ||
+          "You don't have permission"
+        );
+        break;
+
+      case 404:
+        toast.error(
+          err.response?.data?.message ||
+          "Task not found"
+        );
+        break;
+
+      case 500:
+        toast.error("Internal Server Error");
+        break;
+
+      default:
+        toast.error(
+          err.response?.data?.message ||
+          "Something went wrong"
+        );
     }
   }
+}
 
   function handleMoveButton(task, newStatus) {
     if (!newStatus || newStatus === task.status) return;

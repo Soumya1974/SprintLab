@@ -86,12 +86,19 @@ function CollapsibleRow({ icon: Icon, label, open, onToggle, preview, children }
 
 export default function CreateTaskModal({ handleGetTaskCards }) {
   const [formData, setFormData] = useState(INITIAL_FORM);
-  const [touched, setTouched] = useState({ title: false, description: false });
+  const [touched, setTouched] = useState({
+    title: false,
+    description: false,
+  });
+
   const [showDueDate, setShowDueDate] = useState(false);
   const [showPriority, setShowPriority] = useState(false);
   const [showColor, setShowColor] = useState(false);
   const [showAssignTo, setShowAssignTo] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  const [workspace, setWorkspace] = useState(null);
+  const [loadingWorkspace, setLoadingWorkspace] = useState(false);
 
   const wordCount = countWords(formData.description);
   const isOverLimit = wordCount > MAX_DESC_WORDS;
@@ -99,90 +106,247 @@ export default function CreateTaskModal({ handleGetTaskCards }) {
   const titleWordCount = countWords(formData.title);
   const isTitleOverLimit = titleWordCount > MAX_TITLE_WORDS;
 
-  const clearTaskForm = useWorkspaceStore((state) => state.clearTaskForm);
-  const workspaceData = useWorkspaceStore((state) => state.workspaceData);
-  const workspaceDueDate = useWorkspaceStore((state) => state.workspaceDueDate);
-  const projectDetails = useWorkspaceStore((state) => state.projectDetails);
+  const clearTaskForm = useWorkspaceStore(
+    (state) => state.clearTaskForm
+  );
 
-  const rawMembers = projectDetails?.members || [];
+  const workspaceData = useWorkspaceStore(
+    (state) => state.workspaceData
+  );
+
+  const workspaceDueDate = useWorkspaceStore(
+    (state) => state.workspaceDueDate
+  );
+
+  useEffect(() => {
+    if (!workspaceData) {
+      setWorkspace(null);
+      return;
+    }
+
+    const fetchWorkspace = async () => {
+      try {
+        setLoadingWorkspace(true);
+
+        const response = await api.get(
+          `/api/workspaces/dashboard/${workspaceData}`,
+          {
+            withCredentials: true,
+          }
+        );
+
+        setWorkspace(response.data.workspace);
+
+      } catch (err) {
+        console.error(
+          "Failed to fetch workspace:",
+          err
+        );
+
+        setWorkspace(null);
+
+        toast.error(
+          err.response?.data?.message ||
+          "Failed to load workspace"
+        );
+
+      } finally {
+        setLoadingWorkspace(false);
+      }
+    };
+
+    fetchWorkspace();
+
+  }, [workspaceData]);
+
+  const rawMembers = workspace?.members || [];
+
   const membersList = [];
+
   const seenIds = new Set();
 
-  if (projectDetails?.owner && typeof projectDetails.owner === "object" && projectDetails.owner._id) {
-    seenIds.add(projectDetails.owner._id.toString());
-    membersList.push(projectDetails.owner);
+
+  // Add owner
+  if (
+    workspace?.owner &&
+    typeof workspace.owner === "object" &&
+    workspace.owner._id
+  ) {
+    const ownerId =
+      workspace.owner._id.toString();
+
+    seenIds.add(ownerId);
+
+    membersList.push(workspace.owner);
   }
 
-  for (const m of rawMembers) {
-    const u = m.user || m;
-    if (u && u._id && !seenIds.has(u._id.toString())) {
-      seenIds.add(u._id.toString());
-      membersList.push(u);
+
+  // Add workspace members
+  for (const member of rawMembers) {
+
+    const user = member.user || member;
+
+    if (
+      user &&
+      user._id &&
+      !seenIds.has(user._id.toString())
+    ) {
+      seenIds.add(
+        user._id.toString()
+      );
+
+      membersList.push(user);
     }
   }
 
-  const selectedMember = membersList.find((m) => m._id === formData.assignedTo);
+  const selectedMember = membersList.find(
+    (member) =>
+      member._id?.toString() ===
+      formData.assignedTo?.toString()
+  );
 
-  const titleError = !formData.title.trim()
-    ? "Title is required"
-    : isTitleOverLimit
-      ? `Title must be ${MAX_TITLE_WORDS} words or fewer`
-      : "";
+  const titleError =
+    !formData.title.trim()
+      ? "Title is required"
+      : isTitleOverLimit
+        ? `Title must be ${MAX_TITLE_WORDS} words or fewer`
+        : "";
 
-  const descriptionError = !formData.description.trim()
-    ? "Description is required"
-    : isOverLimit
-      ? `Description must be ${MAX_DESC_WORDS} words or fewer`
-      : "";
+  const descriptionError =
+    !formData.description.trim()
+      ? "Description is required"
+      : isOverLimit
+        ? `Description must be ${MAX_DESC_WORDS} words or fewer`
+        : "";
 
-  const isValid = !titleError && !descriptionError;
+  const isValid =
+    !titleError &&
+    !descriptionError;
 
   function updateField(key, value) {
-    setFormData((prev) => ({ ...prev, [key]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
   }
 
   function handleBlur(field) {
-    setTouched((prev) => ({ ...prev, [field]: true }));
+    setTouched((prev) => ({
+      ...prev,
+      [field]: true,
+    }));
   }
 
   async function handleSubmit(e) {
+
     e.preventDefault();
-    setTouched({ title: true, description: true });
-    if (!isValid) return;
-    const { title, description, dueDate, priority, color, assignedTo } = formData;
+
+    setTouched({
+      title: true,
+      description: true,
+    });
+
+    if (!isValid) {
+      return;
+    }
+
+    if (!workspaceData) {
+      toast.error("Please select a workspace");
+      return;
+    }
+
+    const {
+      title,
+      description,
+      dueDate,
+      priority,
+      color,
+      assignedTo,
+    } = formData;
+
     setSubmitting(true);
 
     try {
-      const response = await api.post(`/api/workspaces/add-task/${workspaceData}`, {
-        title,
-        description,
-        dueDate: dueDate || null,
-        priority: priority,
-        color,
-        assignedTo: assignedTo || null,
-      }, {
-        withCredentials: true
-      });
+
+      const response = await api.post(
+        `/api/workspaces/add-task/${workspaceData}`,
+        {
+          title,
+          description,
+          dueDate: dueDate || null,
+          priority,
+          color,
+          assignedTo: assignedTo || null,
+        },
+        {
+          withCredentials: true,
+        }
+      );
 
       if (response.status === 201) {
-        toast.success(response.data.message);
+
+        toast.success(
+          response.data.message
+        );
+
         clearTaskForm();
       }
-    }
-    catch (err) {
-      switch (err.response.status) {
+
+    } catch (err) {
+
+      console.error(err);
+
+      const status =
+        err.response?.status;
+
+      const message =
+        err.response?.data?.message;
+
+      switch (status) {
+
         case 400:
-          toast.error(err.response.data.message);
+          toast.error(
+            message || "Invalid request"
+          );
           break;
+
+        case 401:
+          toast.error(
+            "You are not authorized"
+          );
+          break;
+
+        case 403:
+          toast.error(
+            message ||
+            "You don't have permission"
+          );
+          break;
+
+        case 404:
+          toast.error(
+            message ||
+            "Workspace not found"
+          );
+          break;
+
         case 500:
-          toast.error("Internal Server Error");
+          toast.error(
+            "Internal Server Error"
+          );
           break;
+
         default:
-          toast.error("Something went wrong");
+          toast.error(
+            message ||
+            "Something went wrong"
+          );
       }
-    }
-    finally {
+
+    } finally {
+
       setSubmitting(false);
+
     }
   }
 
