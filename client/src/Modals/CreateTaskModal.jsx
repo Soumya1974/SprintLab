@@ -14,6 +14,7 @@ import useWorkspaceStore from "../store/workspaceStore";
 import api from "../api/axios";
 import toast from "react-hot-toast";
 import { createPortal } from "react-dom";
+import { useEffect } from "react";
 
 const COLORS = [
   { name: "Blue", value: "#2563eb" },

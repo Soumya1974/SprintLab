@@ -1,9 +1,9 @@
-import { create } from "zustand";
-
 const useWorkspaceStore = create((set) => ({
   user: null,
 
   workspaceData: null,
+
+  previousWorkspaceId: null,
 
   allWorkspaces: [],
 
@@ -14,14 +14,21 @@ const useWorkspaceStore = create((set) => ({
   workspaceDueDate: "",
 
   selectWorkspace: (id) =>
-    set({
-      workspaceData: id,
-    }),
+    set((state) => ({
+      previousWorkspaceId:
+        state.workspaceData &&
+        state.workspaceData !== id
+          ? state.workspaceData
+          : state.previousWorkspaceId,
 
-  setAllWorkspaces: (workspaces) =>
-    set({
-      allWorkspaces: workspaces,
-    }),
+      workspaceData: id,
+    })),
+
+  restorePreviousWorkspace: () =>
+    set((state) => ({
+      workspaceData: state.previousWorkspaceId,
+      previousWorkspaceId: null,
+    })),
 
   setWorkspaceData: (id) =>
     set({
@@ -31,6 +38,12 @@ const useWorkspaceStore = create((set) => ({
   clearWorkspaceData: () =>
     set({
       workspaceData: null,
+      previousWorkspaceId: null,
+    }),
+
+  setAllWorkspaces: (workspaces) =>
+    set({
+      allWorkspaces: workspaces,
     }),
 
   refreshWorkspaces: () =>
@@ -73,6 +86,7 @@ const useWorkspaceStore = create((set) => ({
     set({
       user: null,
       workspaceData: null,
+      previousWorkspaceId: null,
       allWorkspaces: [],
       workspaceRefreshKey: 0,
       taskForm: false,

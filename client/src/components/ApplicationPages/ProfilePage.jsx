@@ -165,7 +165,7 @@ function AvatarUploader({ name, avatarFile, setAvatarFile, avatarPreview, setAva
                                 onChange={(e) => handleFile(e.target.files?.[0])}
                             />
                             {
-                                user.avatar ? (
+                                user?.avatar ? (
                                     <img src={user.avatar} alt="Profile preview" className="h-full w-full object-cover" />
                                 ) : (
                                     <span>{initials}</span>
@@ -653,15 +653,22 @@ export default function ProfilePage() {
                                         title="Your photo"
                                         description="This is displayed on your profile and across your workspaces."
                                     />
-                                    <AvatarUploader
-                                        name={name}
-                                        user={user}
-                                        avatarFile={avatarFile}
-                                        setAvatarFile={setAvatarFile}
-                                        avatarPreview={avatarPreview}
-                                        setAvatarPreview={setAvatarPreview}
-                                        onCropComplete={(file) => setCroppedFile(file)}
-                                    />
+                                    {user ? (
+                                        <AvatarUploader
+                                            name={name}
+                                            user={user}
+                                            avatarFile={avatarFile}
+                                            setAvatarFile={setAvatarFile}
+                                            avatarPreview={avatarPreview}
+                                            setAvatarPreview={setAvatarPreview}
+                                            onCropComplete={(file) => setCroppedFile(file)}
+                                        />
+                                    ) : (
+                                        <div className="flex items-center gap-5">
+                                            <div className="h-20 w-20 animate-pulse border border-[#E5E7EB] bg-slate-100" />
+                                            <div className="h-4 w-32 animate-pulse bg-slate-100" />
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className={`${CARD} p-6`}>
