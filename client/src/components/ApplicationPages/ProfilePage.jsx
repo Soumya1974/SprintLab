@@ -368,6 +368,31 @@ export default function ProfilePage() {
     const setUser = useWorkspaceStore((state) => state.setUser);
 
     useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const response = await api.get(
+                    "/api/profile/get-userdata",
+                    {
+                        withCredentials: true,
+                    }
+                );
+
+                const userData = response.data.user;
+
+                setUser(userData);
+
+            } catch (err) {
+                console.error(
+                    "Failed to fetch profile:",
+                    err.response?.data || err
+                );
+            }
+        };
+
+        fetchUser();
+    }, [setUser]);
+
+    useEffect(() => {
         if (user) {
             setName(user.name || "");
             setEmail(user.email || "");
