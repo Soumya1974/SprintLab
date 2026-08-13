@@ -20,18 +20,6 @@ const transporter = nodemailer.createTransport({
 // Generate 6 digit otp
 const generateOtp = () => crypto.randomInt(100000, 999999).toString();
 
-// Nodemailer setup
-const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-        user: process.env.EMAIL_ID,
-        pass: process.env.PASS_CODE,
-    }
-});
-
-// Generate 6 digit otp
-const generateOtp = () => crypto.randomInt(100000, 999999).toString();
-
 export const handleUserData = async (req, res) => {
     try {
         const { email } = req.body;
