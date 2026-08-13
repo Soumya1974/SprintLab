@@ -164,8 +164,8 @@ export default function ProjectHeader({
                 const initial =
                   member.name
                     ? member.name
-                      .charAt(0)
-                      .toUpperCase()
+                        .charAt(0)
+                        .toUpperCase()
                     : "?";
 
                 return (
@@ -221,7 +221,10 @@ export default function ProjectHeader({
 
         <div className="flex gap-2">
 
-          <button onClick={restorePreviousWorkspace}>
+          <button
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:bg-slate-200 border border-slate-200 active:scale-95 px-3.5 py-2 hover:cursor-pointer transition-colors duration-150"
+            onClick={restorePreviousWorkspace}
+          >
             <LogOutIcon className="h-4 w-4" />
             Back
           </button>
