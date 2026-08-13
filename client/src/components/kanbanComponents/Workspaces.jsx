@@ -39,6 +39,7 @@ export default function Workspaces() {
       );
 
       setProjectData(response.data.userProjects || []);
+      
     } catch (err) {
       switch (err.response?.status) {
         case 400:

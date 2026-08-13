@@ -13,16 +13,6 @@ const useWorkspaceStore = create((set) => ({
 
     selectWorkspace: (id, details, dueDate = "") =>
         set((state) => ({
-            previousWorkspaceId:
-                state.workspaceData && state.workspaceData !== id
-                    ? state.workspaceData
-                    : null,
-
-            previousProjectDetails:
-                state.workspaceData && state.workspaceData !== id
-                    ? state.projectDetails
-                    : null,
-
             workspaceData: id,
             projectDetails: details,
             workspaceDueDate: dueDate,

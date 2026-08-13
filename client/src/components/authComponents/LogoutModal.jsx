@@ -14,9 +14,7 @@ export default function LogoutModal({ onCancelClick }) {
         state.clearAccessToken
     )
     const clearForgotPasswordProgress = useAuthStore((state) => state.clearForgotPasswordProgress);
-    const clearUser = useWorkspaceStore((state) => state.clearUser);
-    const clearWorkspaceData = useWorkspaceStore((state) => state.clearWorkspaceData);
-    const clearProjectDetails = useWorkspaceStore((state) => state.clearProjectDetails);
+    const resetWorkspaceStore = useWorkspaceStore((state) => state.resetWorkspaceStore);
 
     const handleLogoutClick = async () => {
         setSubmitting(true);
@@ -27,9 +25,7 @@ export default function LogoutModal({ onCancelClick }) {
 
             clearAccessToken();
             clearForgotPasswordProgress();
-            clearUser();
-            clearWorkspaceData();
-            clearProjectDetails();
+            resetWorkspaceStore();
             
         }
         catch (err) {

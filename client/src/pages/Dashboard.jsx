@@ -195,96 +195,238 @@ export default function Dashboard() {
   const [error, setError] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
 
-  const workspaceData = useWorkspaceStore((state) => state.workspaceData);
-  const allWorkspaces = useWorkspaceStore((state) => state.allWorkspaces);
-  const projectDetails = useWorkspaceStore((state) => state.projectDetails);
-  const selectWorkspace = useWorkspaceStore((state) => state.selectWorkspace);
-  const accessToken = useAuthStore((state) => state.accessToken);
+  const workspaceData = useWorkspaceStore(
+    (state) => state.workspaceData
+  );
+
+  const allWorkspaces = useWorkspaceStore(
+    (state) => state.allWorkspaces
+  );
+
+  const selectWorkspace = useWorkspaceStore(
+    (state) => state.selectWorkspace
+  );
+
+  const user = useWorkspaceStore(
+    (state) => state.user
+  );
+
+  const accessToken = useAuthStore(
+    (state) => state.accessToken
+  );
+
   const cacheRef = useRef(new Map());
   const didInitDefaultWorkspace = useRef(false);
 
+  useEffect(() => {
+    cacheRef.current.clear();
+    setDashboardData(null);
+    setError("");
+    setLoading(false);
+
+    // Allow default workspace selection again
+    didInitDefaultWorkspace.current = false;
+  }, [user?._id]);
+
+  useEffect(() => {
+    if (
+      !didInitDefaultWorkspace.current &&
+      !workspaceData &&
+      allWorkspaces.length > 0
+    ) {
+      const firstWorkspace = allWorkspaces[0];
+
+      didInitDefaultWorkspace.current = true;
+
+      // Store ONLY the ID
+      selectWorkspace(firstWorkspace._id);
+
+      return;
+    }
+  }, [
+    workspaceData,
+    allWorkspaces,
+    selectWorkspace,
+  ]);
+
   const fetchDashboard = useCallback(
     async (showSpinner = true) => {
+
       if (!workspaceData) {
         setDashboardData(null);
         return;
       }
 
+      // Cache
       if (cacheRef.current.has(workspaceData)) {
-        setDashboardData(cacheRef.current.get(workspaceData));
+
+        setDashboardData(
+          cacheRef.current.get(workspaceData)
+        );
+
         if (showSpinner) {
           setLoading(false);
         }
+
         return;
       }
 
       try {
+
         if (showSpinner) {
           setLoading(true);
         }
+
         setError("");
-        const response = await api.get(`/api/workspaces/dashboard/${workspaceData}`);
+
+        // Clear old UI immediately
+        setDashboardData(null);
+
+        const response = await api.get(
+          `/api/workspaces/dashboard/${workspaceData}`
+        );
+
         const payload = response.data;
-        cacheRef.current.set(workspaceData, payload);
+
+        cacheRef.current.set(
+          workspaceData,
+          payload
+        );
+
         setDashboardData(payload);
+
       } catch (err) {
-        setError(err.response?.data?.message || "Unable to load workspace analytics");
+
+        console.error(
+          "Dashboard error:",
+          err
+        );
+
+        setError(
+          err.response?.data?.message ||
+          "Unable to load workspace analytics"
+        );
+
+        setDashboardData(null);
+
       } finally {
+
         if (showSpinner) {
           setLoading(false);
         }
       }
+
     },
     [workspaceData]
   );
 
   useEffect(() => {
-    if (!didInitDefaultWorkspace.current && !workspaceData && allWorkspaces.length > 0) {
-      const firstWorkspace = allWorkspaces[0];
-      didInitDefaultWorkspace.current = true;
-      selectWorkspace(firstWorkspace._id, firstWorkspace, firstWorkspace.dueDate);
+
+    if (!workspaceData) {
+      setDashboardData(null);
       return;
     }
 
-    if (!workspaceData) return;
-
     fetchDashboard();
-  }, [workspaceData, allWorkspaces, fetchDashboard, selectWorkspace]);
+
+  }, [
+    workspaceData,
+    fetchDashboard,
+  ]);
 
   useEffect(() => {
-    if (!workspaceData || !accessToken) return undefined;
 
-    socket.auth = { token: accessToken };
+    if (!workspaceData || !accessToken) {
+      return;
+    }
+
+    socket.auth = {
+      token: accessToken,
+    };
 
     if (!socket.connected) {
       socket.connect();
     }
 
-    socket.emit("join-workspace", { workspaceId: workspaceData });
+    socket.emit(
+      "join-workspace",
+      {
+        workspaceId: workspaceData,
+      }
+    );
+
 
     const handleRealtimeRefresh = async () => {
-      cacheRef.current.delete(workspaceData);
-      setLoading(true);
+
+      // Remove cached dashboard
+      cacheRef.current.delete(
+        workspaceData
+      );
+
       setError("");
+
       await fetchDashboard(false);
-      setLoading(false);
     };
 
-    socket.on("task:created", handleRealtimeRefresh);
-    socket.on("task:updated", handleRealtimeRefresh);
-    socket.on("task:status-changed", handleRealtimeRefresh);
-    socket.on("activity:new", handleRealtimeRefresh);
+
+    socket.on(
+      "task:created",
+      handleRealtimeRefresh
+    );
+
+    socket.on(
+      "task:updated",
+      handleRealtimeRefresh
+    );
+
+    socket.on(
+      "task:status-changed",
+      handleRealtimeRefresh
+    );
+
+    socket.on(
+      "activity:new",
+      handleRealtimeRefresh
+    );
+
 
     return () => {
-      socket.emit("leave-workspace", { workspaceId: workspaceData });
-      socket.off("task:created", handleRealtimeRefresh);
-      socket.off("task:updated", handleRealtimeRefresh);
-      socket.off("task:status-changed", handleRealtimeRefresh);
-      socket.off("activity:new", handleRealtimeRefresh);
-      socket.disconnect();
-    };
-  }, [workspaceData, accessToken, fetchDashboard]);
 
+      socket.emit(
+        "leave-workspace",
+        {
+          workspaceId: workspaceData,
+        }
+      );
+
+      socket.off(
+        "task:created",
+        handleRealtimeRefresh
+      );
+
+      socket.off(
+        "task:updated",
+        handleRealtimeRefresh
+      );
+
+      socket.off(
+        "task:status-changed",
+        handleRealtimeRefresh
+      );
+
+      socket.off(
+        "activity:new",
+        handleRealtimeRefresh
+      );
+
+    };
+
+  }, [
+    workspaceData,
+    accessToken,
+    fetchDashboard,
+  ]);
+  
   const metrics = dashboardData?.metrics || {};
   const workspace = dashboardData?.workspace || projectDetails;
   const activities = dashboardData?.activities || [];
