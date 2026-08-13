@@ -137,7 +137,7 @@ export const handleUserLogin = async (req, res) => {
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
             secure: true,
-            sameSite: "strict",
+            sameSite: "none",
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
 
@@ -205,7 +205,7 @@ export const handleCreateNewAccessToken = async (req, res) => {
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
             secure: true,
-            sameSite: "strict",
+            sameSite: "none",
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
 
@@ -225,44 +225,40 @@ export const handleCreateNewAccessToken = async (req, res) => {
 }
 
 export const handleUserLogout = async (req, res) => {
-
-    const getRefreshToken = req.cookies.refreshToken;
-
-    if (!getRefreshToken) return res.status(204);
+    const refreshToken = req.cookies.refreshToken;
 
     try {
+        // No refresh token
+        if (!refreshToken) {
+            return res.status(200).json({
+                message: "Already logged out"
+            });
+        }
+
         const decoded = jwt.verify(
-            getRefreshToken,
+            refreshToken,
             process.env.JWT_SECRET
         );
 
-        const getUserData = await User.findById(decoded.id);
+        const user = await User.findById(decoded.id);
 
-        if (getUserData) {
-            getUserData.refreshToken = null,
-                await getUserData.save();
+        if (user) {
+            user.refreshToken = null;
+            await user.save();
         }
 
-        res.clearCookie("refreshToken", {
-            httpOnly: true,
-            secure: true,
-            sameSite: "strict"
-        });
-
-        res.status(200).json({
-            message: "Logged out successfully"
-        })
+    } catch (err) {
+        console.log("Logout token error:", err.message);
     }
-    catch (err) {
 
-        res.clearCookie("refreshToken", {
-            httpOnly: true,
-            secure: true,
-            sameSite: "strict"
-        });
+    // Always clear the cookie
+    res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+    });
 
-        return res.status(204).json({
-            message: "Somthing went wrong"
-        });
-    }
-}
+    return res.status(200).json({
+        message: "Logged out successfully"
+    });
+};
