@@ -1,99 +1,83 @@
 import { create } from "zustand";
 
 const useWorkspaceStore = create((set) => ({
-    user: null,
-    workspaceData: null,
-    projectDetails: null,
-    previousWorkspaceId: null,
-    previousProjectDetails: null,
-    allWorkspaces: [],
-    workspaceRefreshKey: 0,
-    taskForm: false,
-    workspaceDueDate: "",
+  user: null,
 
-    selectWorkspace: (id, details, dueDate = "") =>
-        set((state) => ({
-            workspaceData: id,
-            projectDetails: details,
-            workspaceDueDate: dueDate,
-        })),
+  workspaceData: null,
 
-    setWorkspaceData: (id) =>
-        set({ workspaceData: id }),
+  allWorkspaces: [],
 
-    clearWorkspaceData: () =>
-        set({
-            workspaceData: null,
-            projectDetails: null,
-            previousWorkspaceId: null,
-            previousProjectDetails: null,
-        }),
+  workspaceRefreshKey: 0,
 
-    setAllWorkspaces: (workspaces) =>
-        set({ allWorkspaces: workspaces }),
+  taskForm: false,
 
-    setProjectDetails: (data) =>
-        set({ projectDetails: data }),
+  workspaceDueDate: "",
 
-    clearProjectDetails: () =>
-        set({ projectDetails: null }),
+  selectWorkspace: (id) =>
+    set({
+      workspaceData: id,
+    }),
 
-    restorePreviousWorkspace: () =>
-        set((state) => {
-            const hasPrevious = Boolean(
-                state.previousWorkspaceId &&
-                state.previousWorkspaceId !== state.workspaceData
-            );
+  setAllWorkspaces: (workspaces) =>
+    set({
+      allWorkspaces: workspaces,
+    }),
 
-            return {
-                workspaceData: hasPrevious
-                    ? state.previousWorkspaceId
-                    : null,
+  setWorkspaceData: (id) =>
+    set({
+      workspaceData: id,
+    }),
 
-                projectDetails: hasPrevious
-                    ? state.previousProjectDetails
-                    : null,
+  clearWorkspaceData: () =>
+    set({
+      workspaceData: null,
+    }),
 
-                previousWorkspaceId: null,
-                previousProjectDetails: null,
-            };
-        }),
+  refreshWorkspaces: () =>
+    set((state) => ({
+      workspaceRefreshKey:
+        state.workspaceRefreshKey + 1,
+    })),
 
-    refreshWorkspaces: () =>
-        set((state) => ({
-            workspaceRefreshKey: state.workspaceRefreshKey + 1,
-        })),
+  setTaskForm: (value) =>
+    set({
+      taskForm: value,
+    }),
 
-    setTaskForm: (value) =>
-        set({ taskForm: value }),
+  clearTaskForm: () =>
+    set({
+      taskForm: false,
+    }),
 
-    clearTaskForm: () =>
-        set({ taskForm: false }),
+  setWorkspaceDueDate: (value) =>
+    set({
+      workspaceDueDate: value,
+    }),
 
-    setWorkspaceDueDate: (value) =>
-        set({ workspaceDueDate: value }),
+  clearWorkspaceDueDate: () =>
+    set({
+      workspaceDueDate: "",
+    }),
 
-    clearWorkspaceDueDate: () =>
-        set({ workspaceDueDate: "" }),
+  setUser: (user) =>
+    set({
+      user,
+    }),
 
-    setUser: (user) =>
-        set({ user }),
+  clearUser: () =>
+    set({
+      user: null,
+    }),
 
-    clearUser: () =>
-        set({ user: null }),
-
-    resetWorkspaceStore: () =>
-        set({
-            user: null,
-            workspaceData: null,
-            projectDetails: null,
-            previousWorkspaceId: null,
-            previousProjectDetails: null,
-            allWorkspaces: [],
-            workspaceRefreshKey: 0,
-            taskForm: false,
-            workspaceDueDate: "",
-        }),
+  resetWorkspaceStore: () =>
+    set({
+      user: null,
+      workspaceData: null,
+      allWorkspaces: [],
+      workspaceRefreshKey: 0,
+      taskForm: false,
+      workspaceDueDate: "",
+    }),
 }));
 
 export default useWorkspaceStore;

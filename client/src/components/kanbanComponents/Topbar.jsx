@@ -17,7 +17,6 @@ export default function Topbar({ onMenuClick }) {
   const wsRef = useRef(null);
   const allWorkspaces = useWorkspaceStore((state) => state.allWorkspaces);
   const workspaceData = useWorkspaceStore((state) => state.workspaceData);
-  const projectDetails = useWorkspaceStore((state) => state.projectDetails);
   const selectWorkspace = useWorkspaceStore((state) => state.selectWorkspace);
 
   useEffect(() => {
