@@ -43,7 +43,6 @@ import api from "../../api/axios";
 import useWorkspaceStore from "../../store/workspaceStore";
 import toast from "react-hot-toast";
 import NoteConflictModal from "../../Modals/NoteConflictModal";
-import axios from "axios";
 
 const SPRINTLAB_STARTER_CONTENT = `
   <h2>SprintLab Workflow</h2>
@@ -264,7 +263,7 @@ const ProjectNotes = ({ onToggle, maximized }) => {
   const fetchNotes = async () => {
     setLoadingNotes(true);
     try {
-      const response = await axios.get(`/api/get-notes/${workspaceData}`, {
+      const response = await api.get(`/api/get-notes/${workspaceData}`, {
         withCredentials: true,
       });
 

@@ -19,7 +19,7 @@ workspaceRouter.delete('/tasks/:taskId/:workspaceData', handleAccessToken, handl
 workspaceRouter.patch('/tasks/:taskId/:workspaceData/status', handleAccessToken, handleUpdateTaskStatus);
 
 workspaceRouter.put('/post-notes/:workspaceData',handleAccessToken, handleNotesData);
-workspaceRouter.get('/get-notes/:workspaceData', handleGetNotes);
+workspaceRouter.get('/get-notes/:workspaceData',handleAccessToken, handleGetNotes);
 
 
 workspaceRouter.post('/workspaces/:workspaceData/invite', handleAccessToken, handleValidEmail, handleSendInvitation);

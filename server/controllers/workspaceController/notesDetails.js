@@ -84,7 +84,7 @@ export const handleGetNotes = async (req, res) => {
 
     if (!note) {
       return res.status(404).json({
-        message: "Notes note found"
+        message: "Notes not found"
       });
     }
     return res.status(200).json({
