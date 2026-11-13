@@ -44,7 +44,7 @@ jobs:
             -e "ssh -i ~/.ssh/sprintlab_actions -o IdentitiesOnly=yes" \
             ./ "$EC2_USER@$EC2_HOST:$DEPLOY_PATH/"
 
-      - name: Install dependencies and deploy
+           - name: Install dependencies and deploy
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
@@ -53,7 +53,9 @@ jobs:
           ssh -i ~/.ssh/sprintlab_actions \
             -o IdentitiesOnly=yes \
             "$EC2_USER@$EC2_HOST" \
-            "cd '$DEPLOY_PATH/server' &&
+            "export NVM_DIR=\"\$HOME/.nvm\" &&
+             source \"\$NVM_DIR/nvm.sh\" &&
+             cd '$DEPLOY_PATH/server' &&
              npm ci &&
              cd '$DEPLOY_PATH/client' &&
              npm ci &&
